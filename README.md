@@ -17,6 +17,34 @@
 
 ---
 
+## 🎬 미리보기
+
+<div align="center">
+
+**PM · AI 전략가** (`cyberpunk`)
+
+![PM Cyberpunk](./examples/pm-cyberpunk.svg)
+
+**AI Engineer** (`matrix`)
+
+![AI Matrix](./examples/ai-matrix.svg)
+
+**Frontend Dev** (`synthwave`)
+
+![Frontend Synthwave](./examples/frontend-synthwave.svg)
+
+**DevOps** (`ocean`)
+
+![DevOps Ocean](./examples/devops-ocean.svg)
+
+**뱀 단독 (`/api/snake`)**
+
+![Snake](./examples/snake-cyberpunk.svg)
+
+</div>
+
+---
+
 > **왜 만들었냐?**
 > [pixel-profile](https://github.com/LuciNyan/pixel-profile) 은 GitHub 통계 숫자만 보여줌.
 > 커밋 수가 적은 PM, 기획자, AI 도메인 전문가에게는 의미없는 숫자들.
