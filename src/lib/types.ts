@@ -8,6 +8,9 @@ export type ThemeName =
   | 'ocean'
   | 'hacker'
   | 'neon'
+  | 'tokyonight'
+  | 'monokai'
+  | 'retro'
 
 export interface Theme {
   bg: string

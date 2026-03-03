@@ -1,0 +1,65 @@
+# ──────────────────────────────────────────────────────────────────────────────
+# Pixel IT Profile — Auto-update workflow
+#
+# This workflow downloads your profile card and saves it to the repo
+# so your README can reference a local file (no external URL needed!).
+#
+# SETUP:
+#   1. Add PIXEL_ITPROFILE_URL to your repo secrets:
+#      https://YOUR-DEPLOYMENT.vercel.app/api/profile?name=...&theme=cyberpunk
+#   2. Push this file to .github/workflows/update-profile.yml
+#   3. The card will auto-update every day and on every push to main.
+#
+# USAGE IN README:
+#   ![My Profile](./profile-card.svg)
+#   ![Snake](./snake.svg)
+# ──────────────────────────────────────────────────────────────────────────────
+name: 🐍 Update Pixel IT Profile
+
+on:
+  schedule:
+    - cron: '0 0 * * *'   # Every day at midnight UTC
+  push:
+    branches: [main]
+  workflow_dispatch:        # Manual trigger from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  update-profile:
+    name: Generate profile card
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download profile card SVG
+        env:
+          BASE_URL: ${{ secrets.PIXEL_ITPROFILE_URL }}
+        run: |
+          # Download the profile card
+          curl -sSL "$BASE_URL" -o profile-card.svg
+
+          # Download standalone snake animation
+          SNAKE_URL="${BASE_URL/\/api\/profile/\/api\/snake}"
+          curl -sSL "$SNAKE_URL" -o snake.svg
+
+          echo "Profile card size: $(wc -c < profile-card.svg) bytes"
+          echo "Snake size: $(wc -c < snake.svg) bytes"
+
+      - name: Commit updated cards
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          git add profile-card.svg snake.svg
+
+          # Only commit if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update pixel profile cards [skip ci]"
+            git push
+          fi
