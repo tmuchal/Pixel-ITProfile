@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="242" viewBox="0 0 800 242" role="img" aria-label="Pixel IT Profile — Jane">
+<style>
+@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-2px)} }
+.blink { animation: blink 1s step-end infinite }
+.float { animation: float 3s ease-in-out infinite }
+</style>
+<defs>
+  <!-- Neon glow: used on borders, badges, snake -->
+  <filter id="glow" x="-25%" y="-25%" width="150%" height="150%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <!-- Subtle glow for secondary elements -->
+  <filter id="glow-sm" x="-15%" y="-15%" width="130%" height="130%">
+    <feGaussianBlur in="SourceGraphic" stdDeviation="1.2" result="blur"/>
+    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <!-- Scanline texture -->
+  <pattern id="scanlines" x="0" y="0" width="2" height="4" patternUnits="userSpaceOnUse">
+    <rect x="0" y="0" width="2" height="1" fill="#ffffff" opacity="0.03"/>
+  </pattern>
+</defs>
+<rect width="800" height="242" fill="#1a0a2e"/>
+<rect width="800" height="242" fill="url(#scanlines)"/>
+<rect x="1" y="1" width="798" height="240" fill="none" stroke="#c77dff" stroke-width="1.5" filter="url(#glow)"/>
+<rect x="5" y="5" width="790" height="232" fill="none" stroke="#c77dff" stroke-width="0.5" opacity="0.2" stroke-dasharray="4,4"/>
+<rect x="0" y="0" width="10" height="10" fill="#c77dff" filter="url(#glow)"/>
+<rect x="790" y="0" width="10" height="10" fill="#c77dff" filter="url(#glow)"/>
+<rect x="0" y="232" width="10" height="10" fill="#c77dff" filter="url(#glow)"/>
+<rect x="790" y="232" width="10" height="10" fill="#c77dff" filter="url(#glow)"/>
+<rect x="10" y="0" width="4" height="2" fill="#c77dff" opacity="0.6"/>
+<rect x="0" y="10" width="2" height="4" fill="#c77dff" opacity="0.6"/>
+<rect x="786" y="0" width="4" height="2" fill="#c77dff" opacity="0.6"/>
+<rect x="798" y="10" width="2" height="4" fill="#c77dff" opacity="0.6"/>
+<rect x="10" y="240" width="4" height="2" fill="#c77dff" opacity="0.6"/>
+<rect x="0" y="228" width="2" height="4" fill="#c77dff" opacity="0.6"/>
+<rect x="786" y="240" width="4" height="2" fill="#c77dff" opacity="0.6"/>
+<rect x="798" y="228" width="2" height="4" fill="#c77dff" opacity="0.6"/>
+<rect x="16" y="-1" width="142" height="12" fill="#c77dff"/>
+<text x="24" y="9" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="9" fill="#000" font-weight="bold"> PIXEL.IT.PROFILE </text>
+<text class="blink" x="776" y="34" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="12" fill="#ff6b9d" text-anchor="end" filter="url(#glow)">█</text>
+<rect x="34" y="36" width="68" height="68" fill="#16213e"/>
+<rect x="34" y="36" width="68" height="68" fill="none" stroke="#ff6b9d" stroke-width="1"/>
+<rect x="44" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="41" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="46" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="51" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="51" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="51" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="51" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="51" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="51" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="56" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="56" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="56" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="56" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="56" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="56" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="61" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="66" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="71" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="76" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="81" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="39" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="44" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="79" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="84" y="86" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="49" y="91" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="54" y="91" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="59" y="91" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="64" y="91" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="69" y="91" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<rect x="74" y="91" width="5" height="5" fill="#ff6b9d" opacity="0.9"/>
+<text x="68" y="75" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="20.4" fill="#000" text-anchor="middle" font-weight="bold" opacity="0.4">JA</text>
+<clipPath id="clip-nm">
+  <rect x="118" y="35" width="0" height="27">
+    <animate attributeName="width" from="0" to="70" dur="0.40s" begin="0.10s" fill="freeze" calcMode="linear"/>
+  </rect>
+</clipPath>
+<text x="118" y="58" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="21" fill="#e0aaff" font-weight="bold" clip-path="url(#clip-nm)">Jane</text>
+<rect x="118" y="66" width="112" height="24" fill="#240046"/>
+<rect x="118" y="66" width="112" height="24" fill="none" stroke="#ff6b9d" stroke-width="1" filter="url(#glow-sm)"/>
+<text x="129" y="82" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="12.5" fill="#ff6b9d">Frontend Dev</text>
+<clipPath id="clip-bio">
+  <rect x="118" y="97" width="0" height="17">
+    <animate attributeName="width" from="0" to="238" dur="2.31s" begin="0.78s" fill="freeze" calcMode="linear"/>
+  </rect>
+</clipPath>
+<text x="118" y="110" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="11" fill="#9b72cc" clip-path="url(#clip-bio)">&quot;Pixel by pixel building the web&quot;</text>
+<line x1="22" y1="122" x2="778" y2="122" stroke="#c77dff" stroke-width="1" opacity="0.3"/>
+<text x="32" y="147" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="10" fill="#ff6b9d" opacity="0.6">▶</text>
+<text x="46" y="147" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="10" fill="#ff6b9d">IT DOMAINS</text>
+<rect x="32" y="154" width="61" height="26" fill="#240046"/>
+<rect x="32" y="154" width="61" height="26" fill="none" stroke="#ff6b9d" stroke-width="1" filter="url(#glow-sm)"/>
+<text x="62.5" y="171" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="11" fill="#ff6b9d" text-anchor="middle">React</text>
+<rect x="103" y="154" width="94" height="26" fill="#240046"/>
+<rect x="103" y="154" width="94" height="26" fill="none" stroke="#ff6b9d" stroke-width="1" filter="url(#glow-sm)"/>
+<text x="150" y="171" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="11" fill="#ff6b9d" text-anchor="middle">TypeScript</text>
+<rect x="207" y="154" width="74" height="26" fill="#240046"/>
+<rect x="207" y="154" width="74" height="26" fill="none" stroke="#ff6b9d" stroke-width="1" filter="url(#glow-sm)"/>
+<text x="244" y="171" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="11" fill="#ff6b9d" text-anchor="middle">Next.js</text>
+<rect x="291" y="154" width="61" height="26" fill="#240046"/>
+<rect x="291" y="154" width="61" height="26" fill="none" stroke="#ff6b9d" stroke-width="1" filter="url(#glow-sm)"/>
+<text x="321.5" y="171" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="11" fill="#ff6b9d" text-anchor="middle">Figma</text>
+<path id="sp" d="M -140 167 L 20 167 C 32 167 54.5 156 62.5 156 C 70.5 156 93 167 93 167 L 91 167 C 103 167 142 178 150 178 C 158 178 197 167 197 167 L 195 167 C 207 167 236 156 244 156 C 252 156 281 167 281 167 L 279 167 C 291 167 313.5 178 321.5 178 C 329.5 178 352 167 352 167 L 940 167" fill="none" stroke="none"/>
+<rect x="95" y="164" width="6" height="6" fill="#7bf1a8" rx="1">
+    <animate attributeName="opacity" values="1;1;0;0;1;1"
+      keyTimes="0;0.200;0.220;0.340;0.350;1"
+      dur="7s" repeatCount="indefinite"/>
+  </rect>
+<rect x="199" y="164" width="6" height="6" fill="#7bf1a8" rx="1">
+    <animate attributeName="opacity" values="1;1;0;0;1;1"
+      keyTimes="0;0.297;0.317;0.437;0.447;1"
+      dur="7s" repeatCount="indefinite"/>
+  </rect>
+<rect x="283" y="164" width="6" height="6" fill="#7bf1a8" rx="1">
+    <animate attributeName="opacity" values="1;1;0;0;1;1"
+      keyTimes="0;0.374;0.394;0.514;0.524;1"
+      dur="7s" repeatCount="indefinite"/>
+  </rect>
+<g filter="url(#glow-sm)">
+  <animateMotion dur="7s" repeatCount="indefinite" rotate="none">
+    <mpath href="#sp"/>
+  </animateMotion>
+  <!-- Head -->
+  <rect x="-6" y="-6" width="11" height="11" fill="#4cc9f0" rx="1"/>
+  <!-- Eyes -->
+  <rect x="4" y="-4" width="2" height="2" fill="#000"/>
+  <rect x="4" y="3" width="2" height="2" fill="#000"/>
+  <!-- Body -->
+  <rect x="-14" y="-3" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-26" y="-2" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-38" y="-3" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-50" y="-5" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-62" y="-7" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-74" y="-8" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-86" y="-7" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-98" y="-5" width="9" height="9" fill="#f72585" rx="1"/>
+  <rect x="-110" y="-4" width="7" height="7" fill="#f72585" rx="1"/>
+</g>
+</svg>
