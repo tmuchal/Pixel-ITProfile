@@ -3,13 +3,14 @@
  *
  * Generates a pixel-art style SVG profile card with:
  * - Neon glow effects (SVG filter)
- * - Snake animation weaving through IT domain badges (SVG animateMotion)
+ * - Pixel art cat room animation at the bottom
  * - Typing reveal animation for name/role (SVG SMIL)
  * - Responsive badge layout with auto-wrap
  * - 9 themes, fully customizable colors
  */
 import type { ProfileOptions, GithubStats } from './types'
 import { getTheme } from './themes'
+import { buildCatRoomContent } from './buildCatRoom'
 
 const FONT = `'Courier New','Courier','Lucida Console',monospace`
 
@@ -172,101 +173,9 @@ function buildTypingText(
 <text x="${x}" y="${y}" font-family="${FONT}" font-size="${fontSize}" fill="${fill}"${fontWeight ? ` font-weight="${fontWeight}"` : ''} clip-path="url(#clip-${id})">${esc(text)}</text>`
 }
 
-// ── Snake ─────────────────────────────────────────────────────────────────────
-// Uses SVG animateMotion along a Bezier path that weaves through domain badges
+// ── Badge info type ───────────────────────────────────────────────────────────
 
 interface BadgeInfo { x: number; w: number; mid: number }
-
-function buildSnakeWeave(
-  badgeInfos: BadgeInfo[],
-  baseY: number,           // center Y of the snake lane
-  cardW: number,
-  bodyColor: string,
-  headColor: string,
-  foodColor: string,
-  snakeDur: number,
-): string {
-  const sz = 9             // snake segment size
-  const amp = 11           // vertical amplitude of weave through badges
-  const gap = sz + 3       // gap between body segments
-
-  // ── Build weave path ──────────────────────────────────────────────────────
-  // Snake starts off-screen left, weaves up/down at each badge, exits right
-  const startX = -140
-  let d = `M ${startX} ${baseY}`
-
-  if (badgeInfos.length === 0) {
-    d += ` L ${cardW + 140} ${baseY}`
-  } else {
-    // Line to before first badge
-    d += ` L ${badgeInfos[0].x - 12} ${baseY}`
-
-    badgeInfos.forEach((b, i) => {
-      // Alternate weave direction: even = above, odd = below
-      const dir = i % 2 === 0 ? -1 : 1
-      const peakY = baseY + dir * amp
-      const cx = b.x + b.w / 2
-
-      // Smooth Bezier: approach badge → curve up/down at center → leave
-      d += ` C ${b.x} ${baseY} ${cx - 8} ${peakY} ${cx} ${peakY}`
-      d += ` C ${cx + 8} ${peakY} ${b.x + b.w} ${baseY} ${b.x + b.w} ${baseY}`
-
-      // Line to next badge (or card edge)
-      const nextX = i < badgeInfos.length - 1
-        ? badgeInfos[i + 1].x - 12
-        : cardW + 140
-      d += ` L ${nextX} ${baseY}`
-    })
-  }
-
-  // ── Snake body (positioned relative to head at 0,0) ───────────────────────
-  // Sine-wave offsets for natural-looking body
-  const waveY = [0, 2, 3, 2, 0, -2, -3, -2, 0, 1]
-  const bodySegs = waveY.slice(1).map((dy, i) => {
-    const segX = -((i + 1) * gap) - 2
-    const segSz = i === waveY.length - 2 ? sz - 2 : sz
-    return `<rect x="${segX}" y="${dy - r(sz / 2)}" width="${segSz}" height="${segSz}" fill="${bodyColor}" rx="1"/>`
-  })
-
-  // Food dots between badges (appear/disappear as snake passes)
-  const foodDots: string[] = []
-  for (let i = 0; i < badgeInfos.length - 1; i++) {
-    const { x: bx, w: bw } = badgeInfos[i]
-    const nextBx = badgeInfos[i + 1].x
-    const fx = r(bx + bw + (nextBx - bx - bw) / 2) - 3
-    const fy = baseY - 3
-    // Stagger food disappearance: food at i-th gap disappears when snake passes
-    const eatAt = ((bx + bw + (nextBx - bx - bw) / 2 - startX) / (cardW + 140 - startX))
-    const delay = eatAt * snakeDur
-    foodDots.push(
-      `<rect x="${fx}" y="${fy}" width="6" height="6" fill="${foodColor}" rx="1">
-    <animate attributeName="opacity" values="1;1;0;0;1;1"
-      keyTimes="0;${(eatAt - 0.02).toFixed(3)};${eatAt.toFixed(3)};${(eatAt + 0.12).toFixed(3)};${(eatAt + 0.13).toFixed(3)};1"
-      dur="${snakeDur}s" repeatCount="indefinite"/>
-  </rect>`
-    )
-  }
-
-  return [
-    // Invisible path for animateMotion
-    `<path id="sp" d="${d}" fill="none" stroke="none"/>`,
-    // Food dots (rendered under snake)
-    ...foodDots,
-    // Snake group (moves along path)
-    `<g filter="url(#glow-sm)">
-  <animateMotion dur="${snakeDur}s" repeatCount="indefinite" rotate="none">
-    <mpath href="#sp"/>
-  </animateMotion>
-  <!-- Head -->
-  <rect x="${-r(sz / 2) - 1}" y="${-r(sz / 2) - 1}" width="${sz + 2}" height="${sz + 2}" fill="${headColor}" rx="1"/>
-  <!-- Eyes -->
-  <rect x="${r(sz / 2) - 1}" y="${-r(sz / 2) + 1}" width="2" height="2" fill="#000"/>
-  <rect x="${r(sz / 2) - 1}" y="${r(sz / 2) - 2}" width="2" height="2" fill="#000"/>
-  <!-- Body -->
-  ${bodySegs.join('\n  ')}
-</g>`,
-  ].join('\n')
-}
 
 // ── Stats row ─────────────────────────────────────────────────────────────────
 
@@ -329,13 +238,11 @@ export function generateProfileCard(
   const accent = options.accent_color || theme.accent
   const textColor = options.text_color || theme.text
   const borderColor = options.border_color || theme.border
-  const snakeColor = options.snake_color || theme.snake
-  const foodColor = options.food_color || theme.food
 
   const showAvatar = options.show_avatar !== false
   const showDomains = options.show_domains !== false
   const showStats = options.show_stats === true && !!stats
-  const showSnake = options.show_snake !== false
+  const showCat = options.show_snake !== false  // reuses show_snake param for backwards compat
 
   const w = options.layout === 'compact' ? 600 : 800
   const pad = 22
@@ -346,8 +253,6 @@ export function generateProfileCard(
     .map(d => d.trim())
     .filter(Boolean)
     .slice(0, 8)
-
-  const snakeDur = options.snake_speed === 'slow' ? 12 : options.snake_speed === 'fast' ? 4 : 7
 
   // ── Compute badge layout (with two-row wrap) ──────────────────────────────
   const badgeFontSize = 11
@@ -387,9 +292,10 @@ export function generateProfileCard(
   h += 80              // header (avatar height)
   h += 14              // divider + gap
 
+  const catRoomH = 200
   const hasDomains = showDomains && domains.length > 0
   if (hasDomains) h += domainsH
-  if (showSnake) h += 36
+  if (showCat) h += catRoomH + 14  // room + divider
   if (showStats) h += 52
   h += pad             // bottom padding
 
@@ -484,7 +390,7 @@ export function generateProfileCard(
   out.push(buildDivider(curY, w, pad, borderColor))
   curY += 14
 
-  // ── DOMAINS + SNAKE ──────────────────────────────────────────────────────
+  // ── DOMAINS ───────────────────────────────────────────────────────────────
   if (hasDomains) {
     out.push(buildSectionHeader(pad + 10, curY + 11, 'IT DOMAINS', accent))
     curY += 18
@@ -504,40 +410,18 @@ export function generateProfileCard(
       ].join('\n'))
     })
 
-    // Snake weaves through badges in the LAST row
-    const lastRowBadges = badgeLayouts.filter(bl => bl.row === numBadgeRows - 1)
-    const snakeMidY = (lastRowBadges[0]?.y ?? curY) + badgeH / 2
-
-    out.push(buildSnakeWeave(
-      lastRowBadges.map(bl => ({ x: bl.x, w: bl.w, mid: bl.mid })),
-      snakeMidY,
-      w,
-      snakeColor,
-      theme.snakeHead,
-      foodColor,
-      snakeDur,
-    ))
-
     curY += numBadgeRows * rowH + 10
   }
 
-  // ── STANDALONE SNAKE SECTION (when no domains) ────────────────────────────
-  if (showSnake && !hasDomains) {
-    out.push(buildDivider(curY, w, pad, borderColor))
-    curY += 10
-
-    const snakeY = curY + 12
-    // Food dots spread evenly
-    const foodCount = 7
-    const spanW = w - pad * 2 - 20
-    const fakeBadges: BadgeInfo[] = Array.from({ length: foodCount }, (_, i) => {
-      const fx = r(pad + 10 + (spanW / (foodCount + 1)) * (i + 1))
-      return { x: fx - 3, w: 6, mid: fx }
-    })
-
-    out.push(buildSnakeWeave(fakeBadges, snakeY, w, snakeColor, theme.snakeHead, foodColor, snakeDur))
-
-    curY += 36
+  // ── CAT ROOM SECTION ──────────────────────────────────────────────────────
+  if (showCat) {
+    out.push(buildDivider(curY, w, pad, borderColor, ' CAT.ROOM '))
+    curY += 14
+    // Embed cat room as nested SVG (clips to card width)
+    out.push(`<svg x="0" y="${curY}" width="${w}" height="${catRoomH}" viewBox="0 0 ${w} ${catRoomH}">`)
+    out.push(buildCatRoomContent(w, catRoomH, accent))
+    out.push('</svg>')
+    curY += catRoomH
   }
 
   // ── STATS SECTION ────────────────────────────────────────────────────────

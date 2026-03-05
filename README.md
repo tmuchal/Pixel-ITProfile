@@ -9,7 +9,7 @@
 ```
 
 **픽셀 아트 IT 프로필 카드 생성기**
-뱀이 당신의 IT 도메인 태그들을 연결하며 기어다닙니다 🐍
+고양이가 사는 픽셀 아트 방 + 당신의 IT 정체성 🐱
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftmuchal%2FPixel-ITProfile)
 
@@ -21,7 +21,17 @@
 
 <div align="center">
 
-**PM · AI 전략가** (`cyberpunk`)
+**고양이 방** (`matrix`) — 걷기 → 책상 코딩 → 수면 반복
+
+![Cat Room Matrix](./examples/cat-matrix.svg)
+
+**고양이 방** (`cyberpunk`)
+
+![Cat Room Cyberpunk](./examples/cat-cyberpunk.svg)
+
+---
+
+**PM · AI 전략가** (`cyberpunk`) — 프로필 카드 전체
 
 ![PM Cyberpunk](./examples/pm-cyberpunk.svg)
 
@@ -33,14 +43,6 @@
 
 ![Frontend Synthwave](./examples/frontend-synthwave.svg)
 
-**DevOps** (`ocean`)
-
-![DevOps Ocean](./examples/devops-ocean.svg)
-
-**뱀 단독 (`/api/snake`)**
-
-![Snake](./examples/snake-cyberpunk.svg)
-
 </div>
 
 ---
@@ -49,7 +51,7 @@
 > [pixel-profile](https://github.com/LuciNyan/pixel-profile) 은 GitHub 통계 숫자만 보여줌.
 > 커밋 수가 적은 PM, 기획자, AI 도메인 전문가에게는 의미없는 숫자들.
 > **당신이 어떤 IT인인지**를 보여주는 카드가 필요했다.
-> 거기에 + 뱀이 도메인 태그들을 연결하는 애니메이션.
+> 거기에 + 타마고치처럼 방을 돌아다니는 픽셀 고양이.
 
 ---
 
@@ -58,7 +60,7 @@
 | | |
 |---|---|
 | 🎭 **IT 정체성 중심** | 역할(PM / AI Engineer / DevOps) + 도메인 태그 |
-| 🐍 **뱀 weaving 애니메이션** | `<animateMotion>` + Bezier 경로로 배지 사이를 진짜로 구불구불 통과 |
+| 🐱 **픽셀 고양이 방** | 타마고치처럼 걷고, 모니터 앞에 앉고, 자는 고양이 |
 | ✨ **SVG 네온 글로우** | `<feGaussianBlur>` 필터로 실제 CRT/네온 느낌 |
 | ⌨️ **타이핑 애니메이션** | SVG SMIL `<animate>` clip-path reveal로 이름이 타이핑되며 등장 |
 | 📊 **GitHub 통계** | 토큰 있을 때 선택 표시, 없어도 완전 동작 |
@@ -76,10 +78,10 @@
 ![My IT Profile](https://pixel-itprofile.vercel.app/api/profile?name=김철수&role=PM&domains=AI,Enterprise,Agent,Voice,Blockchain&bio=관련없어보이는것들을연결하는사람&theme=cyberpunk)
 ```
 
-**뱀 단독 사용 (contribution graph 위에 올리기):**
+**고양이 방 단독 사용:**
 
 ```markdown
-![Snake](https://pixel-itprofile.vercel.app/api/snake?theme=matrix&speed=normal)
+![Cat Room](https://pixel-itprofile.vercel.app/api/cat?theme=matrix)
 ```
 
 ---
@@ -115,14 +117,14 @@
 | `domains` | IT 도메인 태그 (쉼표 구분, 최대 8개) | `AI,Enterprise,Agent,Blockchain` |
 | `bio` | 한 줄 소개 | `관련없어보이는것들을연결하는사람` |
 
-### 🐍 뱀 애니메이션
+### 🐱 고양이 방 (`/api/cat`)
 
 | 파라미터 | 설명 | 기본값 |
 |---------|------|--------|
-| `snake_speed` | 속도 | `slow` / `normal` / `fast` |
-| `snake_color` | 몸 색 (#hex) | 테마 기본값 |
-| `food_color` | 먹이 색 (#hex) | 테마 기본값 |
-| `show_snake` | 표시 여부 | `true` |
+| `theme` | 방 액센트 색상 | `matrix` |
+| `width` | 가로 크기 (px) | `800` |
+| `height` | 세로 크기 (px) | `150` |
+| `show_snake` | 프로필 카드 고양이 방 표시 여부 | `true` |
 
 ### 🎨 디자인
 
@@ -158,7 +160,7 @@
 
 ### AI / ML Engineer
 ```markdown
-![Profile](https://pixel-itprofile.vercel.app/api/profile?name=Alex&role=AI+Engineer&domains=PyTorch,LangChain,RAG,Vector+DB&bio=Making+machines+think&theme=matrix&snake_speed=fast)
+![Profile](https://pixel-itprofile.vercel.app/api/profile?name=Alex&role=AI+Engineer&domains=PyTorch,LangChain,RAG,Vector+DB&bio=Making+machines+think&theme=matrix)
 ```
 
 ### DevOps / Platform Engineer
