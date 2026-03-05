@@ -23,25 +23,25 @@
 
 **고양이 방** (`matrix`) — 걷기 → 책상 코딩 → 수면 반복
 
-![Cat Room Matrix](./examples/cat-matrix.svg)
+![Cat Room Matrix](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
 
 **고양이 방** (`cyberpunk`)
 
-![Cat Room Cyberpunk](./examples/cat-cyberpunk.svg)
+![Cat Room Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-cyberpunk.svg)
 
 ---
 
 **PM · AI 전략가** (`cyberpunk`) — 프로필 카드 전체
 
-![PM Cyberpunk](./examples/pm-cyberpunk.svg)
+![PM Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/pm-cyberpunk.svg)
 
 **AI Engineer** (`matrix`)
 
-![AI Matrix](./examples/ai-matrix.svg)
+![AI Matrix](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/ai-matrix.svg)
 
 **Frontend Dev** (`synthwave`)
 
-![Frontend Synthwave](./examples/frontend-synthwave.svg)
+![Frontend Synthwave](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/frontend-synthwave.svg)
 
 </div>
 
@@ -75,13 +75,21 @@
 **GitHub `README.md`에 한 줄만 붙여넣으면 됩니다:**
 
 ```markdown
-![My IT Profile](https://pixel-itprofile.vercel.app/api/profile?name=김철수&role=PM&domains=AI,Enterprise,Agent,Voice,Blockchain&bio=관련없어보이는것들을연결하는사람&theme=cyberpunk)
+![고양이 방](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
 ```
 
-**고양이 방 단독 사용:**
+**다른 테마:**
 
 ```markdown
-![Cat Room](https://pixel-itprofile.vercel.app/api/cat?theme=matrix)
+![Cat Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-cyberpunk.svg)
+![Cat Synthwave](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-synthwave.svg)
+![Cat TokyoNight](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-tokyonight.svg)
+```
+
+**프로필 카드 전체 (Vercel 배포 시):**
+
+```markdown
+![My IT Profile](https://YOUR-APP.vercel.app/api/profile?name=김철수&role=PM&domains=AI,Enterprise,Agent,Voice,Blockchain&bio=관련없어보이는것들을연결하는사람&theme=cyberpunk)
 ```
 
 ---
@@ -123,8 +131,8 @@
 |---------|------|--------|
 | `theme` | 방 액센트 색상 | `matrix` |
 | `width` | 가로 크기 (px) | `800` |
-| `height` | 세로 크기 (px) | `150` |
-| `show_snake` | 프로필 카드 고양이 방 표시 여부 | `true` |
+| `height` | 세로 크기 (px) | `200` |
+| `show_cat` | 프로필 카드 고양이 방 표시 여부 | `true` |
 
 ### 🎨 디자인
 
@@ -237,7 +245,7 @@ npm run dev
 ```
 http://localhost:3000                     ← 인터랙티브 데모 페이지
 http://localhost:3000/api/profile?name=테스트&role=PM&domains=AI,Agent&theme=cyberpunk
-http://localhost:3000/api/snake?theme=matrix
+http://localhost:3000/api/cat?theme=matrix
 ```
 
 ---
@@ -249,7 +257,7 @@ src/
 ├── app/
 │   ├── api/
 │   │   ├── profile/route.ts   ← 메인 프로필 카드 (SVG)
-│   │   └── snake/route.ts     ← 뱀 단독 (SVG)
+│   │   └── cat/route.ts       ← 고양이 방 단독 (SVG)
 │   ├── demo-client.tsx        ← 인터랙티브 데모 (React 클라이언트)
 │   ├── page.tsx
 │   └── layout.tsx
@@ -257,7 +265,7 @@ src/
     ├── card.ts                ← SVG 카드 생성기 ★ 핵심
     │   ├── buildDefs()         SVG 필터 (네온 글로우, 스캔라인)
     │   ├── buildBorder()       픽셀 아트 코너 장식 + 터미널 라벨
-    │   ├── buildSnakeWeave()   animateMotion + Bezier 경로 뱀
+    │   ├── buildCatRoom()       픽셀 아트 고양이 방 애니메이션
     │   ├── buildTypingText()   SMIL clip-path 타이핑 애니메이션
     │   └── buildStats()        픽셀 프로그레스 바
     ├── themes.ts              ← 12가지 테마 정의
@@ -281,9 +289,7 @@ my_theme: {
   border: '#ff6600',
   badge: '#1a0a00',
   badgeText: '#ff6600',
-  snake: '#ffaa00',   // 뱀 몸
-  snakeHead: '#ffdd00', // 뱀 머리
-  food: '#ff0000',    // 먹이
+  cat: '#ff8c3a',     // 고양이 색상
 },
 ```
 
@@ -291,8 +297,8 @@ my_theme: {
 
 <div align="center">
 
-Made with 🐍 pixels and too much caffeine
+Made with 🐱 pixels and too much caffeine
 
-Inspired by [pixel-profile](https://github.com/LuciNyan/pixel-profile) · Snake concept from [Platane/snk](https://github.com/Platane/snk)
+Inspired by [pixel-profile](https://github.com/LuciNyan/pixel-profile)
 
 </div>
