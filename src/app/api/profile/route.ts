@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateProfileCard } from '@/lib/card'
 import { fetchGithubStats, fetchAvatarAsBase64 } from '@/lib/github'
-import type { ProfileOptions, ThemeName, SnakeSpeed, LayoutType } from '@/lib/types'
+import type { ProfileOptions, ThemeName, LayoutType } from '@/lib/types'
 
 export const runtime = 'edge'
 export const revalidate = 3600
@@ -26,9 +26,6 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     text_color:  p.get('text_color')  ?? undefined,
     accent_color:p.get('accent_color')?? undefined,
     border_color:p.get('border_color')?? undefined,
-    snake_color: p.get('snake_color') ?? undefined,
-    food_color:  p.get('food_color')  ?? undefined,
-    snake_speed: (p.get('snake_speed') ?? 'normal') as SnakeSpeed,
     layout:      (p.get('layout')     ?? 'wide') as LayoutType,
     show_avatar: bool(p.get('show_avatar'), true),
     show_domains:bool(p.get('show_domains'), true),
