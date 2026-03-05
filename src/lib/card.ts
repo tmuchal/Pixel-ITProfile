@@ -292,7 +292,7 @@ export function generateProfileCard(
   h += 80              // header (avatar height)
   h += 14              // divider + gap
 
-  const catRoomH = 120
+  const catRoomH = 200
   const hasDomains = showDomains && domains.length > 0
   if (hasDomains) h += domainsH
   if (showCat) h += catRoomH + 14  // room + divider

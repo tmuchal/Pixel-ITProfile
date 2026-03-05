@@ -21,7 +21,17 @@
 
 <div align="center">
 
-**PM · AI 전략가** (`cyberpunk`)
+**고양이 방** (`matrix`) — 걷기 → 책상 코딩 → 수면 반복
+
+![Cat Room Matrix](./examples/cat-matrix.svg)
+
+**고양이 방** (`cyberpunk`)
+
+![Cat Room Cyberpunk](./examples/cat-cyberpunk.svg)
+
+---
+
+**PM · AI 전략가** (`cyberpunk`) — 프로필 카드 전체
 
 ![PM Cyberpunk](./examples/pm-cyberpunk.svg)
 
@@ -32,14 +42,6 @@
 **Frontend Dev** (`synthwave`)
 
 ![Frontend Synthwave](./examples/frontend-synthwave.svg)
-
-**DevOps** (`ocean`)
-
-![DevOps Ocean](./examples/devops-ocean.svg)
-
-**고양이 방 단독 (`/api/cat`)**
-
-![Cat Room](./examples/cat-matrix.svg)
 
 </div>
 
