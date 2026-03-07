@@ -47,7 +47,7 @@ GitHub 프로필에 넣는 픽셀아트 고양이 방 카드
 
 | 파라미터 | 옵션 | 기본값 |
 |---------|------|--------|
-| `scene` | `dubai` `italy` `paris` `night` | `paris` |
+| `scene` | `dubai` `italy` `paris` | `paris` |
 | `theme` | `matrix` `cyberpunk` `synthwave` `ocean` `nord` `dracula` `tokyonight` `monokai` `hacker` `neon` `terminal` `retro` | `matrix` |
 | `width` | 최대 `1200` | `800` |
 | `height` | 최대 `300` | `150` |
