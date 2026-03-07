@@ -1,8 +1,8 @@
 /**
- * Pixel art cat room — cozy night room
+ * Pixel art cat room
  *
- * Fat chubby orange cat daily cycle (40s loop):
- *   walk right → code at desk → drink coffee → walk left → watch YouTube on TV → sleep → repeat
+ * Cat in red lobster costume (70s loop):
+ *   walk right → code at desk (Claude+OpenClaw on monitor) → drink coffee → walk left → watch TV → sleep → repeat
  *
  * Room layout: [Bed + TV] [Window] [Bookshelf] [Desk + Monitor]
  */
@@ -33,83 +33,84 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
-// ── Pusheen-style orange cat palette ──────────────────────────────────────────
-//   Inspired by the chunky pixel Pusheen style — thick black outline, orange body
+// ── Red lobster costume cat palette ────────────────────────────────────────────
+//   Cat wearing a chunky red lobster costume — antenna, red body, cat face visible
 
 const C: Record<string, string> = {
   K: '#111111',  // black outline
-  O: '#ff8c30',  // orange body
-  o: '#cc5500',  // dark orange stripe / ear inner
-  W: '#fff8f0',  // cream belly
+  R: '#cc2200',  // red costume body
+  r: '#991500',  // dark red shadow/detail
+  W: '#fff0ee',  // cream belly / face area
   e: '#111111',  // dark block eye
   N: '#ff6688',  // pink nose
   B: '#ffbbcc',  // pink blush
-  T: '#cc5500',  // tail dark
+  T: '#991500',  // tail dark red
 }
 
-// Pusheen-orange walking frame A (10×14) — right foot forward
+// Lobster-costume cat walking frame A (10×15) — right foot forward
 const WA = [
-  '..KK..KK..',  // ear tips
-  '.KoK..KoK.',  // ears with dark inner
-  'KOOOOOOOOK',  // head top
-  'KOoOOOOoOK',  // forehead stripe 1
-  'KOOoOOoOOK',  // forehead stripe 2
-  'KOeeOOeeOK',  // block eyes (2px each)
-  'KOOB.N.BOK',  // blush cheeks + pink nose
-  'KOOOOOOOOK',  // body upper
-  'KWWWWWWWOK',  // cream belly
-  'KOOOOOOOOK',  // body lower
-  'KOoOoOoOOK',  // lower body stripes
-  '.KOOOOOOK.',  // bottom
-  '.KOK..KOK.',  // legs — frame A
+  '.KK....KK.',  // antenna tips (thin, tall)
+  '.KrK..KrK.',  // antenna base (dark red)
+  'KRRRRRRRRK',  // head/costume top
+  'KRrRRRRrRK',  // costume detail
+  'KRRrRRrRRK',  // costume detail
+  'KReeRReeRK',  // cat eyes visible
+  'KRRB.N.BRK',  // cat nose + blush
+  'KRRRRRRRRK',  // upper body
+  'KWWWWWWWRK',  // cream belly
+  'KRRRRRRRRK',  // lower body
+  'KRrRrRrRRK',  // costume stripes
+  '.KRRRRRRKK',  // hmm
+  '.KRRRRRRK.',  // bottom
+  '.KRK..KRK.',  // legs — frame A
   '..KK...KK.',  // feet — frame A
 ]
 
-// Pusheen-orange walking frame B (10×14) — left foot forward
+// Lobster-costume cat walking frame B (10×15) — left foot forward
 const WB = [
-  '..KK..KK..',
-  '.KoK..KoK.',
-  'KOOOOOOOOK',
-  'KOoOOOOoOK',
-  'KOOoOOoOOK',
-  'KOeeOOeeOK',
-  'KOOB.N.BOK',
-  'KOOOOOOOOK',
-  'KWWWWWWWOK',
-  'KOOOOOOOOK',
-  'KOoOoOoOOK',
-  '.KOOOOOOK.',
-  '..KOK.KOK.',  // legs — frame B (shifted)
+  '.KK....KK.',
+  '.KrK..KrK.',
+  'KRRRRRRRRK',
+  'KRrRRRRrRK',
+  'KRRrRRrRRK',
+  'KReeRReeRK',
+  'KRRB.N.BRK',
+  'KRRRRRRRRK',
+  'KWWWWWWWRK',
+  'KRRRRRRRRK',
+  'KRrRrRrRRK',
+  '.KRRRRRRK.',
+  '..KRK.KRK.',  // legs — frame B
   '...KK..KK.',  // feet — frame B
 ]
 
-// Pusheen-orange sitting (10×13) — at desk or watching TV
+// Lobster-costume cat sitting (10×14) — at desk or watching TV
 const SI = [
-  '..KK..KK..',
-  '.KoK..KoK.',
-  'KOOOOOOOOK',
-  'KOoOOOOoOK',
-  'KOOoOOoOOK',
-  'KOeeOOeeOK',
-  'KOOB.N.BOK',
-  'KOOOOOOOOK',
-  'KWWWWWWWOK',
-  'KOOOOOOOOK',
-  'KOoOoOoOOK',
-  '.KOOOOOOK.',
-  '.KoooooKT.',  // tail curling to the side
+  '.KK....KK.',
+  '.KrK..KrK.',
+  'KRRRRRRRRK',
+  'KRrRRRRrRK',
+  'KRRrRRrRRK',
+  'KReeRReeRK',
+  'KRRB.N.BRK',
+  'KRRRRRRRRK',
+  'KWWWWWWWRK',
+  'KRRRRRRRRK',
+  'KRrRrRrRRK',
+  '.KRRRRRRK.',
+  '.KrrrrrKT.',  // tail curling to the side
 ]
 
 // Sleeping (10×8) — lying in bed, closed eyes (— = eyelid line)
 const SL = [
-  '..KOOOOK..',  // head
-  '.KOOOOOOK.',
-  '.KO--O--K.',  // closed eyes
-  '.KOOOOOOK.',
-  '.KOOBNNBOK',  // blush + nose
-  'KOOOOOOOOK',  // body
-  'KWWWWWWWOK',  // belly
-  '.KoooooKT.',  // tail
+  '..KRRRK..',   // head (9 wide — pad)
+  '.KRRRRRRK.',
+  '.KR--R--K.',  // closed eyes
+  '.KRRRRRRK.',
+  '.KRRBNNBRK',  // blush + nose
+  'KRRRRRRRRK',  // body
+  'KWWWWWWWRK',  // belly
+  '.KrrrrrKT.',  // tail
 ]
 
 const CS: Record<string, string> = { ...C, '-': '#111111' }  // eyelid = black line
@@ -621,14 +622,14 @@ function buildCSS(
 .tvg{animation:tvg-v ${dur}s step-end infinite}
 @keyframes tvg-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
 
-/* Leg alternation */
-.fa{animation:fa .45s step-end infinite}
-.fb{animation:fb .45s step-end infinite}
+/* Leg alternation — slower */
+.fa{animation:fa .7s step-end infinite}
+.fb{animation:fb .7s step-end infinite}
 @keyframes fa{0%,49%{opacity:1}50%,100%{opacity:0}}
 @keyframes fb{0%,49%{opacity:0}50%,100%{opacity:1}}
 
-/* Tail wag */
-.tw{animation:tw .7s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%}
+/* Tail wag — relaxed */
+.tw{animation:tw 1.1s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%}
 @keyframes tw{from{transform:rotate(-18deg)}to{transform:rotate(12deg)}}
 
 /* Zzz bubbles */
@@ -637,10 +638,17 @@ function buildCSS(
 .z3{animation:zf 3s ease-out 1.8s infinite}
 @keyframes zf{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(8px,-22px);opacity:0}}
 
-/* Coding sparks */
-.ht{animation:htf 2s ease-out infinite}
-.ht2{animation:htf 2s ease-out 1s infinite}
-@keyframes htf{0%{transform:translate(0,0);opacity:0}20%{opacity:0.95}100%{transform:translate(4px,-18px);opacity:0}}`
+/* Keyboard impact sparks */
+.ht{animation:htf 1.4s ease-out infinite}
+.ht2{animation:htf 1.4s ease-out .7s infinite}
+.ht3{animation:htf 1.4s ease-out 0.35s infinite}
+@keyframes htf{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(6px,-24px);opacity:0}}
+
+/* Monitor logos alternating — Claude vs OpenClaw */
+.mon-claude{animation:mon-cl ${dur}s step-end infinite}
+.mon-openclaw{animation:mon-oc ${dur}s step-end infinite}
+@keyframes mon-cl{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e((t1+t2)/2)}%{opacity:1}${e((t1+t2)/2+0.01)}%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:0}${e(t3)}%{opacity:0}100%{opacity:0}}
+@keyframes mon-oc{0%{opacity:0}${e((t1+t2)/2)}%{opacity:0}${e((t1+t2)/2+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}`
 }
 
 // ── Main export ────────────────────────────────────────────────────────────────
@@ -662,13 +670,13 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const sleepX     = 26    // in bed (left side)
   const deskSitX   = walkEndX
 
-  // Animation timeline (40s total)
-  const DUR = 40
-  const t1 = 5  / DUR * 100   // walk right ends
-  const t2 = 16 / DUR * 100   // coding ends, coffee starts
-  const t3 = 21 / DUR * 100   // coffee ends, walk left starts
-  const t4 = 26 / DUR * 100   // walk left ends, TV watching starts
-  const t5 = 33 / DUR * 100   // TV ends, sleep starts
+  // Animation timeline (70s total — slow, relaxed)
+  const DUR = 70
+  const t1 = 8  / DUR * 100   // walk right ends
+  const t2 = 30 / DUR * 100   // coding ends, coffee starts
+  const t3 = 38 / DUR * 100   // coffee ends, walk left starts
+  const t4 = 46 / DUR * 100   // walk left ends, TV watching starts
+  const t5 = 58 / DUR * 100   // TV ends, sleep starts
 
   const css  = buildCSS(DUR, t1, t2, t3, t4, t5, walkStartX, walkEndX)
   const room = buildRoom(w, h, accent, scene)
@@ -684,20 +692,46 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   <g class="fb">${bmp(WB, C, 0, walkY)}</g>
 </g>`
 
+  // Monitor screen coordinates
+  const monX = w - 340 + 88, monY = 8, monW = 140, monH = 80
+
+  // Claude logo on monitor (pixel art - orange diamond shape)
+  const claudeLogo = `<g class="mon-claude">
+  <rect x="${monX+2}" y="${monY+2}" width="${monW-4}" height="${monH-4}" fill="#0a0a0a" rx="3"/>
+  <text x="${monX + monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#ff6b35" text-anchor="middle" font-weight="bold">◆ CLAUDE ◆</text>
+  <text x="${monX + monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#ff9955" text-anchor="middle">Anthropic</text>
+  <rect x="${monX+10}" y="${monY+36}" width="${monW-20}" height="1" fill="#ff6b35" opacity="0.4"/>
+  <text x="${monX + monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffaa" text-anchor="middle">&gt; analyzing...</text>
+  <text x="${monX + monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88cc88" text-anchor="middle">&gt; output ready_</text>
+</g>`
+
+  // OpenClaw logo on monitor
+  const openclawLogo = `<g class="mon-openclaw">
+  <rect x="${monX+2}" y="${monY+2}" width="${monW-4}" height="${monH-4}" fill="#0a0a0a" rx="3"/>
+  <text x="${monX + monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#10a37f" text-anchor="middle" font-weight="bold">✦ OPENCLAW ✦</text>
+  <text x="${monX + monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#1dc9a0" text-anchor="middle">model: gpt-claw</text>
+  <rect x="${monX+10}" y="${monY+36}" width="${monW-20}" height="1" fill="#10a37f" opacity="0.4"/>
+  <text x="${monX + monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffee" text-anchor="middle">&gt; processing...</text>
+  <text x="${monX + monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
+</g>`
+
   // 2. At desk (coding + coffee)
   const atDesk = `<g class="ds" transform="translate(${deskSitX},0)">
   ${bmp(SI.slice(0, -1), C, 0, sitY)}
   <g class="tw">${bmp([SI[SI.length - 1]], C, catW, sitY + (SI.length - 1) * PX)}</g>
-  <text class="ht" x="${catW - 4}" y="${sitY - 4}" font-family="monospace" font-size="12" fill="${accent}">★</text>
-  <text class="ht2" x="${catW + 6}" y="${sitY - 2}" font-family="monospace" font-size="9" fill="#ffaa20">✦</text>
+  <text class="ht"  x="${catW - 8}" y="${sitY - 6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
+  <text class="ht2" x="${catW + 4}"  y="${sitY - 4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
+  <text class="ht3" x="${catW - 2}" y="${sitY - 14}" font-family="monospace" font-size="9"  fill="#ffffff" opacity="0.8">✦</text>
 </g>`
 
-  // 2b. Coffee cup lift (visible during coffee phase, near cat's face at desk)
-  const coffeeLift = `<g class="cf" transform="translate(${deskSitX + 32},${sitY + 18})">
-  <rect x="0" y="0" width="12" height="9" fill="#2a1408" rx="2"/>
-  <ellipse cx="6" cy="0" rx="5" ry="2" fill="#3a2010"/>
-  <ellipse cx="6" cy="0" rx="4" ry="1.5" fill="#5a2808"/>
-  <path d="M 12 2 Q 17 2 17 6 Q 17 10 12 10" stroke="#3a2010" stroke-width="2" fill="none"/>
+  // 2b. Coffee cup lift (visible during coffee phase)
+  const coffeeLift = `<g class="cf" transform="translate(${deskSitX + 28},${sitY + 14})">
+  <rect x="0" y="4" width="18" height="13" fill="#2a1408" rx="3"/>
+  <ellipse cx="9" cy="4" rx="8" ry="3" fill="#3a2010"/>
+  <ellipse cx="9" cy="4" rx="6" ry="2" fill="#6b3010"/>
+  <path d="M 18 6 Q 24 6 24 11 Q 24 16 18 16" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="9" cy="4" rx="4" ry="1.2" fill="#8b4513" opacity="0.8"/>
+  <text x="26" y="2" font-family="monospace" font-size="8" fill="#ffcc88" opacity="0.9">☕</text>
 </g>`
 
   // 3. Walk left
@@ -735,6 +769,8 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 
   return `<style>${css}</style>
 ${room}
+${claudeLogo}
+${openclawLogo}
 ${tvOn}
 ${walkR}
 ${atDesk}

@@ -31,11 +31,17 @@ GitHub 프로필에 넣는 픽셀아트 고양이 방 카드
 
 ## 사용법
 
+> **Vercel이란?**
+> 내 카드를 인터넷에 24시간 켜두는 서버를 공짜로 빌려주는 서비스야.
+> 회원가입만 하면 되고, 카드 사용도 무료.
+
 ### 1단계 — Vercel에 배포하기
 
-위 **Deploy** 버튼을 클릭하면 Vercel 사이트로 이동해.
-GitHub 계정으로 로그인하고 배포를 완료하면 내 고유 주소가 생겨.
-예: `https://pixel-itprofile-홍길동.vercel.app`
+위 **Deploy** 버튼을 클릭해.
+*(Deploy = 내 카드를 인터넷에 올린다는 뜻)*
+
+Vercel 사이트에서 GitHub 계정으로 로그인 → 버튼 몇 번 클릭하면 끝.
+완료되면 내 고유 주소가 생겨. 예: `https://pixel-itprofile-홍길동.vercel.app`
 
 ### 2단계 — 내 GitHub 프로필에 추가하기
 
