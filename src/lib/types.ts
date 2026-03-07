@@ -38,6 +38,9 @@ export interface ProfileOptions {
   bio?: string                    // 한 줄 소개
   slogan?: string                 // 한 줄 슬로건 예: "관련 없어 보이는 것들을 연결하는 사람"
 
+  // Scene
+  scene?: 'dubai' | 'italy' | 'paris'
+
   // Appearance
   theme?: ThemeName
   bg_color?: string
