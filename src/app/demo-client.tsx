@@ -3,24 +3,19 @@
 import { useState, useEffect } from 'react'
 
 const THEMES = [
-  'matrix', 'cyberpunk', 'synthwave', 'dracula',
-  'tokyonight', 'ocean', 'nord', 'monokai',
-  'terminal', 'hacker', 'neon', 'retro',
+  'matrix', 'cyberpunk', 'synthwave', 'tokyonight',
+  'ocean', 'nord', 'monokai', 'retro',
 ]
 
-const THEME_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
-  matrix:     { bg: '#0d0d0d', accent: '#00ff41', text: '#00ff41' },
-  cyberpunk:  { bg: '#0a0a0f', accent: '#ff2d78', text: '#ffffff' },
-  synthwave:  { bg: '#1a0a2e', accent: '#ff6b9d', text: '#e0aaff' },
-  dracula:    { bg: '#282a36', accent: '#bd93f9', text: '#f8f8f2' },
-  tokyonight: { bg: '#1a1b26', accent: '#7aa2f7', text: '#c0caf5' },
-  ocean:      { bg: '#0a192f', accent: '#64ffda', text: '#ccd6f6' },
-  nord:       { bg: '#2e3440', accent: '#88c0d0', text: '#eceff4' },
-  monokai:    { bg: '#272822', accent: '#a6e22e', text: '#f8f8f2' },
-  terminal:   { bg: '#1a1a1a', accent: '#ffcc00', text: '#e0e0e0' },
-  hacker:     { bg: '#000000', accent: '#00ff00', text: '#33ff33' },
-  neon:       { bg: '#0a0a0a', accent: '#00ffff', text: '#ffffff' },
-  retro:      { bg: '#1a0f00', accent: '#ff8c00', text: '#ffb000' },
+const THEME_COLORS: Record<string, { bg: string; accent: string }> = {
+  matrix:     { bg: '#0d0d0d', accent: '#00ff41' },
+  cyberpunk:  { bg: '#0a0a0f', accent: '#ff2d78' },
+  synthwave:  { bg: '#1a0a2e', accent: '#ff6b9d' },
+  tokyonight: { bg: '#1a1b26', accent: '#7aa2f7' },
+  ocean:      { bg: '#0a192f', accent: '#64ffda' },
+  nord:       { bg: '#2e3440', accent: '#88c0d0' },
+  monokai:    { bg: '#272822', accent: '#a6e22e' },
+  retro:      { bg: '#1a0f00', accent: '#ff8c00' },
 }
 
 function buildProfileUrl(baseUrl: string, params: Record<string, string>): string {
@@ -33,113 +28,101 @@ function buildProfileUrl(baseUrl: string, params: Record<string, string>): strin
 
 function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false)
-  const copy = () => {
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
   return (
     <button
-      onClick={copy}
+      onClick={() => {
+        navigator.clipboard.writeText(text)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }}
       style={{
-        background: 'none', border: '1px solid #333', color: copied ? '#00ff41' : '#666',
-        padding: '4px 10px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 11,
+        background: 'none', border: '1px solid #333', color: copied ? '#00ff41' : '#555',
+        padding: '4px 12px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 11,
         borderRadius: 2, transition: 'color 0.2s',
       }}
     >
-      {copied ? '✓ Copied!' : 'Copy'}
+      {copied ? '✓ 복사됨!' : '복사'}
     </button>
   )
 }
 
 export default function DemoClient({ baseUrl }: { baseUrl: string }) {
   const [params, setParams] = useState({
-    name: '김철수',
-    username: '',
-    role: 'PM',
+    name:    '김철수',
+    role:    'PM · AI 전략가',
     domains: 'AI,Enterprise,Agent,Voice,Blockchain',
-    bio: '관련없어보이는것들을연결하는사람',
-    theme: 'cyberpunk',
-    layout: 'wide',
-    snake_speed: 'normal',
-    show_stats: 'false',
+    bio:     '관련없어보이는것들을연결하는사람',
+    theme:   'cyberpunk',
   })
 
   const [imgKey, setImgKey] = useState(0)
   const [imgError, setImgError] = useState(false)
 
   const profileUrl = buildProfileUrl(baseUrl, params)
-  const snakeUrl = `${baseUrl}/api/snake?theme=${params.theme}&speed=${params.snake_speed}`
   const themeColor = THEME_COLORS[params.theme] || THEME_COLORS.matrix
 
-  const readmeCode = `<!-- 프로필 카드 -->\n![My IT Profile](${profileUrl})\n\n<!-- 뱀 단독 사용 -->\n![Snake](${snakeUrl})`
+  const readmeSnippet = `<!-- GitHub 프로필 README.md에 붙여넣기 -->
+![Pixel IT Profile](${profileUrl})`
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setImgKey(k => k + 1)
-      setImgError(false)
-    }, 600)
-    return () => clearTimeout(timer)
+    const t = setTimeout(() => { setImgKey(k => k + 1); setImgError(false) }, 600)
+    return () => clearTimeout(t)
   }, [params])
 
-  const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+  const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setParams(p => ({ ...p, [key]: e.target.value }))
 
   return (
-    <main style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px', color: '#ccc' }}>
+    <main style={{ maxWidth: 980, margin: '0 auto', padding: '36px 20px', color: '#ccc', fontFamily: 'monospace' }}>
 
-      {/* Title */}
-      <div style={{ marginBottom: 32 }}>
-        <pre style={{ color: '#00ff41', fontSize: 18, lineHeight: 1.4, margin: 0, fontFamily: 'monospace' }}>
+      {/* ── Header ── */}
+      <div style={{ marginBottom: 36 }}>
+        <pre style={{ color: '#00ff41', fontSize: 17, lineHeight: 1.4, margin: 0 }}>
 {`  ____  _          _   ___ _____   ____             __ _ _
  |  _ \\(_)_  _____| | |_ _|_   _| |  _ \\ _ __ ___ / _(_) | ___
  | |_) | \\ \\/ / _ \\ |  | |  | |   | |_) | '__/ _ \\ |_| | |/ _ \\
  |  __/| |>  <  __/ |  | |  | |   |  __/| | | (_) |  _| | |  __/
  |_|   |_/_/\\_\\___|_| |___| |_|   |_|   |_|  \\___/|_| |_|_|\\___|`}
         </pre>
-        <p style={{ color: '#888', fontSize: 13, margin: '12px 0 0', fontFamily: 'monospace' }}>
-          🐍 픽셀 아트 IT 프로필 카드 생성기 — 뱀이 당신의 도메인들을 연결합니다
+        <p style={{ color: '#555', fontSize: 12, margin: '10px 0 0' }}>
+          GitHub README에 넣는 픽셀 아트 프로필 카드 — 통통한 고양이가 하루를 보냅니다
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '280px 1fr', gap: 28 }}>
 
-        {/* ── Controls ── */}
+        {/* ── 설정 패널 ── */}
         <div>
-          <div style={{
-            border: '1px solid #333', padding: 16,
-            background: '#0a0a0a', fontFamily: 'monospace',
-          }}>
-            <div style={{ color: '#00ff41', fontSize: 11, marginBottom: 16, borderBottom: '1px solid #222', paddingBottom: 8 }}>
-              ▶ CUSTOMIZE
+          <div style={{ border: '1px solid #222', background: '#080808', padding: 18 }}>
+            <div style={{ color: '#00ff41', fontSize: 11, marginBottom: 18, borderBottom: '1px solid #1a1a1a', paddingBottom: 8 }}>
+              ▶ 내용 설정
             </div>
 
             {[
-              { key: 'name',        label: 'Name',         placeholder: '김철수' },
-              { key: 'username',    label: 'GitHub user',  placeholder: 'yourname (optional)' },
-              { key: 'role',        label: 'Role',         placeholder: 'PM / Frontend Dev / ...' },
-              { key: 'domains',     label: 'IT Domains',   placeholder: 'AI,Enterprise,Agent' },
-              { key: 'bio',         label: 'Bio / Slogan', placeholder: '한 줄 소개' },
+              { key: 'name',    label: '이름',         placeholder: '김철수' },
+              { key: 'role',    label: '직군',         placeholder: 'PM · AI Engineer · DevOps ...' },
+              { key: 'domains', label: 'IT 관심분야',  placeholder: 'AI,Enterprise,Agent (쉼표 구분)' },
+              { key: 'bio',     label: '한 줄 소개',   placeholder: '나만의 한 줄' },
             ].map(({ key, label, placeholder }) => (
-              <div key={key} style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 10, color: '#555', marginBottom: 3 }}>{label}</div>
+              <div key={key} style={{ marginBottom: 12 }}>
+                <div style={{ fontSize: 10, color: '#444', marginBottom: 4 }}>{label}</div>
                 <input
                   value={(params as Record<string, string>)[key]}
                   onChange={set(key)}
                   placeholder={placeholder}
                   style={{
-                    width: '100%', background: '#111', border: '1px solid #333',
-                    color: '#ccc', padding: '5px 8px', fontSize: 11,
-                    fontFamily: 'monospace', boxSizing: 'border-box',
+                    width: '100%', background: '#0e0e0e', border: '1px solid #2a2a2a',
+                    color: '#ccc', padding: '6px 8px', fontSize: 11,
+                    fontFamily: 'monospace', boxSizing: 'border-box', borderRadius: 2,
                   }}
                 />
               </div>
             ))}
 
-            {/* Theme picker */}
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: 10, color: '#555', marginBottom: 6 }}>Theme</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
+            {/* 테마 선택 */}
+            <div style={{ marginTop: 18 }}>
+              <div style={{ fontSize: 10, color: '#444', marginBottom: 8 }}>색상 테마</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 5 }}>
                 {THEMES.map(t => {
                   const c = THEME_COLORS[t]
                   return (
@@ -149,15 +132,16 @@ export default function DemoClient({ baseUrl }: { baseUrl: string }) {
                       title={t}
                       style={{
                         background: c.bg,
-                        border: `2px solid ${params.theme === t ? c.accent : '#222'}`,
+                        border: `2px solid ${params.theme === t ? c.accent : '#1a1a1a'}`,
                         color: c.accent,
-                        padding: '4px 2px',
+                        padding: '5px 2px',
                         fontSize: 8,
                         cursor: 'pointer',
                         fontFamily: 'monospace',
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
                         whiteSpace: 'nowrap',
+                        borderRadius: 2,
                       }}
                     >
                       {t}
@@ -167,39 +151,31 @@ export default function DemoClient({ baseUrl }: { baseUrl: string }) {
               </div>
             </div>
 
-            {/* Layout + Speed */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
-              <div>
-                <div style={{ fontSize: 10, color: '#555', marginBottom: 3 }}>Layout</div>
-                <select value={params.layout} onChange={set('layout')}
-                  style={{ width: '100%', background: '#111', border: '1px solid #333', color: '#ccc', padding: '4px', fontSize: 11, fontFamily: 'monospace' }}>
-                  <option value="wide">wide</option>
-                  <option value="compact">compact</option>
-                </select>
-              </div>
-              <div>
-                <div style={{ fontSize: 10, color: '#555', marginBottom: 3 }}>Snake speed</div>
-                <select value={params.snake_speed} onChange={set('snake_speed')}
-                  style={{ width: '100%', background: '#111', border: '1px solid #333', color: '#ccc', padding: '4px', fontSize: 11, fontFamily: 'monospace' }}>
-                  <option value="slow">slow</option>
-                  <option value="normal">normal</option>
-                  <option value="fast">fast</option>
-                </select>
-              </div>
+            <div style={{ marginTop: 18, padding: '12px', background: '#0a0a0a', border: '1px solid #1a1a1a', fontSize: 10, color: '#444', lineHeight: 1.7 }}>
+              <div style={{ color: '#555', marginBottom: 6 }}>고양이 하루 루틴 (40초 반복)</div>
+              🚶 걷기 → 💻 코딩 → ☕ 커피 → 🚶 귀가 → 📺 유튜브 → 😴 수면
             </div>
           </div>
         </div>
 
-        {/* ── Preview ── */}
+        {/* ── 미리보기 ── */}
         <div>
-          {/* Card preview */}
+          <div style={{ fontSize: 10, color: '#444', marginBottom: 8 }}>
+            미리보기 — {params.name || '이름'} · {params.role || '직군'} ({params.theme})
+          </div>
+
           <div style={{
-            background: themeColor.bg, border: `1px solid ${themeColor.accent}22`,
-            padding: 16, marginBottom: 16, minHeight: 200,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: themeColor.bg,
+            border: `1px solid ${themeColor.accent}22`,
+            padding: 16,
+            marginBottom: 20,
+            minHeight: 220,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}>
             {imgError ? (
-              <div style={{ color: '#ff6666', fontSize: 12, fontFamily: 'monospace', textAlign: 'center' }}>
+              <div style={{ color: '#ff6666', fontSize: 12, textAlign: 'center' }}>
                 <div style={{ marginBottom: 8 }}>⚠ 로컬 dev 환경에서는 미리보기가 제한됩니다</div>
                 <div style={{ color: '#555', fontSize: 10 }}>배포 후 실제 카드를 확인하세요</div>
               </div>
@@ -207,131 +183,97 @@ export default function DemoClient({ baseUrl }: { baseUrl: string }) {
               <img
                 key={imgKey}
                 src={profileUrl}
-                alt="Profile Card Preview"
+                alt="Profile Card"
                 onError={() => setImgError(true)}
                 style={{ maxWidth: '100%', display: 'block' }}
               />
             )}
           </div>
 
-          {/* Snake preview */}
-          <div style={{
-            background: themeColor.bg, border: `1px solid ${themeColor.accent}22`,
-            padding: '8px 16px', marginBottom: 16,
-          }}>
-            <div style={{ color: '#444', fontSize: 10, fontFamily: 'monospace', marginBottom: 6 }}>
-              ▶ Snake only (/api/snake)
-            </div>
-            {!imgError && (
-              <img key={`snake-${imgKey}`} src={snakeUrl} alt="Snake" style={{ maxWidth: '100%', height: 60 }} />
-            )}
-          </div>
-
-          {/* README code */}
-          <div style={{ border: '1px solid #222', background: '#060606', padding: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ color: '#444', fontSize: 10, fontFamily: 'monospace' }}>📋 Copy to README.md</span>
-              <CopyButton text={readmeCode} />
+          {/* README 코드 복사 */}
+          <div style={{ border: '1px solid #1a1a1a', background: '#050505', padding: 14 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <span style={{ color: '#444', fontSize: 10 }}>📋 README.md에 붙여넣기</span>
+              <CopyButton text={readmeSnippet} />
             </div>
             <pre style={{
-              margin: 0, fontSize: 10, color: '#666',
-              fontFamily: 'monospace', overflowX: 'auto',
-              whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+              margin: 0, fontSize: 10, color: '#555',
+              overflowX: 'auto', whiteSpace: 'pre-wrap', wordBreak: 'break-all',
+              lineHeight: 1.6,
             }}>
-              {readmeCode}
+              {readmeSnippet}
             </pre>
           </div>
         </div>
       </div>
 
-      {/* ── API Docs ── */}
-      <section style={{ marginTop: 48 }}>
-        <h2 style={{ color: '#00ff41', fontFamily: 'monospace', fontSize: 14, borderBottom: '1px solid #222', paddingBottom: 8 }}>
-          ⚙ API Reference
+      {/* ── 사용법 ── */}
+      <section style={{ marginTop: 52 }}>
+        <h2 style={{ color: '#00ff41', fontSize: 13, borderBottom: '1px solid #1a1a1a', paddingBottom: 8, margin: '0 0 20px' }}>
+          ⚙ 사용법 및 파라미터
         </h2>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 28 }}>
 
-          {/* Profile params */}
           <div>
-            <div style={{ color: '#888', fontSize: 11, fontFamily: 'monospace', marginBottom: 8 }}>
-              GET /api/profile
-            </div>
+            <div style={{ color: '#555', fontSize: 11, marginBottom: 10 }}>GET /api/profile — 파라미터 목록</div>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
               <tbody>
                 {[
-                  ['name', '표시할 이름'],
-                  ['username', 'GitHub 유저명 (아바타 자동 fetch)'],
-                  ['role', '직군 — PM, AI Engineer, DevOps...'],
-                  ['domains', 'IT 도메인 (쉼표 구분, 최대 8개)'],
-                  ['bio / slogan', '한 줄 소개'],
-                  ['theme', THEMES.join(' | ')],
-                  ['layout', 'wide | compact'],
-                  ['snake_speed', 'slow | normal | fast'],
-                  ['show_stats', 'true | false (GitHub 통계)'],
-                  ['show_avatar', 'true | false'],
-                  ['bg_color', '배경색 (#hex)'],
-                  ['accent_color', '강조색 (#hex)'],
-                  ['snake_color', '뱀 색 (#hex)'],
-                  ['food_color', '먹이 색 (#hex)'],
+                  ['name',        '표시할 이름'],
+                  ['role',        '직군 (PM, AI Engineer, DevOps …)'],
+                  ['domains',     'IT 관심 분야 (쉼표 구분, 최대 8개)'],
+                  ['bio',         '한 줄 소개'],
+                  ['username',    'GitHub 아이디 (프로필 사진 자동 로드)'],
+                  ['theme',       THEMES.join(' | ')],
+                  ['accent_color','강조색 오버라이드 (#hex)'],
+                  ['bg_color',    '배경색 오버라이드 (#hex)'],
                 ].map(([k, v]) => (
-                  <tr key={k} style={{ borderBottom: '1px solid #111' }}>
-                    <td style={{ padding: '5px 8px', color: '#ff6b9d', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{k}</td>
-                    <td style={{ padding: '5px 8px', color: '#666' }}>{v}</td>
+                  <tr key={k} style={{ borderBottom: '1px solid #0e0e0e' }}>
+                    <td style={{ padding: '5px 8px', color: '#ff6b9d', whiteSpace: 'nowrap' }}>{k}</td>
+                    <td style={{ padding: '5px 8px', color: '#555' }}>{v}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
 
-          {/* Snake params + Deploy */}
           <div>
-            <div style={{ color: '#888', fontSize: 11, fontFamily: 'monospace', marginBottom: 8 }}>
-              GET /api/snake
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11, marginBottom: 24 }}>
-              <tbody>
-                {[
-                  ['theme', '색상 테마'],
-                  ['speed', 'slow | normal | fast'],
-                  ['color', '뱀 몸 색'],
-                  ['head_color', '뱀 머리 색'],
-                  ['food_color', '먹이 색'],
-                  ['width', '이미지 너비 (px)'],
-                  ['height', '이미지 높이 (px)'],
-                ].map(([k, v]) => (
-                  <tr key={k} style={{ borderBottom: '1px solid #111' }}>
-                    <td style={{ padding: '5px 8px', color: '#ff6b9d', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{k}</td>
-                    <td style={{ padding: '5px 8px', color: '#666' }}>{v}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Deploy */}
-            <div style={{ border: '1px solid #1a1a1a', padding: 12, background: '#060606' }}>
-              <div style={{ color: '#00ff41', fontSize: 11, fontFamily: 'monospace', marginBottom: 8 }}>🚀 Deploy your own</div>
-              <pre style={{ margin: 0, fontSize: 10, color: '#666', fontFamily: 'monospace' }}>
+            <div style={{ color: '#555', fontSize: 11, marginBottom: 10 }}>직접 배포하기</div>
+            <div style={{ border: '1px solid #1a1a1a', padding: 14, background: '#050505' }}>
+              <pre style={{ margin: 0, fontSize: 10, color: '#555', lineHeight: 1.8 }}>
 {`# 1. Fork & clone
-git clone github.com/YOU/pixel-itprofile
+git clone github.com/YOU/Pixel-ITProfile
 
-# 2. Deploy to Vercel
+# 2. Vercel 배포
 vercel deploy
 
-# 3. (optional) GitHub stats
-# Add GITHUB_TOKEN env var in Vercel dashboard`}
+# 3. (선택) GitHub 통계 표시
+# Vercel 환경변수에 GITHUB_TOKEN 추가`}
+              </pre>
+            </div>
+
+            <div style={{ marginTop: 16, border: '1px solid #1a1a1a', padding: 14, background: '#050505' }}>
+              <div style={{ color: '#555', fontSize: 10, marginBottom: 8 }}>README.md 사용 예시</div>
+              <pre style={{ margin: 0, fontSize: 10, color: '#555', lineHeight: 1.8 }}>
+{`[![Pixel IT Profile](
+  https://pixel-itprofile.vercel.app/api/profile
+  ?name=홍길동
+  &role=Backend+Engineer
+  &domains=Go,Kubernetes,AWS
+  &bio=서버를신나게두드리는사람
+  &theme=ocean
+)](https://github.com/홍길동)`}
               </pre>
             </div>
           </div>
         </div>
       </section>
 
-      <footer style={{ marginTop: 40, borderTop: '1px solid #111', paddingTop: 16, fontSize: 10, color: '#333', fontFamily: 'monospace' }}>
-        <span>Pixel IT Profile</span>
+      <footer style={{ marginTop: 44, borderTop: '1px solid #111', paddingTop: 16, fontSize: 10, color: '#2a2a2a' }}>
+        Pixel IT Profile
         {' · '}
-        <a href="https://github.com/LuciNyan/pixel-profile" style={{ color: '#444' }}>Inspired by pixel-profile</a>
-        {' · '}
-        <a href="https://github.com/Platane/snk" style={{ color: '#444' }}>Snake idea from Platane/snk</a>
+        <a href="https://github.com/tmuchal/Pixel-ITProfile" style={{ color: '#333' }}>GitHub</a>
       </footer>
     </main>
   )
