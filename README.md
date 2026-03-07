@@ -27,6 +27,18 @@
 
 ---
 
+**고양이 방** (`dubai`) — 노을 하늘 + 부르즈 할리파 실루엣 + 사막 모래언덕
+
+![Cat Room Dubai](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-dubai.svg)
+
+**고양이 방** (`italy`) — 지중해 파란 하늘 + 태양 + 아말피 알록달록 건물 + 바다
+
+![Cat Room Italy](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-italy.svg)
+
+**고양이 방** (`aurora`) — 어두운 밤 + 초록/보라 오로라 + 눈덮인 산 + 소나무
+
+![Cat Room Aurora](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-aurora.svg)
+
 **고양이 방** (`matrix`) — 걷기 → 책상 코딩 → 수면 반복
 
 ![Cat Room Matrix](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
@@ -136,6 +148,7 @@
 | 파라미터 | 설명 | 기본값 |
 |---------|------|--------|
 | `theme` | 방 액센트 색상 | `matrix` |
+| `scene` | 창문 배경 장면 (`night` / `dubai` / `italy` / `aurora`) | `night` |
 | `width` | 가로 크기 (px) | `800` |
 | `height` | 세로 크기 (px) | `200` |
 | `show_cat` | 프로필 카드 고양이 방 표시 여부 | `true` |
