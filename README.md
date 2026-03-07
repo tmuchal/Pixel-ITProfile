@@ -21,35 +21,13 @@
 
 <div align="center">
 
+### 프로필 카드
+
 **UCHAL (tmuchal)** — PM · AI & Blockchain (`cyberpunk`)
 
 ![UCHAL Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/tmuchal-cyberpunk.svg)
 
----
-
-**고양이 방** (`dubai`) — 노을 하늘 + 부르즈 할리파 실루엣 + 사막 모래언덕
-
-![Cat Room Dubai](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-dubai.svg)
-
-**고양이 방** (`italy`) — 지중해 파란 하늘 + 태양 + 아말피 알록달록 건물 + 바다
-
-![Cat Room Italy](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-italy.svg)
-
-**고양이 방** (`aurora`) — 어두운 밤 + 초록/보라 오로라 + 눈덮인 산 + 소나무
-
-![Cat Room Aurora](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-aurora.svg)
-
-**고양이 방** (`matrix`) — 걷기 → 책상 코딩 → 수면 반복
-
-![Cat Room Matrix](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
-
-**고양이 방** (`cyberpunk`)
-
-![Cat Room Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-cyberpunk.svg)
-
----
-
-**PM · AI 전략가** (`cyberpunk`) — 프로필 카드 전체
+**PM · AI 전략가** (`cyberpunk`)
 
 ![PM Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/pm-cyberpunk.svg)
 
@@ -60,6 +38,46 @@
 **Frontend Dev** (`synthwave`)
 
 ![Frontend Synthwave](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/frontend-synthwave.svg)
+
+**Full Stack Dev** (`tokyonight`)
+
+![Fullstack TokyoNight](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/fullstack-tokyonight.svg)
+
+**DevOps** (`ocean`)
+
+![DevOps Ocean](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/devops-ocean.svg)
+
+---
+
+### 🐱 고양이 방 — 창문 씬 (scene)
+
+**`dubai`** — 노을 하늘 + 부르즈 할리파 실루엣 + 사막 모래언덕
+
+![Cat Dubai](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-dubai.svg)
+
+**`italy`** — 지중해 파란 하늘 + 태양 + 아말피 알록달록 건물 + 바다
+
+![Cat Italy](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-italy.svg)
+
+**`aurora`** — 어두운 밤 + 초록/보라 오로라 + 눈덮인 산 + 소나무
+
+![Cat Aurora](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-aurora.svg)
+
+**`matrix`** — 클래식 그린 터미널
+
+![Cat Matrix](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
+
+**`cyberpunk`** — 핫핑크 + 사이안
+
+![Cat Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-cyberpunk.svg)
+
+**`synthwave`** — 레트로 보라 + 분홍
+
+![Cat Synthwave](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-synthwave.svg)
+
+**`tokyonight`** — VS Code 인기 테마
+
+![Cat TokyoNight](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-tokyonight.svg)
 
 </div>
 
@@ -79,6 +97,7 @@
 |---|---|
 | 🎭 **IT 정체성 중심** | 역할(PM / AI Engineer / DevOps) + 도메인 태그 |
 | 🐱 **픽셀 고양이 방** | 타마고치처럼 걷고, 모니터 앞에 앉고, 자는 고양이 |
+| 🌍 **4가지 창문 씬** | dubai / italy / aurora / night — 방 밖 풍경 선택 |
 | ✨ **SVG 네온 글로우** | `<feGaussianBlur>` 필터로 실제 CRT/네온 느낌 |
 | ⌨️ **타이핑 애니메이션** | SVG SMIL `<animate>` clip-path reveal로 이름이 타이핑되며 등장 |
 | 📊 **GitHub 통계** | 토큰 있을 때 선택 표시, 없어도 완전 동작 |
@@ -96,12 +115,12 @@
 ![고양이 방](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
 ```
 
-**다른 테마:**
+**창문 씬 바꾸기 (`scene` 파라미터, Vercel 배포 시):**
 
 ```markdown
-![Cat Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-cyberpunk.svg)
-![Cat Synthwave](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-synthwave.svg)
-![Cat TokyoNight](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-tokyonight.svg)
+![Cat Dubai](https://YOUR-APP.vercel.app/api/cat?scene=dubai)
+![Cat Italy](https://YOUR-APP.vercel.app/api/cat?scene=italy)
+![Cat Aurora](https://YOUR-APP.vercel.app/api/cat?scene=aurora)
 ```
 
 **프로필 카드 전체 (Vercel 배포 시):**
@@ -109,25 +128,6 @@
 ```markdown
 ![My IT Profile](https://YOUR-APP.vercel.app/api/profile?name=김철수&role=PM&domains=AI,Enterprise,Agent,Voice,Blockchain&bio=관련없어보이는것들을연결하는사람&theme=cyberpunk)
 ```
-
----
-
-## 🎨 테마 갤러리
-
-| 테마 | 설명 |
-|------|------|
-| `matrix` | 클래식 그린 터미널 |
-| `cyberpunk` | 핫핑크 + 사이안 |
-| `synthwave` | 레트로 보라 + 분홍 |
-| `tokyonight` | VS Code 인기 테마 |
-| `dracula` | 다크 드라큘라 |
-| `monokai` | 웜 에디터 테마 |
-| `ocean` | 딥 오션 청록 |
-| `nord` | 북유럽 블루 |
-| `terminal` | 앰버 레트로 터미널 |
-| `hacker` | 순수 블랙 + 그린 |
-| `neon` | 사이안 + 마젠타 |
-| `retro` | CRT 호박색 |
 
 ---
 
@@ -148,10 +148,19 @@
 | 파라미터 | 설명 | 기본값 |
 |---------|------|--------|
 | `theme` | 방 액센트 색상 | `matrix` |
-| `scene` | 창문 배경 장면 (`night` / `dubai` / `italy` / `aurora`) | `night` |
+| `scene` | 창문 배경 장면 | `night` |
 | `width` | 가로 크기 (px) | `800` |
 | `height` | 세로 크기 (px) | `200` |
 | `show_cat` | 프로필 카드 고양이 방 표시 여부 | `true` |
+
+**`scene` 옵션:**
+
+| scene | 설명 |
+|-------|------|
+| `night` | 달빛 + 별 (기본) |
+| `dubai` | 노을 + 부르즈 할리파 + 사막 |
+| `italy` | 지중해 + 아말피 해안 마을 |
+| `aurora` | 오로라 + 설산 + 소나무 |
 
 ### 🎨 디자인
 
@@ -170,6 +179,25 @@
 |---------|------|
 | `show_stats` | GitHub 통계 표시 (기본 `false`, 토큰 필요) |
 | `show_avatar` | 아바타 표시 (기본 `true`) |
+
+---
+
+## 🎨 테마 갤러리
+
+| 테마 | 설명 |
+|------|------|
+| `matrix` | 클래식 그린 터미널 |
+| `cyberpunk` | 핫핑크 + 사이안 |
+| `synthwave` | 레트로 보라 + 분홍 |
+| `tokyonight` | VS Code 인기 테마 |
+| `dracula` | 다크 드라큘라 |
+| `monokai` | 웜 에디터 테마 |
+| `ocean` | 딥 오션 청록 |
+| `nord` | 북유럽 블루 |
+| `terminal` | 앰버 레트로 터미널 |
+| `hacker` | 순수 블랙 + 그린 |
+| `neon` | 사이안 + 마젠타 |
+| `retro` | CRT 호박색 |
 
 ---
 
@@ -234,7 +262,6 @@ docker run -p 3000:3000 -e GITHUB_TOKEN=ghp_xxx pixel-itprofile
 매일 프로필 카드를 자동 생성해서 레포에 저장 → README에서 로컬 파일 참조:
 
 ```markdown
-<!-- README.md에서 이렇게 사용 -->
 ![My Profile](./profile-card.svg)
 ![Snake](./snake.svg)
 ```
@@ -263,8 +290,8 @@ npm run dev
 테스트:
 ```
 http://localhost:3000                     ← 인터랙티브 데모 페이지
+http://localhost:3000/api/cat?theme=matrix&scene=dubai
 http://localhost:3000/api/profile?name=테스트&role=PM&domains=AI,Agent&theme=cyberpunk
-http://localhost:3000/api/cat?theme=matrix
 ```
 
 ---
@@ -281,12 +308,8 @@ src/
 │   ├── page.tsx
 │   └── layout.tsx
 └── lib/
-    ├── card.ts                ← SVG 카드 생성기 ★ 핵심
-    │   ├── buildDefs()         SVG 필터 (네온 글로우, 스캔라인)
-    │   ├── buildBorder()       픽셀 아트 코너 장식 + 터미널 라벨
-    │   ├── buildCatRoom()       픽셀 아트 고양이 방 애니메이션
-    │   ├── buildTypingText()   SMIL clip-path 타이핑 애니메이션
-    │   └── buildStats()        픽셀 프로그레스 바
+    ├── buildCatRoom.ts        ← 픽셀 아트 고양이 방 + 씬 생성기 ★ 핵심
+    ├── card.ts                ← SVG 카드 생성기
     ├── themes.ts              ← 12가지 테마 정의
     ├── github.ts              ← GitHub GraphQL API
     └── types.ts               ← TypeScript 타입
@@ -300,15 +323,15 @@ src/
 
 ```typescript
 my_theme: {
-  bg: '#000000',      // 배경색
-  bg2: '#111111',     // 보조 배경색
-  text: '#ffffff',    // 기본 텍스트
-  accent: '#ff6600',  // 강조색 (배지 테두리, 글로우)
-  subtext: '#888888', // 보조 텍스트 (보이는 밝기로!)
+  bg: '#000000',
+  bg2: '#111111',
+  text: '#ffffff',
+  accent: '#ff6600',
+  subtext: '#888888',
   border: '#ff6600',
   badge: '#1a0a00',
   badgeText: '#ff6600',
-  cat: '#ff8c3a',     // 고양이 색상
+  cat: '#ff8c3a',
 },
 ```
 
