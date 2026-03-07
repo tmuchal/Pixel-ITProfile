@@ -33,50 +33,51 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
-// ── Red lobster costume cat palette ────────────────────────────────────────────
-//   Cat wearing a chunky red lobster costume — antenna, red body, cat face visible
+// ── Cat in red lobster costume ─────────────────────────────────────────────────
+//   Orange cat face + ears visible, red costume covers the body
 
 const C: Record<string, string> = {
   K: '#111111',  // black outline
+  O: '#ff9944',  // orange cat fur (face, ears)
+  o: '#dd6600',  // dark orange ear inner / stripe
   R: '#cc2200',  // red costume body
-  r: '#991500',  // dark red shadow/detail
-  W: '#fff0ee',  // cream belly / face area
-  e: '#111111',  // dark block eye
+  r: '#991500',  // dark red costume detail
+  W: '#fff8f0',  // cream muzzle / belly
+  e: '#111111',  // eyes
   N: '#ff6688',  // pink nose
   B: '#ffbbcc',  // pink blush
-  T: '#991500',  // tail dark red
+  T: '#991500',  // tail
 }
 
-// Lobster-costume cat walking frame A (10×15) — right foot forward
+// Walking frame A (10×14) — orange cat face, red costume body, right foot forward
 const WA = [
-  '.KK....KK.',  // antenna tips (thin, tall)
-  '.KrK..KrK.',  // antenna base (dark red)
-  'KRRRRRRRRK',  // head/costume top
-  'KRrRRRRrRK',  // costume detail
-  'KRRrRRrRRK',  // costume detail
-  'KReeRReeRK',  // cat eyes visible
-  'KRRB.N.BRK',  // cat nose + blush
-  'KRRRRRRRRK',  // upper body
-  'KWWWWWWWRK',  // cream belly
-  'KRRRRRRRRK',  // lower body
+  '..OK..KO..',  // pointy orange cat ears
+  '.OoK..KoO.',  // ears with dark inner
+  'KOOOOOOOOK',  // orange cat face
+  'KOoOOOOoOK',  // face shading
+  'KOeeOOeeOK',  // cat eyes
+  'KOOB.N.BOK',  // blush + nose
+  'KRRRRRRRRK',  // red costume collar/start
+  'KRrRRRRrRK',  // costume upper body
+  'KWWWWWWWWK',  // cream costume belly
+  'KRRRRRRRRK',  // costume lower body
   'KRrRrRrRRK',  // costume stripes
-  '.KRRRRRRKK',  // hmm
-  '.KRRRRRRK.',  // bottom
+  '.KRRRRRRK.',  // costume bottom
   '.KRK..KRK.',  // legs — frame A
   '..KK...KK.',  // feet — frame A
 ]
 
-// Lobster-costume cat walking frame B (10×15) — left foot forward
+// Walking frame B (10×14) — left foot forward
 const WB = [
-  '.KK....KK.',
-  '.KrK..KrK.',
+  '..OK..KO..',
+  '.OoK..KoO.',
+  'KOOOOOOOOK',
+  'KOoOOOOoOK',
+  'KOeeOOeeOK',
+  'KOOB.N.BOK',
   'KRRRRRRRRK',
   'KRrRRRRrRK',
-  'KRRrRRrRRK',
-  'KReeRReeRK',
-  'KRRB.N.BRK',
-  'KRRRRRRRRK',
-  'KWWWWWWWRK',
+  'KWWWWWWWWK',
   'KRRRRRRRRK',
   'KRrRrRrRRK',
   '.KRRRRRRK.',
@@ -84,36 +85,36 @@ const WB = [
   '...KK..KK.',  // feet — frame B
 ]
 
-// Lobster-costume cat sitting (10×14) — at desk or watching TV
+// Sitting (10×13) — at desk or watching TV
 const SI = [
-  '.KK....KK.',
-  '.KrK..KrK.',
+  '..OK..KO..',
+  '.OoK..KoO.',
+  'KOOOOOOOOK',
+  'KOoOOOOoOK',
+  'KOeeOOeeOK',
+  'KOOB.N.BOK',
   'KRRRRRRRRK',
   'KRrRRRRrRK',
-  'KRRrRRrRRK',
-  'KReeRReeRK',
-  'KRRB.N.BRK',
-  'KRRRRRRRRK',
-  'KWWWWWWWRK',
+  'KWWWWWWWWK',
   'KRRRRRRRRK',
   'KRrRrRrRRK',
   '.KRRRRRRK.',
-  '.KrrrrrKT.',  // tail curling to the side
+  '.KrrrrrKT.',  // red tail
 ]
 
-// Sleeping (10×8) — lying in bed, closed eyes (— = eyelid line)
+// Sleeping (10×8) — lying flat, closed eyes
 const SL = [
-  '..KRRRK..',   // head (9 wide — pad)
-  '.KRRRRRRK.',
-  '.KR--R--K.',  // closed eyes
-  '.KRRRRRRK.',
-  '.KRRBNNBRK',  // blush + nose
-  'KRRRRRRRRK',  // body
-  'KWWWWWWWRK',  // belly
+  '..KOOOOOK.',  // orange cat head
+  '.KOOOOOOOK',
+  '.KO--O--OK',  // closed eyes
+  '.KOOOOOOOK',
+  '.KOOB.NBOK',  // blush + nose
+  'KRRRRRRRRK',  // red costume body
+  'KWWWWWWWWK',  // belly
   '.KrrrrrKT.',  // tail
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#111111' }  // eyelid = black line
+const CS: Record<string, string> = { ...C, '-': '#333333' }  // eyelid line
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
@@ -584,59 +585,40 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 
 // ── CSS Animations ─────────────────────────────────────────────────────────────
 
-function buildCSS(
-  dur: number,
-  t1: number, t2: number, t3: number, t4: number, t5: number,
-  walkStartX: number, walkEndX: number,
-): string {
+// t1=sleep끝/코딩시작, t2=코딩끝/커피시작, t3=커피끝/창문시작, t4=창문끝/수면시작
+function buildCSS(dur: number, t1: number, t2: number, t3: number, t4: number): string {
   const e = (n: number) => n.toFixed(2)
+  const mid = (a: number, b: number) => ((a + b) / 2).toFixed(2)
   return `
-/* Walk right: 0 → t1 */
-.wr{animation:wr-p ${dur}s linear infinite,wr-v ${dur}s step-end infinite}
-@keyframes wr-p{0%{transform:translateX(${walkStartX}px)}${e(t1)}%{transform:translateX(${walkEndX}px)}100%{transform:translateX(${walkEndX}px)}}
-@keyframes wr-v{0%{opacity:1}${e(t1)}%{opacity:1}${e(t1+0.01)}%{opacity:0}100%{opacity:0}}
-
-/* At desk: t1 → t3 (coding + coffee phases) */
-.ds{animation:ds-v ${dur}s step-end infinite}
-@keyframes ds-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}
-
-/* Walk left: t3 → t4 */
-.wl{animation:wl-p ${dur}s linear infinite,wl-v ${dur}s step-end infinite}
-@keyframes wl-p{0%{transform:translateX(${walkEndX}px)}${e(t3)}%{transform:translateX(${walkEndX}px)}${e(t4)}%{transform:translateX(${walkStartX}px)}100%{transform:translateX(${walkStartX}px)}}
-@keyframes wl-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
-
-/* Watch TV: t4 → t5 */
-.wt{animation:wt-v ${dur}s step-end infinite}
-@keyframes wt-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
-
-/* Sleeping: t5 → end */
+/* Sleeping: 0→t1, t4→end */
 .sl{animation:sl-v ${dur}s step-end infinite}
-@keyframes sl-v{0%{opacity:0}${e(t5)}%{opacity:0}${e(t5+0.01)}%{opacity:1}100%{opacity:1}}
+@keyframes sl-v{0%{opacity:1}${e(t1)}%{opacity:1}${e(t1+0.01)}%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}100%{opacity:1}}
 
-/* Coffee cup lift: t2 → t3 */
+/* At desk (coding): t1 → t2 */
+.ds{animation:ds-v ${dur}s step-end infinite}
+@keyframes ds-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}
+
+/* Coffee: t2 → t3 (cat at desk + coffee cup) */
+.cf-cat{animation:cf-cat-v ${dur}s step-end infinite}
+@keyframes cf-cat-v{0%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}
+
 .cf{animation:cf-v ${dur}s step-end infinite,cf-y ${dur}s ease-in-out infinite}
 @keyframes cf-v{0%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}
-@keyframes cf-y{${e(t2)}%{transform:translateY(0)}${e((t2+t3)/2)}%{transform:translateY(-8px) rotate(-12deg)}${e(t3)}%{transform:translateY(0)}}
+@keyframes cf-y{${e(t2)}%{transform:translateY(0)}${mid(t2,t3)}%{transform:translateY(-10px) rotate(-15deg)}${e(t3)}%{transform:translateY(0)}}
 
-/* TV glow on: t4 → t5 */
-.tvg{animation:tvg-v ${dur}s step-end infinite}
-@keyframes tvg-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
+/* Looking out window: t3 → t4 */
+.win{animation:win-v ${dur}s step-end infinite}
+@keyframes win-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
 
-/* Leg alternation — slower */
-.fa{animation:fa .7s step-end infinite}
-.fb{animation:fb .7s step-end infinite}
-@keyframes fa{0%,49%{opacity:1}50%,100%{opacity:0}}
-@keyframes fb{0%,49%{opacity:0}50%,100%{opacity:1}}
-
-/* Tail wag — relaxed */
+/* Tail wag */
 .tw{animation:tw 1.1s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%}
 @keyframes tw{from{transform:rotate(-18deg)}to{transform:rotate(12deg)}}
 
 /* Zzz bubbles */
-.z1{animation:zf 3s ease-out infinite}
-.z2{animation:zf 3s ease-out .9s infinite}
-.z3{animation:zf 3s ease-out 1.8s infinite}
-@keyframes zf{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(8px,-22px);opacity:0}}
+.z1{animation:zf 3.5s ease-out infinite}
+.z2{animation:zf 3.5s ease-out 1.1s infinite}
+.z3{animation:zf 3.5s ease-out 2.2s infinite}
+@keyframes zf{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(8px,-24px);opacity:0}}
 
 /* Keyboard impact sparks */
 .ht{animation:htf 1.4s ease-out infinite}
@@ -644,138 +626,107 @@ function buildCSS(
 .ht3{animation:htf 1.4s ease-out 0.35s infinite}
 @keyframes htf{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(6px,-24px);opacity:0}}
 
-/* Monitor logos alternating — Claude vs OpenClaw */
+/* Monitor logos: Claude t1→mid(t1,t2), OpenClaw mid→t2 */
 .mon-claude{animation:mon-cl ${dur}s step-end infinite}
 .mon-openclaw{animation:mon-oc ${dur}s step-end infinite}
-@keyframes mon-cl{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e((t1+t2)/2)}%{opacity:1}${e((t1+t2)/2+0.01)}%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:0}${e(t3)}%{opacity:0}100%{opacity:0}}
-@keyframes mon-oc{0%{opacity:0}${e((t1+t2)/2)}%{opacity:0}${e((t1+t2)/2+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}`
+@keyframes mon-cl{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${mid(t1,t2)}%{opacity:1}${e(parseFloat(mid(t1,t2))+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes mon-oc{0%{opacity:0}${mid(t1,t2)}%{opacity:0}${e(parseFloat(mid(t1,t2))+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}`
 }
 
 // ── Main export ────────────────────────────────────────────────────────────────
 
-export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'night'): string {
-  const floorY  = h - 40
-  const catH    = WA.length * PX    // 14 × 5 = 70
-  const sitH    = SI.length * PX    // 13 × 5 = 65
-  const sleepH  = SL.length * PX   // 8 × 5 = 40
-  const catW    = WA[0].length * PX // 10 × 5 = 50
+export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'paris'): string {
+  const floorY = h - 40
+  const sitH   = SI.length * PX    // 13 × 5 = 65
+  const sleepH = SL.length * PX    // 8 × 5 = 40
+  const catW   = SI[0].length * PX // 10 × 5 = 50
 
-  const walkY   = floorY - catH         // walking cat top
-  const sitY    = floorY - sitH         // sitting cat top
-  const sleepY  = floorY - sleepH - 8   // sleeping cat top (on bed)
+  const sitY   = floorY - sitH
+  const sleepY = floorY - sleepH - 8
 
-  // Cat X positions
-  const walkStartX = -55   // off-screen left (enters from left)
-  const walkEndX   = w - 340 + 78  // at desk (near keyboard)
-  const sleepX     = 26    // in bed (left side)
-  const deskSitX   = walkEndX
+  // Cat positions (no walking — just fixed locations)
+  const sleepX  = 26          // in bed (left side)
+  const deskX   = w - 262     // at desk (right side, near keyboard)
+  const windowX = 148         // near window (center-left, facing right)
 
-  // Animation timeline (70s total — slow, relaxed)
+  // Animation timeline (70s: 잠자기→코딩→커피→창문→잠자기)
   const DUR = 70
-  const t1 = 8  / DUR * 100   // walk right ends
-  const t2 = 30 / DUR * 100   // coding ends, coffee starts
-  const t3 = 38 / DUR * 100   // coffee ends, walk left starts
-  const t4 = 46 / DUR * 100   // walk left ends, TV watching starts
-  const t5 = 58 / DUR * 100   // TV ends, sleep starts
+  const t1 = 15 / DUR * 100  // 잠자기 끝 / 코딩 시작
+  const t2 = 35 / DUR * 100  // 코딩 끝 / 커피 시작
+  const t3 = 45 / DUR * 100  // 커피 끝 / 창문 시작
+  const t4 = 60 / DUR * 100  // 창문 끝 / 잠자기 시작
 
-  const css  = buildCSS(DUR, t1, t2, t3, t4, t5, walkStartX, walkEndX)
+  const css  = buildCSS(DUR, t1, t2, t3, t4)
   const room = buildRoom(w, h, accent, scene)
 
-  // TV screen coordinates (matching buildRoom)
-  const tvScx = TV_X + 5, tvScy = TV_Y + 5, tvScw = TV_W - 10, tvSch = TV_H - 12
+  // Monitor screen (on the desk monitor)
+  const monX = deskX + 2, monY = 8, monW = 138, monH = 78
 
-  // ── Cat layers ──
-
-  // 1. Walk right
-  const walkR = `<g class="wr">
-  <g class="fa">${bmp(WA, C, 0, walkY)}</g>
-  <g class="fb">${bmp(WB, C, 0, walkY)}</g>
-</g>`
-
-  // Monitor screen coordinates
-  const monX = w - 340 + 88, monY = 8, monW = 140, monH = 80
-
-  // Claude logo on monitor (pixel art - orange diamond shape)
+  // ── Claude logo on monitor ──
   const claudeLogo = `<g class="mon-claude">
   <rect x="${monX+2}" y="${monY+2}" width="${monW-4}" height="${monH-4}" fill="#0a0a0a" rx="3"/>
-  <text x="${monX + monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#ff6b35" text-anchor="middle" font-weight="bold">◆ CLAUDE ◆</text>
-  <text x="${monX + monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#ff9955" text-anchor="middle">Anthropic</text>
+  <text x="${monX+monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#ff6b35" text-anchor="middle" font-weight="bold">◆ CLAUDE ◆</text>
+  <text x="${monX+monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#ff9955" text-anchor="middle">Anthropic</text>
   <rect x="${monX+10}" y="${monY+36}" width="${monW-20}" height="1" fill="#ff6b35" opacity="0.4"/>
-  <text x="${monX + monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffaa" text-anchor="middle">&gt; analyzing...</text>
-  <text x="${monX + monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88cc88" text-anchor="middle">&gt; output ready_</text>
+  <text x="${monX+monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffaa" text-anchor="middle">&gt; analyzing...</text>
+  <text x="${monX+monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88cc88" text-anchor="middle">&gt; output ready_</text>
 </g>`
 
-  // OpenClaw logo on monitor
+  // ── OpenClaw logo on monitor ──
   const openclawLogo = `<g class="mon-openclaw">
   <rect x="${monX+2}" y="${monY+2}" width="${monW-4}" height="${monH-4}" fill="#0a0a0a" rx="3"/>
-  <text x="${monX + monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#10a37f" text-anchor="middle" font-weight="bold">✦ OPENCLAW ✦</text>
-  <text x="${monX + monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#1dc9a0" text-anchor="middle">model: gpt-claw</text>
+  <text x="${monX+monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#10a37f" text-anchor="middle" font-weight="bold">✦ OPENCLAW ✦</text>
+  <text x="${monX+monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#1dc9a0" text-anchor="middle">model: gpt-claw</text>
   <rect x="${monX+10}" y="${monY+36}" width="${monW-20}" height="1" fill="#10a37f" opacity="0.4"/>
-  <text x="${monX + monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffee" text-anchor="middle">&gt; processing...</text>
-  <text x="${monX + monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
+  <text x="${monX+monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffee" text-anchor="middle">&gt; processing...</text>
+  <text x="${monX+monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
 </g>`
 
-  // 2. At desk (coding + coffee)
-  const atDesk = `<g class="ds" transform="translate(${deskSitX},0)">
-  ${bmp(SI.slice(0, -1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length - 1]], C, catW, sitY + (SI.length - 1) * PX)}</g>
-  <text class="ht"  x="${catW - 8}" y="${sitY - 6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
-  <text class="ht2" x="${catW + 4}"  y="${sitY - 4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
-  <text class="ht3" x="${catW - 2}" y="${sitY - 14}" font-family="monospace" font-size="9"  fill="#ffffff" opacity="0.8">✦</text>
-</g>`
-
-  // 2b. Coffee cup lift (visible during coffee phase)
-  const coffeeLift = `<g class="cf" transform="translate(${deskSitX + 28},${sitY + 14})">
-  <rect x="0" y="4" width="18" height="13" fill="#2a1408" rx="3"/>
-  <ellipse cx="9" cy="4" rx="8" ry="3" fill="#3a2010"/>
-  <ellipse cx="9" cy="4" rx="6" ry="2" fill="#6b3010"/>
-  <path d="M 18 6 Q 24 6 24 11 Q 24 16 18 16" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <ellipse cx="9" cy="4" rx="4" ry="1.2" fill="#8b4513" opacity="0.8"/>
-  <text x="26" y="2" font-family="monospace" font-size="8" fill="#ffcc88" opacity="0.9">☕</text>
-</g>`
-
-  // 3. Walk left
-  const walkL = `<g class="wl">
-  <g class="fa">${bmp(WA_L, C, 0, walkY)}</g>
-  <g class="fb">${bmp(WB_L, C, 0, walkY)}</g>
-</g>`
-
-  // 4. TV on (YouTube-style content, visible during watch phase)
-  const tvOn = `<g class="tvg">
-  <rect x="${tvScx}" y="${tvScy}" width="${tvScw}" height="${tvSch}" fill="#cc0000" opacity="0.15" rx="2"/>
-  <rect x="${tvScx}" y="${tvScy}" width="${tvScw}" height="${tvSch}" fill="#111" opacity="0.7" rx="2"/>
-  <rect x="${tvScx + 2}" y="${tvScy + 2}" width="${tvScw - 4}" height="9" fill="#cc0000" opacity="0.6" rx="1"/>
-  <rect x="${tvScx + 4}" y="${tvScy + 3}" width="28" height="6" fill="#fff" opacity="0.35" rx="1"/>
-  <rect x="${tvScx + 2}" y="${tvScy + 12}" width="${tvScw - 4}" height="${tvSch - 20}" fill="#1a1a2a" opacity="0.8"/>
-  <polygon points="${tvScx + tvScw/2 - 8},${tvScy + 22} ${tvScx + tvScw/2 - 8},${tvScy + 38} ${tvScx + tvScw/2 + 10},${tvScy + 30}" fill="#fff" opacity="0.55"/>
-  <rect x="${tvScx + 2}" y="${tvScy + tvSch - 8}" width="${tvScw - 4}" height="3" fill="#444" opacity="0.6"/>
-  <rect x="${tvScx + 2}" y="${tvScy + tvSch - 8}" width="${Math.floor((tvScw - 4) * 0.38)}" height="3" fill="#cc0000" opacity="0.8"/>
-  <rect x="${tvScx}" y="${tvScy}" width="${tvScw}" height="${tvSch}" fill="${accent}" opacity="0.04" rx="2"/>
-</g>`
-
-  // 5. Watching TV (cat sitting in bed looking at TV)
-  const watchTV = `<g class="wt" transform="translate(${sleepX},0)">
-  ${bmp(SI.slice(0, -1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length - 1]], C, catW, sitY + (SI.length - 1) * PX)}</g>
-</g>`
-
-  // 6. Sleeping (in bed)
+  // ── 1. 잠자기 (bed) ──
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
   ${bmp(SL, CS, 0, sleepY)}
-  <text class="z1" x="${catW + 6}" y="${sleepY - 2}" font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
-  <text class="z2" x="${catW + 14}" y="${sleepY - 10}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
-  <text class="z3" x="${catW + 22}" y="${sleepY - 20}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
+  <text class="z1" x="${catW+6}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
+  <text class="z2" x="${catW+14}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
+  <text class="z3" x="${catW+22}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
+</g>`
+
+  // ── 2. 코딩 (desk) ──
+  const coding = `<g class="ds" transform="translate(${deskX},0)">
+  ${bmp(SI.slice(0,-1), C, 0, sitY)}
+  <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
+  <text class="ht"  x="${catW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
+  <text class="ht2" x="${catW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
+  <text class="ht3" x="${catW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
+</g>`
+
+  // ── 3. 커피 (desk, 컵 들기) ──
+  const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
+  ${bmp(SI.slice(0,-1), C, 0, sitY)}
+  <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
+</g>`
+
+  const coffeeCup = `<g class="cf" transform="translate(${deskX+30},${sitY+12})">
+  <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
+  <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
+  <ellipse cx="10" cy="4" rx="7" ry="2.5" fill="#6b3010"/>
+  <path d="M20 6 Q26 6 26 12 Q26 18 20 18" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="10" cy="4" rx="5" ry="1.5" fill="#8b4513" opacity="0.8"/>
+  <text x="28" y="4" font-family="monospace" font-size="10" fill="#ffcc88">☕</text>
+</g>`
+
+  // ── 4. 창문 바깥 보기 (window) ──
+  const lookWindow = `<g class="win" transform="translate(${windowX},0)">
+  ${bmp(SI.slice(0,-1), C, 0, sitY)}
+  <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
 </g>`
 
   return `<style>${css}</style>
 ${room}
 ${claudeLogo}
 ${openclawLogo}
-${tvOn}
-${walkR}
-${atDesk}
-${coffeeLift}
-${walkL}
-${watchTV}
-${sleeping}`
+${sleeping}
+${coding}
+${coffeeCat}
+${coffeeCup}
+${lookWindow}`
 }
