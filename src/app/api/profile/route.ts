@@ -21,6 +21,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     domains:     p.get('domains')     ?? undefined,
     bio:         p.get('bio')         ?? undefined,
     slogan:      p.get('slogan')      ?? undefined,
+    scene:       (p.get('scene') ?? 'paris') as 'dubai' | 'italy' | 'paris',
     theme:       (p.get('theme')      ?? 'matrix') as ThemeName,
     bg_color:    p.get('bg_color')    ?? undefined,
     text_color:  p.get('text_color')  ?? undefined,

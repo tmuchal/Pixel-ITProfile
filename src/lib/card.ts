@@ -419,7 +419,7 @@ export function generateProfileCard(
     curY += 14
     // Embed cat room as nested SVG (clips to card width)
     out.push(`<svg x="0" y="${curY}" width="${w}" height="${catRoomH}" viewBox="0 0 ${w} ${catRoomH}">`)
-    out.push(buildCatRoomContent(w, catRoomH, accent))
+    out.push(buildCatRoomContent(w, catRoomH, accent, options.scene ?? 'paris'))
     out.push('</svg>')
     curY += catRoomH
   }
