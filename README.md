@@ -21,6 +21,12 @@
 
 <div align="center">
 
+**UCHAL (tmuchal)** — PM · AI & Blockchain (`cyberpunk`)
+
+![UCHAL Cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/tmuchal-cyberpunk.svg)
+
+---
+
 **고양이 방** (`matrix`) — 걷기 → 책상 코딩 → 수면 반복
 
 ![Cat Room Matrix](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-matrix.svg)
