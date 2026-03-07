@@ -25,7 +25,7 @@
 **UCHAL** ([@tmuchal](https://github.com/tmuchal))
 PM · AI & Blockchain
 
-![Cat Room](https://pixel-itprofile.vercel.app/api/cat?scene=paris&theme=cyberpunk)
+![Cat Room](./preview.svg)
 
 </div>
 
