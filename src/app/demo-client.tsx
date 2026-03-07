@@ -3,24 +3,19 @@
 import { useState, useEffect } from 'react'
 
 const THEMES = [
-  'matrix', 'cyberpunk', 'synthwave', 'dracula',
-  'tokyonight', 'ocean', 'nord', 'monokai',
-  'terminal', 'hacker', 'neon', 'retro',
+  'matrix', 'cyberpunk', 'synthwave', 'tokyonight',
+  'ocean', 'nord', 'monokai', 'retro',
 ]
 
-const THEME_COLORS: Record<string, { bg: string; accent: string; text: string }> = {
-  matrix:     { bg: '#0d0d0d', accent: '#00ff41', text: '#00ff41' },
-  cyberpunk:  { bg: '#0a0a0f', accent: '#ff2d78', text: '#ffffff' },
-  synthwave:  { bg: '#1a0a2e', accent: '#ff6b9d', text: '#e0aaff' },
-  dracula:    { bg: '#282a36', accent: '#bd93f9', text: '#f8f8f2' },
-  tokyonight: { bg: '#1a1b26', accent: '#7aa2f7', text: '#c0caf5' },
-  ocean:      { bg: '#0a192f', accent: '#64ffda', text: '#ccd6f6' },
-  nord:       { bg: '#2e3440', accent: '#88c0d0', text: '#eceff4' },
-  monokai:    { bg: '#272822', accent: '#a6e22e', text: '#f8f8f2' },
-  terminal:   { bg: '#1a1a1a', accent: '#ffcc00', text: '#e0e0e0' },
-  hacker:     { bg: '#000000', accent: '#00ff00', text: '#33ff33' },
-  neon:       { bg: '#0a0a0a', accent: '#00ffff', text: '#ffffff' },
-  retro:      { bg: '#1a0f00', accent: '#ff8c00', text: '#ffb000' },
+const THEME_COLORS: Record<string, { bg: string; accent: string; label: string }> = {
+  matrix:     { bg: '#0d0d0d', accent: '#00ff41', label: 'Matrix' },
+  cyberpunk:  { bg: '#0a0a0f', accent: '#ff2d78', label: 'Cyberpunk' },
+  synthwave:  { bg: '#1a0a2e', accent: '#ff6b9d', label: 'Synthwave' },
+  tokyonight: { bg: '#1a1b26', accent: '#7aa2f7', label: 'Tokyo Night' },
+  ocean:      { bg: '#0a192f', accent: '#64ffda', label: 'Ocean' },
+  nord:       { bg: '#2e3440', accent: '#88c0d0', label: 'Nord' },
+  monokai:    { bg: '#272822', accent: '#a6e22e', label: 'Monokai' },
+  retro:      { bg: '#1a0f00', accent: '#ff8c00', label: 'Retro' },
 }
 
 function buildProfileUrl(baseUrl: string, params: Record<string, string>): string {
@@ -31,308 +26,394 @@ function buildProfileUrl(baseUrl: string, params: Record<string, string>): strin
   return url.toString()
 }
 
-function CopyButton({ text }: { text: string }) {
+function CopyButton({ text, label = '복사' }: { text: string; label?: string }) {
   const [copied, setCopied] = useState(false)
-  const copy = () => {
-    navigator.clipboard.writeText(text)
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
-  }
   return (
     <button
-      onClick={copy}
+      onClick={() => {
+        navigator.clipboard.writeText(text)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+      }}
       style={{
-        background: 'none', border: '1px solid #333', color: copied ? '#00ff41' : '#666',
-        padding: '4px 10px', cursor: 'pointer', fontFamily: 'monospace', fontSize: 11,
-        borderRadius: 2, transition: 'color 0.2s',
+        background: copied ? '#00ff4111' : 'none',
+        border: `1px solid ${copied ? '#00ff41' : '#2a2a2a'}`,
+        color: copied ? '#00ff41' : '#444',
+        padding: '5px 14px',
+        cursor: 'pointer',
+        fontFamily: 'monospace',
+        fontSize: 11,
+        borderRadius: 3,
+        transition: 'all 0.2s',
+        whiteSpace: 'nowrap',
       }}
     >
-      {copied ? '✓ Copied!' : 'Copy'}
+      {copied ? '✓ 복사됨!' : label}
     </button>
+  )
+}
+
+function InputField({
+  label, value, onChange, placeholder, mono = false,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+  placeholder?: string
+  mono?: boolean
+}) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 10, color: '#555', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+        {label}
+      </div>
+      <input
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        style={{
+          width: '100%',
+          background: '#080808',
+          border: '1px solid #1e1e1e',
+          color: '#aaa',
+          padding: '7px 10px',
+          fontSize: mono ? 11 : 12,
+          fontFamily: mono ? 'monospace' : 'inherit',
+          boxSizing: 'border-box',
+          borderRadius: 3,
+          outline: 'none',
+        }}
+      />
+    </div>
   )
 }
 
 export default function DemoClient({ baseUrl }: { baseUrl: string }) {
   const [params, setParams] = useState({
-    name: '김철수',
-    username: '',
-    role: 'PM',
+    name:    '김철수',
+    role:    'PM · AI 전략가',
     domains: 'AI,Enterprise,Agent,Voice,Blockchain',
-    bio: '관련없어보이는것들을연결하는사람',
-    theme: 'cyberpunk',
-    layout: 'wide',
-    snake_speed: 'normal',
-    show_stats: 'false',
+    bio:     '관련없어보이는것들을연결하는사람',
+    theme:   'cyberpunk',
   })
 
   const [imgKey, setImgKey] = useState(0)
   const [imgError, setImgError] = useState(false)
+  const [imgLoading, setImgLoading] = useState(false)
 
   const profileUrl = buildProfileUrl(baseUrl, params)
-  const snakeUrl = `${baseUrl}/api/snake?theme=${params.theme}&speed=${params.snake_speed}`
   const themeColor = THEME_COLORS[params.theme] || THEME_COLORS.matrix
 
-  const readmeCode = `<!-- 프로필 카드 -->\n![My IT Profile](${profileUrl})\n\n<!-- 뱀 단독 사용 -->\n![Snake](${snakeUrl})`
+  const readmeSnippet = `![Pixel IT Profile](${profileUrl})`
+  const markdownLink = `[![Pixel IT Profile](${profileUrl})](https://github.com/${params.name})`
 
   useEffect(() => {
-    const timer = setTimeout(() => {
+    setImgLoading(true)
+    const t = setTimeout(() => {
       setImgKey(k => k + 1)
       setImgError(false)
     }, 600)
-    return () => clearTimeout(timer)
+    return () => clearTimeout(t)
   }, [params])
 
-  const set = (key: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
-    setParams(p => ({ ...p, [key]: e.target.value }))
+  const set = (key: string) => (v: string) =>
+    setParams(p => ({ ...p, [key]: v }))
 
   return (
-    <main style={{ maxWidth: 960, margin: '0 auto', padding: '32px 20px', color: '#ccc' }}>
+    <div style={{ minHeight: '100vh', background: '#080808', color: '#ccc', fontFamily: "'Courier New', monospace" }}>
 
-      {/* Title */}
-      <div style={{ marginBottom: 32 }}>
-        <pre style={{ color: '#00ff41', fontSize: 18, lineHeight: 1.4, margin: 0, fontFamily: 'monospace' }}>
+      {/* ── Hero / Header ── */}
+      <div style={{
+        background: 'linear-gradient(180deg, #0d0d0d 0%, #080808 100%)',
+        borderBottom: '1px solid #1a1a1a',
+        padding: '48px 0 36px',
+        textAlign: 'center',
+      }}>
+        <div style={{ maxWidth: 860, margin: '0 auto', padding: '0 24px' }}>
+          <div style={{ display: 'inline-block', background: '#0d0d0d', border: '1px solid #1e1e1e', borderRadius: 4, padding: '3px 12px', fontSize: 10, color: '#555', marginBottom: 20, letterSpacing: '0.1em' }}>
+            GITHUB PROFILE CARD GENERATOR
+          </div>
+          <pre style={{
+            color: '#00ff41',
+            fontSize: 'clamp(8px, 1.6vw, 15px)',
+            lineHeight: 1.35,
+            margin: '0 0 16px',
+            userSelect: 'none',
+            textShadow: '0 0 20px #00ff4155',
+            overflowX: 'auto',
+          }}>
 {`  ____  _          _   ___ _____   ____             __ _ _
  |  _ \\(_)_  _____| | |_ _|_   _| |  _ \\ _ __ ___ / _(_) | ___
  | |_) | \\ \\/ / _ \\ |  | |  | |   | |_) | '__/ _ \\ |_| | |/ _ \\
  |  __/| |>  <  __/ |  | |  | |   |  __/| | | (_) |  _| | |  __/
  |_|   |_/_/\\_\\___|_| |___| |_|   |_|   |_|  \\___/|_| |_|_|\\___|`}
-        </pre>
-        <p style={{ color: '#888', fontSize: 13, margin: '12px 0 0', fontFamily: 'monospace' }}>
-          🐍 픽셀 아트 IT 프로필 카드 생성기 — 뱀이 당신의 도메인들을 연결합니다
-        </p>
+          </pre>
+          <p style={{ color: '#444', fontSize: 12, margin: 0, lineHeight: 1.7 }}>
+            GitHub README에 넣는 픽셀 아트 프로필 카드 &mdash; 통통한 고양이가 하루를 보내는 애니메이션
+          </p>
+        </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', gap: 24 }}>
+      {/* ── Main content ── */}
+      <div style={{ maxWidth: 1060, margin: '0 auto', padding: '40px 24px' }}>
 
-        {/* ── Controls ── */}
-        <div>
-          <div style={{
-            border: '1px solid #333', padding: 16,
-            background: '#0a0a0a', fontFamily: 'monospace',
-          }}>
-            <div style={{ color: '#00ff41', fontSize: 11, marginBottom: 16, borderBottom: '1px solid #222', paddingBottom: 8 }}>
-              ▶ CUSTOMIZE
+        <div style={{ display: 'grid', gridTemplateColumns: '290px 1fr', gap: 32, alignItems: 'start' }}>
+
+          {/* ── Left: Settings panel ── */}
+          <div style={{ position: 'sticky', top: 24 }}>
+
+            {/* Content settings */}
+            <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 4, padding: '18px 18px 14px', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 18, paddingBottom: 12, borderBottom: '1px solid #111' }}>
+                <span style={{ fontSize: 10, color: '#00ff41', opacity: 0.7 }}>▶</span>
+                <span style={{ fontSize: 11, color: '#666', letterSpacing: '0.08em', textTransform: 'uppercase' }}>내용 설정</span>
+              </div>
+
+              <InputField label="이름" value={params.name} onChange={set('name')} placeholder="김철수" />
+              <InputField label="직군" value={params.role} onChange={set('role')} placeholder="PM · AI Engineer · DevOps" />
+              <InputField label="IT 관심분야 (쉼표 구분)" value={params.domains} onChange={set('domains')} placeholder="AI,Cloud,Kubernetes" mono />
+              <InputField label="한 줄 소개" value={params.bio} onChange={set('bio')} placeholder="나만의 한 줄" />
             </div>
 
-            {[
-              { key: 'name',        label: 'Name',         placeholder: '김철수' },
-              { key: 'username',    label: 'GitHub user',  placeholder: 'yourname (optional)' },
-              { key: 'role',        label: 'Role',         placeholder: 'PM / Frontend Dev / ...' },
-              { key: 'domains',     label: 'IT Domains',   placeholder: 'AI,Enterprise,Agent' },
-              { key: 'bio',         label: 'Bio / Slogan', placeholder: '한 줄 소개' },
-            ].map(({ key, label, placeholder }) => (
-              <div key={key} style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 10, color: '#555', marginBottom: 3 }}>{label}</div>
-                <input
-                  value={(params as Record<string, string>)[key]}
-                  onChange={set(key)}
-                  placeholder={placeholder}
-                  style={{
-                    width: '100%', background: '#111', border: '1px solid #333',
-                    color: '#ccc', padding: '5px 8px', fontSize: 11,
-                    fontFamily: 'monospace', boxSizing: 'border-box',
-                  }}
-                />
-              </div>
-            ))}
-
             {/* Theme picker */}
-            <div style={{ marginBottom: 10 }}>
-              <div style={{ fontSize: 10, color: '#555', marginBottom: 6 }}>Theme</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 4 }}>
+            <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 4, padding: '18px 18px 14px', marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16, paddingBottom: 12, borderBottom: '1px solid #111' }}>
+                <span style={{ fontSize: 10, color: '#00ff41', opacity: 0.7 }}>▶</span>
+                <span style={{ fontSize: 11, color: '#666', letterSpacing: '0.08em', textTransform: 'uppercase' }}>색상 테마</span>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                 {THEMES.map(t => {
                   const c = THEME_COLORS[t]
+                  const active = params.theme === t
                   return (
                     <button
                       key={t}
                       onClick={() => setParams(p => ({ ...p, theme: t }))}
-                      title={t}
                       style={{
                         background: c.bg,
-                        border: `2px solid ${params.theme === t ? c.accent : '#222'}`,
+                        border: `1.5px solid ${active ? c.accent : '#1e1e1e'}`,
                         color: c.accent,
-                        padding: '4px 2px',
-                        fontSize: 8,
+                        padding: '8px 6px',
+                        fontSize: 10,
                         cursor: 'pointer',
                         fontFamily: 'monospace',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        whiteSpace: 'nowrap',
+                        borderRadius: 3,
+                        textAlign: 'left',
+                        transition: 'border-color 0.15s',
+                        boxShadow: active ? `0 0 8px ${c.accent}33` : 'none',
                       }}
                     >
-                      {t}
+                      <div style={{ width: 8, height: 8, background: c.accent, display: 'inline-block', marginRight: 6, borderRadius: 1, verticalAlign: 'middle', boxShadow: `0 0 4px ${c.accent}` }} />
+                      {c.label}
                     </button>
                   )
                 })}
               </div>
             </div>
 
-            {/* Layout + Speed */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 10 }}>
-              <div>
-                <div style={{ fontSize: 10, color: '#555', marginBottom: 3 }}>Layout</div>
-                <select value={params.layout} onChange={set('layout')}
-                  style={{ width: '100%', background: '#111', border: '1px solid #333', color: '#ccc', padding: '4px', fontSize: 11, fontFamily: 'monospace' }}>
-                  <option value="wide">wide</option>
-                  <option value="compact">compact</option>
-                </select>
+            {/* Cat info */}
+            <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 4, padding: 14, fontSize: 10, color: '#333', lineHeight: 1.9 }}>
+              <div style={{ color: '#444', marginBottom: 8, letterSpacing: '0.06em' }}>고양이 하루 루틴 (40초 반복)</div>
+              <div>🚶 걷기</div>
+              <div>💻 코딩</div>
+              <div>☕ 커피</div>
+              <div>🚶 귀가</div>
+              <div>📺 유튜브</div>
+              <div>😴 수면</div>
+            </div>
+          </div>
+
+          {/* ── Right: Preview + Export ── */}
+          <div>
+
+            {/* Preview */}
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                <div style={{ fontSize: 10, color: '#444', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  미리보기
+                </div>
+                <div style={{ fontSize: 10, color: '#333' }}>
+                  {params.name || '—'} · {params.theme}
+                </div>
               </div>
-              <div>
-                <div style={{ fontSize: 10, color: '#555', marginBottom: 3 }}>Snake speed</div>
-                <select value={params.snake_speed} onChange={set('snake_speed')}
-                  style={{ width: '100%', background: '#111', border: '1px solid #333', color: '#ccc', padding: '4px', fontSize: 11, fontFamily: 'monospace' }}>
-                  <option value="slow">slow</option>
-                  <option value="normal">normal</option>
-                  <option value="fast">fast</option>
-                </select>
+
+              <div style={{
+                background: themeColor.bg,
+                border: `1px solid ${themeColor.accent}22`,
+                borderRadius: 4,
+                padding: 20,
+                minHeight: 240,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+                {imgError ? (
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: '#ff5555', fontSize: 12, marginBottom: 8 }}>⚠ 로컬 환경에서는 미리보기가 제한됩니다</div>
+                    <div style={{ color: '#333', fontSize: 10 }}>배포 후 실제 카드를 확인하세요</div>
+                  </div>
+                ) : (
+                  <img
+                    key={imgKey}
+                    src={profileUrl}
+                    alt="Profile Card Preview"
+                    onError={() => setImgError(true)}
+                    onLoad={() => setImgLoading(false)}
+                    style={{ maxWidth: '100%', display: 'block', borderRadius: 2 }}
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Export */}
+            <div style={{ background: '#0a0a0a', border: '1px solid #1a1a1a', borderRadius: 4, overflow: 'hidden' }}>
+
+              {/* Tab: Simple */}
+              <div style={{ borderBottom: '1px solid #111', padding: '14px 18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ fontSize: 10, color: '#555', letterSpacing: '0.06em', textTransform: 'uppercase' }}>README.md — 이미지만</span>
+                  <CopyButton text={readmeSnippet} />
+                </div>
+                <pre style={{
+                  margin: 0,
+                  fontSize: 10,
+                  color: '#444',
+                  overflowX: 'auto',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                  lineHeight: 1.7,
+                  background: '#060606',
+                  padding: '10px 12px',
+                  borderRadius: 3,
+                  border: '1px solid #111',
+                }}>
+                  {readmeSnippet}
+                </pre>
+              </div>
+
+              {/* Tab: With link */}
+              <div style={{ padding: '14px 18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                  <span style={{ fontSize: 10, color: '#555', letterSpacing: '0.06em', textTransform: 'uppercase' }}>README.md — 클릭 링크 포함</span>
+                  <CopyButton text={markdownLink} />
+                </div>
+                <pre style={{
+                  margin: 0,
+                  fontSize: 10,
+                  color: '#444',
+                  overflowX: 'auto',
+                  whiteSpace: 'pre-wrap',
+                  wordBreak: 'break-all',
+                  lineHeight: 1.7,
+                  background: '#060606',
+                  padding: '10px 12px',
+                  borderRadius: 3,
+                  border: '1px solid #111',
+                }}>
+                  {markdownLink}
+                </pre>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ── Preview ── */}
-        <div>
-          {/* Card preview */}
-          <div style={{
-            background: themeColor.bg, border: `1px solid ${themeColor.accent}22`,
-            padding: 16, marginBottom: 16, minHeight: 200,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}>
-            {imgError ? (
-              <div style={{ color: '#ff6666', fontSize: 12, fontFamily: 'monospace', textAlign: 'center' }}>
-                <div style={{ marginBottom: 8 }}>⚠ 로컬 dev 환경에서는 미리보기가 제한됩니다</div>
-                <div style={{ color: '#555', fontSize: 10 }}>배포 후 실제 카드를 확인하세요</div>
+        {/* ── API Reference ── */}
+        <div style={{ marginTop: 64, borderTop: '1px solid #111', paddingTop: 40 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 28 }}>
+            <span style={{ fontSize: 10, color: '#00ff41', opacity: 0.6 }}>▶</span>
+            <span style={{ fontSize: 13, color: '#555', letterSpacing: '0.08em', textTransform: 'uppercase' }}>API Reference</span>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+
+            {/* Parameters */}
+            <div>
+              <div style={{ fontSize: 10, color: '#333', marginBottom: 12, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                GET /api/profile
               </div>
-            ) : (
-              <img
-                key={imgKey}
-                src={profileUrl}
-                alt="Profile Card Preview"
-                onError={() => setImgError(true)}
-                style={{ maxWidth: '100%', display: 'block' }}
-              />
-            )}
-          </div>
-
-          {/* Snake preview */}
-          <div style={{
-            background: themeColor.bg, border: `1px solid ${themeColor.accent}22`,
-            padding: '8px 16px', marginBottom: 16,
-          }}>
-            <div style={{ color: '#444', fontSize: 10, fontFamily: 'monospace', marginBottom: 6 }}>
-              ▶ Snake only (/api/snake)
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <thead>
+                  <tr>
+                    <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, color: '#333', fontWeight: 'normal', borderBottom: '1px solid #111' }}>파라미터</th>
+                    <th style={{ textAlign: 'left', padding: '6px 10px', fontSize: 10, color: '#333', fontWeight: 'normal', borderBottom: '1px solid #111' }}>설명</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    ['name',         '표시할 이름'],
+                    ['role',         '직군 (PM, AI Engineer …)'],
+                    ['domains',      'IT 관심 분야 (쉼표 구분, max 8)'],
+                    ['bio',          '한 줄 소개'],
+                    ['username',     'GitHub ID (프로필 사진 로드)'],
+                    ['theme',        THEMES.join(' | ')],
+                    ['accent_color', '강조색 오버라이드 (#hex)'],
+                    ['bg_color',     '배경색 오버라이드 (#hex)'],
+                  ].map(([k, v], i) => (
+                    <tr key={k} style={{ borderBottom: '1px solid #0c0c0c', background: i % 2 === 0 ? 'transparent' : '#0a0a0a' }}>
+                      <td style={{ padding: '7px 10px', color: '#ff6b9d', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{k}</td>
+                      <td style={{ padding: '7px 10px', color: '#444', fontSize: 10 }}>{v}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            {!imgError && (
-              <img key={`snake-${imgKey}`} src={snakeUrl} alt="Snake" style={{ maxWidth: '100%', height: 60 }} />
-            )}
-          </div>
 
-          {/* README code */}
-          <div style={{ border: '1px solid #222', background: '#060606', padding: 12 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-              <span style={{ color: '#444', fontSize: 10, fontFamily: 'monospace' }}>📋 Copy to README.md</span>
-              <CopyButton text={readmeCode} />
+            {/* Deploy + Example */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <div style={{ fontSize: 10, color: '#333', marginBottom: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  직접 배포하기
+                </div>
+                <div style={{ background: '#060606', border: '1px solid #111', borderRadius: 4, padding: '14px 16px' }}>
+                  <pre style={{ margin: 0, fontSize: 10, color: '#444', lineHeight: 1.9 }}>
+{`# 1. Fork & clone
+git clone github.com/YOU/Pixel-ITProfile
+
+# 2. Vercel 배포
+vercel deploy
+
+# 3. (선택) GitHub 통계 연동
+# Vercel 환경변수에 GITHUB_TOKEN 추가`}
+                  </pre>
+                </div>
+              </div>
+
+              <div>
+                <div style={{ fontSize: 10, color: '#333', marginBottom: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  사용 예시
+                </div>
+                <div style={{ background: '#060606', border: '1px solid #111', borderRadius: 4, padding: '14px 16px' }}>
+                  <pre style={{ margin: 0, fontSize: 10, color: '#444', lineHeight: 1.9 }}>
+{`[![Pixel IT Profile](
+  https://pixel-itprofile.vercel.app/api/profile
+  ?name=홍길동
+  &role=Backend+Engineer
+  &domains=Go,Kubernetes,AWS
+  &bio=서버를신나게두드리는사람
+  &theme=ocean
+)](https://github.com/honggildong)`}
+                  </pre>
+                </div>
+              </div>
             </div>
-            <pre style={{
-              margin: 0, fontSize: 10, color: '#666',
-              fontFamily: 'monospace', overflowX: 'auto',
-              whiteSpace: 'pre-wrap', wordBreak: 'break-all',
-            }}>
-              {readmeCode}
-            </pre>
           </div>
         </div>
       </div>
 
-      {/* ── API Docs ── */}
-      <section style={{ marginTop: 48 }}>
-        <h2 style={{ color: '#00ff41', fontFamily: 'monospace', fontSize: 14, borderBottom: '1px solid #222', paddingBottom: 8 }}>
-          ⚙ API Reference
-        </h2>
-
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
-
-          {/* Profile params */}
-          <div>
-            <div style={{ color: '#888', fontSize: 11, fontFamily: 'monospace', marginBottom: 8 }}>
-              GET /api/profile
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
-              <tbody>
-                {[
-                  ['name', '표시할 이름'],
-                  ['username', 'GitHub 유저명 (아바타 자동 fetch)'],
-                  ['role', '직군 — PM, AI Engineer, DevOps...'],
-                  ['domains', 'IT 도메인 (쉼표 구분, 최대 8개)'],
-                  ['bio / slogan', '한 줄 소개'],
-                  ['theme', THEMES.join(' | ')],
-                  ['layout', 'wide | compact'],
-                  ['snake_speed', 'slow | normal | fast'],
-                  ['show_stats', 'true | false (GitHub 통계)'],
-                  ['show_avatar', 'true | false'],
-                  ['bg_color', '배경색 (#hex)'],
-                  ['accent_color', '강조색 (#hex)'],
-                  ['snake_color', '뱀 색 (#hex)'],
-                  ['food_color', '먹이 색 (#hex)'],
-                ].map(([k, v]) => (
-                  <tr key={k} style={{ borderBottom: '1px solid #111' }}>
-                    <td style={{ padding: '5px 8px', color: '#ff6b9d', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{k}</td>
-                    <td style={{ padding: '5px 8px', color: '#666' }}>{v}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Snake params + Deploy */}
-          <div>
-            <div style={{ color: '#888', fontSize: 11, fontFamily: 'monospace', marginBottom: 8 }}>
-              GET /api/snake
-            </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11, marginBottom: 24 }}>
-              <tbody>
-                {[
-                  ['theme', '색상 테마'],
-                  ['speed', 'slow | normal | fast'],
-                  ['color', '뱀 몸 색'],
-                  ['head_color', '뱀 머리 색'],
-                  ['food_color', '먹이 색'],
-                  ['width', '이미지 너비 (px)'],
-                  ['height', '이미지 높이 (px)'],
-                ].map(([k, v]) => (
-                  <tr key={k} style={{ borderBottom: '1px solid #111' }}>
-                    <td style={{ padding: '5px 8px', color: '#ff6b9d', fontFamily: 'monospace', whiteSpace: 'nowrap' }}>{k}</td>
-                    <td style={{ padding: '5px 8px', color: '#666' }}>{v}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            {/* Deploy */}
-            <div style={{ border: '1px solid #1a1a1a', padding: 12, background: '#060606' }}>
-              <div style={{ color: '#00ff41', fontSize: 11, fontFamily: 'monospace', marginBottom: 8 }}>🚀 Deploy your own</div>
-              <pre style={{ margin: 0, fontSize: 10, color: '#666', fontFamily: 'monospace' }}>
-{`# 1. Fork & clone
-git clone github.com/YOU/pixel-itprofile
-
-# 2. Deploy to Vercel
-vercel deploy
-
-# 3. (optional) GitHub stats
-# Add GITHUB_TOKEN env var in Vercel dashboard`}
-              </pre>
-            </div>
+      {/* ── Footer ── */}
+      <div style={{ borderTop: '1px solid #0f0f0f', padding: '24px 0', marginTop: 40 }}>
+        <div style={{ maxWidth: 1060, margin: '0 auto', padding: '0 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 10, color: '#2a2a2a' }}>Pixel IT Profile</span>
+          <div style={{ display: 'flex', gap: 20, fontSize: 10 }}>
+            <a href="https://github.com/tmuchal/Pixel-ITProfile" style={{ color: '#333', textDecoration: 'none' }}>
+              GitHub
+            </a>
+            <a href="/api/profile?name=demo&theme=matrix" style={{ color: '#333', textDecoration: 'none' }}>
+              API
+            </a>
           </div>
         </div>
-      </section>
-
-      <footer style={{ marginTop: 40, borderTop: '1px solid #111', paddingTop: 16, fontSize: 10, color: '#333', fontFamily: 'monospace' }}>
-        <span>Pixel IT Profile</span>
-        {' · '}
-        <a href="https://github.com/LuciNyan/pixel-profile" style={{ color: '#444' }}>Inspired by pixel-profile</a>
-        {' · '}
-        <a href="https://github.com/Platane/snk" style={{ color: '#444' }}>Snake idea from Platane/snk</a>
-      </footer>
-    </main>
+      </div>
+    </div>
   )
 }
