@@ -33,85 +33,86 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
-// ── Fat chubby orange cat palette ─────────────────────────────────────────────
+// ── Pusheen-style orange cat palette ──────────────────────────────────────────
+//   Inspired by the chunky pixel Pusheen style — thick black outline, orange body
 
 const C: Record<string, string> = {
+  K: '#111111',  // black outline
   O: '#ff8c30',  // orange body
-  o: '#cc5500',  // dark orange / ear inner
+  o: '#cc5500',  // dark orange stripe / ear inner
   W: '#fff8f0',  // cream belly
-  E: '#22aa55',  // bright green eye
-  e: '#083808',  // eye pupil
-  N: '#ff2060',  // pink nose
-  B: '#ffbbaa',  // blush cheek
-  T: '#e06010',  // tail
+  e: '#111111',  // dark block eye
+  N: '#ff6688',  // pink nose
+  B: '#ffbbcc',  // pink blush
+  T: '#cc5500',  // tail dark
 }
 
-// Fat walking frame A (10×14) — right foot forward
+// Pusheen-orange walking frame A (10×14) — right foot forward
 const WA = [
-  '.OO....OO.',
-  '.OOOOOOOO.',
-  'OOOOOOOOOO',
-  '.OEeOOEeO.',
-  '.OOooOooO.',
-  '.OBWNNWBo.',
-  '.OOOOOOOO.',
-  '.OOOOOOOO.',
-  'OOOOOOOOOO',
-  '.OWWWWWOO.',
-  'OOOOOOOOOO',
-  '.OOOOOOOO.',
-  '.OOO..OOO.',
-  '..OO..OO..',
+  '..KK..KK..',  // ear tips
+  '.KoK..KoK.',  // ears with dark inner
+  'KOOOOOOOOK',  // head top
+  'KOoOOOOoOK',  // forehead stripe 1
+  'KOOoOOoOOK',  // forehead stripe 2
+  'KOeeOOeeOK',  // block eyes (2px each)
+  'KOOB.N.BOK',  // blush cheeks + pink nose
+  'KOOOOOOOOK',  // body upper
+  'KWWWWWWWOK',  // cream belly
+  'KOOOOOOOOK',  // body lower
+  'KOoOoOoOOK',  // lower body stripes
+  '.KOOOOOOK.',  // bottom
+  '.KOK..KOK.',  // legs — frame A
+  '..KK...KK.',  // feet — frame A
 ]
 
-// Fat walking frame B (10×14) — left foot forward
+// Pusheen-orange walking frame B (10×14) — left foot forward
 const WB = [
-  '.OO....OO.',
-  '.OOOOOOOO.',
-  'OOOOOOOOOO',
-  '.OEeOOEeO.',
-  '.OOooOooO.',
-  '.OBWNNWBo.',
-  '.OOOOOOOO.',
-  '.OOOOOOOO.',
-  'OOOOOOOOOO',
-  '.OWWWWWOO.',
-  'OOOOOOOOOO',
-  '.OOOOOOOO.',
-  '..OOO.OOO.',
-  '..OO..OO..',
+  '..KK..KK..',
+  '.KoK..KoK.',
+  'KOOOOOOOOK',
+  'KOoOOOOoOK',
+  'KOOoOOoOOK',
+  'KOeeOOeeOK',
+  'KOOB.N.BOK',
+  'KOOOOOOOOK',
+  'KWWWWWWWOK',
+  'KOOOOOOOOK',
+  'KOoOoOoOOK',
+  '.KOOOOOOK.',
+  '..KOK.KOK.',  // legs — frame B (shifted)
+  '...KK..KK.',  // feet — frame B
 ]
 
-// Fat sitting (10×13) — at desk or watching TV
+// Pusheen-orange sitting (10×13) — at desk or watching TV
 const SI = [
-  '.OO....OO.',
-  '.OOOOOOOO.',
-  'OOOOOOOOOO',
-  '.OEeOOEeO.',
-  '.OOooOooO.',
-  '.OBWNNWBo.',
-  '.OOOOOOOO.',
-  '.OOOOOOOO.',
-  'OOOOOOOOOO',
-  '.OWWWWWOO.',
-  'OOOOOOOOOO',
-  '.OOOOOOOO.',
-  '.ToooooTT.',
+  '..KK..KK..',
+  '.KoK..KoK.',
+  'KOOOOOOOOK',
+  'KOoOOOOoOK',
+  'KOOoOOoOOK',
+  'KOeeOOeeOK',
+  'KOOB.N.BOK',
+  'KOOOOOOOOK',
+  'KWWWWWWWOK',
+  'KOOOOOOOOK',
+  'KOoOoOoOOK',
+  '.KOOOOOOK.',
+  '.KoooooKT.',  // tail curling to the side
 ]
 
-// Sleeping (10×8) — lying in bed, closed eyes
+// Sleeping (10×8) — lying in bed, closed eyes (— = eyelid line)
 const SL = [
-  '..OOOOOO..',
-  '.OOOOOOOO.',
-  '.OO--O--O.',
-  '.OOOOOOOO.',
-  '.OBWNNWBo.',
-  'OOOOOOOOOO',
-  '.OWWWWWOO.',
-  '.ToooooTT.',
+  '..KOOOOK..',  // head
+  '.KOOOOOOK.',
+  '.KO--O--K.',  // closed eyes
+  '.KOOOOOOK.',
+  '.KOOBNNBOK',  // blush + nose
+  'KOOOOOOOOK',  // body
+  'KWWWWWWWOK',  // belly
+  '.KoooooKT.',  // tail
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#cc5500' }
+const CS: Record<string, string> = { ...C, '-': '#111111' }  // eyelid = black line
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
@@ -127,7 +128,7 @@ const TV_H   = 68    // TV height
 
 // ── Scene type ─────────────────────────────────────────────────────────────────
 
-export type RoomScene = 'dubai' | 'italy' | 'aurora' | 'night'
+export type RoomScene = 'dubai' | 'italy' | 'paris' | 'night'
 
 // ── Window scene builder ───────────────────────────────────────────────────────
 
@@ -203,51 +204,74 @@ function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene:
       }
     })
 
-  } else if (scene === 'aurora') {
-    // Deep dark night sky
-    out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#020810"/>`)
-    // Stars
-    const auroraStars: [number,number,number][] = [
-      [wx+5,wy+4,1.5],[wx+18,wy+8,1],[wx+32,wy+3,2],[wx+55,wy+6,1.5],[wx+78,wy+4,1],
-      [wx+12,wy+18,1],[wx+44,wy+14,1.5],[wx+68,wy+20,1],[wx+90,wy+10,2],[wx+25,wy+28,1],
-      [wx+60,wy+25,1.5],[wx+85,wy+30,1],[wx+8,wy+38,1],[wx+35,wy+35,2],[wx+70,wy+42,1],
-      [wx+20,wy+50,1.5],[wx+50,wy+52,1],[wx+88,wy+45,1.5],[wx+15,wy+62,1],[wx+65,wy+55,2],
-      [wx+40,wy+68,1],[wx+80,wy+62,1],[wx+28,wy+72,1.5],[wx+55,wy+75,1],
-    ]
-    auroraStars.forEach(([sx,sy,sr]) => out.push(`<circle cx="${sx}" cy="${sy}" r="${sr}" fill="#ffffff" opacity="0.75"/>`))
-    // Aurora borealis — green wavy ribbons
-    const auroraGreen = ['#00ff80','#00ee60','#20dd70','#10cc60']
-    auroraGreen.forEach((c, i) => {
-      const aY = wy + 10 + i * 10
-      const op = 0.45 - i * 0.06
-      out.push(`<path d="M ${wx} ${aY+4} C ${wx+ww*0.25} ${aY-10} ${wx+ww*0.5} ${aY+8} ${wx+ww} ${aY}" stroke="${c}" stroke-width="${5 - i}" fill="none" opacity="${op.toFixed(2)}"/>`)
-    })
-    // Aurora purple streaks
-    for (let pi = 0; pi < 3; pi++) {
-      const px = wx + 15 + pi * 35
-      out.push(`<path d="M ${px} ${wy+2} Q ${px+6} ${wy+45} ${px-4} ${wy+wh-28}" stroke="#9040ff" stroke-width="2.5" fill="none" opacity="0.22"/>`)
+  } else if (scene === 'paris') {
+    // Bright Paris blue sky
+    out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#7ec8f5"/>`)
+    // Sky gradient (lighter near horizon)
+    out.push(`<rect x="${wx}" y="${wy + Math.floor(wh * 0.45)}" width="${ww}" height="${Math.floor(wh * 0.15)}" fill="#aaddf8" opacity="0.45"/>`)
+    // Sun (bright, top-right)
+    out.push(`<circle cx="${wx + ww - 24}" cy="${wy + 16}" r="12" fill="#fffbe0" opacity="0.98"/>`)
+    out.push(`<circle cx="${wx + ww - 24}" cy="${wy + 16}" r="18" fill="#fff8a0" opacity="0.18"/>`)
+    // Fluffy clouds
+    out.push(`<ellipse cx="${wx + 30}" cy="${wy + 14}" rx="16" ry="6" fill="#fff" opacity="0.9"/>`)
+    out.push(`<ellipse cx="${wx + 20}" cy="${wy + 15}" rx="10" ry="5" fill="#fff" opacity="0.8"/>`)
+    out.push(`<ellipse cx="${wx + 42}" cy="${wy + 15}" rx="9" ry="5" fill="#fff" opacity="0.85"/>`)
+    out.push(`<ellipse cx="${wx + 74}" cy="${wy + 20}" rx="12" ry="5" fill="#fff" opacity="0.75"/>`)
+    out.push(`<ellipse cx="${wx + 64}" cy="${wy + 21}" rx="8" ry="4" fill="#fff" opacity="0.7"/>`)
+    // Seine river (bottom 30%)
+    const seineY = wy + Math.floor(wh * 0.68)
+    out.push(`<rect x="${wx}" y="${seineY}" width="${ww}" height="${wh - Math.floor(wh * 0.68)}" fill="#5aacdc"/>`)
+    // River shimmer
+    for (let i = 0; i < 5; i++) {
+      out.push(`<rect x="${wx + 6 + i * 18}" y="${seineY + 4 + i * 2}" width="12" height="1.5" fill="#c8eaff" opacity="0.5"/>`)
     }
-    // Snow-covered mountains
-    const mtnBase = wy + Math.floor(wh * 0.6)
-    out.push(`<rect x="${wx}" y="${mtnBase}" width="${ww}" height="${wh - Math.floor(wh * 0.6)}" fill="#080e1a"/>`)
-    const mtns = [{x:wx,w:48,h:58},{x:wx+28,w:55,h:72},{x:wx+68,w:46,h:52}]
-    mtns.forEach(m => {
-      const peak = mtnBase - m.h
-      out.push(`<polygon points="${m.x},${mtnBase} ${m.x+m.w/2},${peak} ${m.x+m.w},${mtnBase}" fill="#0c1828"/>`)
-      // Snow cap
-      const capW = m.w * 0.35
-      out.push(`<polygon points="${m.x+m.w/2-capW/2},${peak+m.h*0.22} ${m.x+m.w/2},${peak} ${m.x+m.w/2+capW/2},${peak+m.h*0.22}" fill="#ddeeff" opacity="0.92"/>`)
+    // Quai (riverbank) — stone path
+    const quaiY = seineY - 10
+    out.push(`<rect x="${wx}" y="${quaiY}" width="${ww}" height="10" fill="#c4b090"/>`)
+    // Parisian Haussmann buildings (cream/pale stone)
+    const hausData = [
+      {x:wx, w:32, h:60, c:'#f5e8c8'}, {x:wx+34, w:28, h:52, c:'#ede0b8'},
+      {x:wx+64, w:30, h:58, c:'#f0e4c0'},
+    ]
+    hausData.forEach(d => {
+      const hx = d.x, hy = quaiY - d.h, hh = d.h
+      out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="${hh}" fill="${d.c}"/>`)
+      // Mansard roof (dark grey)
+      out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="10" fill="#6a7080"/>`)
+      // Roof dormer windows
+      for (let di = 0; di < 2; di++) {
+        const dox = hx + 5 + di * 12
+        out.push(`<rect x="${dox}" y="${hy + 1}" width="6" height="6" fill="#4a90c8" opacity="0.7" rx="1"/>`)
+      }
+      // Windows rows
+      for (let wy2 = hy + 14; wy2 < quaiY - 8; wy2 += 13) {
+        for (let wx2 = hx + 4; wx2 < hx + d.w - 4; wx2 += 10) {
+          out.push(`<rect x="${wx2}" y="${wy2}" width="5" height="7" fill="#4a7db0" opacity="0.6" rx="1"/>`)
+          // Balcony ledge
+          out.push(`<rect x="${wx2 - 1}" y="${wy2 + 7}" width="7" height="1.5" fill="#8a7a60" opacity="0.7"/>`)
+        }
+      }
     })
-    // Snow ground
-    out.push(`<rect x="${wx}" y="${wy+wh-10}" width="${ww}" height="10" fill="#c8d8ee" opacity="0.7"/>`)
-    // Pine trees (silhouette)
-    const pineXs = [wx+6, wx+52, wx+88]
-    pineXs.forEach(px => {
-      const pt = mtnBase - 26
-      out.push(`<polygon points="${px},${mtnBase} ${px+10},${mtnBase} ${px+5},${pt}" fill="#0a200a"/>`)
-      out.push(`<polygon points="${px+1},${mtnBase-8} ${px+9},${mtnBase-8} ${px+5},${pt+6}" fill="#122a12"/>`)
-      out.push(`<polygon points="${px+2},${mtnBase-10} ${px+8},${mtnBase-10} ${px+5},${pt+8}" fill="#c8dde8" opacity="0.65"/>`)
-    })
+    // Eiffel Tower (center-right, iconic silhouette)
+    const etX = wx + ww - 50, etBase = quaiY
+    // Base legs
+    out.push(`<polygon points="${etX},${etBase} ${etX+6},${etBase-28} ${etX+9},${etBase-28}" fill="#5a6070"/>`)
+    out.push(`<polygon points="${etX+22},${etBase} ${etX+13},${etBase-28} ${etX+16},${etBase-28}" fill="#5a6070"/>`)
+    // First platform
+    out.push(`<rect x="${etX+5}" y="${etBase-30}" width="12" height="4" fill="#4e5a68"/>`)
+    // Middle section
+    out.push(`<polygon points="${etX+6},${etBase-30} ${etX+9},${etBase-56} ${etX+13},${etBase-56} ${etX+16},${etBase-30}" fill="#5a6070"/>`)
+    // Second platform
+    out.push(`<rect x="${etX+8}" y="${etBase-58}" width="6" height="3" fill="#4e5a68"/>`)
+    // Top spire
+    out.push(`<polygon points="${etX+9},${etBase-58} ${etX+11},${etBase-85} ${etX+13},${etBase-58}" fill="#5a6070"/>`)
+    // Antenna tip
+    out.push(`<rect x="${etX+10.5}" y="${etBase-95}" width="1.5" height="12" fill="#6a7080"/>`)
+    // Tower lattice lines
+    for (let li = 0; li < 3; li++) {
+      const ly = etBase - 10 - li * 9
+      out.push(`<line x1="${etX+1+li*2}" y1="${ly}" x2="${etX+21-li*2}" y2="${ly}" stroke="#4a5560" stroke-width="0.8" opacity="0.6"/>`)
+    }
 
   } else {
     // Night city (original)
@@ -292,23 +316,23 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
   // ── Wall color per scene ──
   const wallColor   = scene === 'dubai'  ? '#f5e8c8'
                     : scene === 'italy'  ? '#f2e0c4'
-                    : scene === 'aurora' ? '#0a0e18'
+                    : scene === 'paris'  ? '#f7f0e8'
                     : '#1a1228'
   const wallLine    = scene === 'dubai'  ? '#e8d8a8'
                     : scene === 'italy'  ? '#e8d0b0'
-                    : scene === 'aurora' ? '#0e1420'
+                    : scene === 'paris'  ? '#ede5d8'
                     : '#221840'
   const floorColor  = scene === 'dubai'  ? '#d0bc88'
                     : scene === 'italy'  ? '#b85030'
-                    : scene === 'aurora' ? '#1a0e08'
+                    : scene === 'paris'  ? '#c8b888'
                     : '#2a1a08'
   const floorLine   = scene === 'dubai'  ? '#bca870'
                     : scene === 'italy'  ? '#a04028'
-                    : scene === 'aurora' ? '#2a1810'
+                    : scene === 'paris'  ? '#b8a870'
                     : '#3a2810'
   const floorEdge   = scene === 'dubai'  ? '#c8b078'
                     : scene === 'italy'  ? '#c05840'
-                    : scene === 'aurora' ? '#1e1208'
+                    : scene === 'paris'  ? '#c0b080'
                     : '#3a2010'
 
   out.push(`<rect width="${w}" height="${floorY}" fill="${wallColor}"/>`)
@@ -372,8 +396,8 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 
   // ── Window (center-left, above bookshelf area) ──
   const wx = 195, wy = 8, ww = 108, wh = floorY - 16
-  const frameColor = scene === 'aurora' ? '#1a1008' : '#3a2010'
-  const frameInner = scene === 'aurora' ? '#100c04' : '#2a1408'
+  const frameColor = '#3a2010'
+  const frameInner = '#2a1408'
   // Frame
   out.push(`<rect x="${wx - 5}" y="${wy - 5}" width="${ww + 10}" height="${wh + 10}" fill="${frameColor}"/>`)
   out.push(`<rect x="${wx - 3}" y="${wy - 3}" width="${ww + 6}" height="${wh + 6}" fill="${frameInner}"/>`)
