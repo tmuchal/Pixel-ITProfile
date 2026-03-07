@@ -3,45 +3,105 @@
  * Usage: node scripts/generate-examples.mjs
  */
 
-import { writeFileSync } from 'fs'
-import { createRequire } from 'module'
+import { writeFileSync, unlinkSync } from 'fs'
 import { execSync } from 'child_process'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.join(__dirname, '..')
-
-// TypeScript를 일시적으로 컴파일해서 사용
 const distFile = path.join(root, '.gen-tmp.cjs')
+const entryFile = path.join(root, '.gen-entry.ts')
 
-execSync(`npx esbuild src/lib/buildCatRoom.ts src/lib/themes.ts src/lib/card.ts src/lib/types.ts --bundle --platform=node --format=cjs --outfile=${distFile}`, {
-  cwd: root,
-  stdio: 'inherit'
-})
+import { writeFileSync as writeFS } from 'fs'
+writeFS(entryFile, `export { buildCatRoomContent } from './src/lib/buildCatRoom'\nexport { themes } from './src/lib/themes'\nexport { generateProfileCard } from './src/lib/card'\n`)
 
-const { buildCatRoomContent } = await import(distFile)
-const { themes } = await import(distFile)
+execSync(
+  `npx esbuild ${entryFile} --bundle --platform=node --format=cjs --outfile=${distFile}`,
+  { cwd: root, stdio: 'inherit' }
+)
 
-const EXAMPLES = [
-  { file: 'cat-matrix.svg',     theme: 'matrix',     w: 800, h: 200, type: 'cat' },
-  { file: 'cat-cyberpunk.svg',  theme: 'cyberpunk',  w: 800, h: 200, type: 'cat' },
-  { file: 'cat-synthwave.svg',  theme: 'synthwave',  w: 800, h: 200, type: 'cat' },
-  { file: 'cat-tokyonight.svg', theme: 'tokyonight', w: 800, h: 200, type: 'cat' },
+const mod = await import(distFile)
+const { buildCatRoomContent, themes, generateProfileCard } = mod
+
+// ── Cat-room only examples ──────────────────────────────────────────────────
+const CAT_EXAMPLES = [
+  { file: 'cat-matrix.svg',     theme: 'matrix' },
+  { file: 'cat-cyberpunk.svg',  theme: 'cyberpunk' },
+  { file: 'cat-synthwave.svg',  theme: 'synthwave' },
+  { file: 'cat-tokyonight.svg', theme: 'tokyonight' },
 ]
 
-for (const ex of EXAMPLES) {
+for (const ex of CAT_EXAMPLES) {
   const t = themes[ex.theme]
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${ex.w}" height="${ex.h}" viewBox="0 0 ${ex.w} ${ex.h}">
-${buildCatRoomContent(ex.w, ex.h, t.accent)}
+  const w = 800, h = 200
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+${buildCatRoomContent(w, h, t.accent)}
 </svg>`
-  const outPath = path.join(root, 'examples', ex.file)
-  writeFileSync(outPath, svg, 'utf8')
-  console.log(`✅ ${ex.file} 생성됨`)
+  writeFileSync(path.join(root, 'examples', ex.file), svg, 'utf8')
+  console.log(`✅ ${ex.file}`)
 }
 
-// 임시 파일 삭제
-import { unlinkSync } from 'fs'
-try { unlinkSync(distFile) } catch {}
+// ── Full profile card examples ───────────────────────────────────────────────
+const PROFILE_EXAMPLES = [
+  {
+    file: 'pm-cyberpunk.svg',
+    options: {
+      name: '김철수',
+      role: 'PM · AI 전략가',
+      domains: 'AI,Enterprise,Agent,Voice,Blockchain',
+      bio: '관련없어보이는것들을연결하는사람',
+      theme: 'cyberpunk',
+    },
+  },
+  {
+    file: 'ai-matrix.svg',
+    options: {
+      name: 'Alex',
+      role: 'AI Engineer',
+      domains: 'PyTorch,LangChain,RAG,Vector DB',
+      bio: 'Making machines think',
+      theme: 'matrix',
+    },
+  },
+  {
+    file: 'frontend-synthwave.svg',
+    options: {
+      name: 'Jane',
+      role: 'Frontend Dev',
+      domains: 'React,TypeScript,Next.js,Figma',
+      bio: 'Pixel by pixel building the web',
+      theme: 'synthwave',
+    },
+  },
+  {
+    file: 'fullstack-tokyonight.svg',
+    options: {
+      name: 'Park Junho',
+      role: 'Fullstack Engineer',
+      domains: 'Node.js,PostgreSQL,Docker,AWS',
+      bio: '풀스택은 외로운 직업입니다',
+      theme: 'tokyonight',
+    },
+  },
+  {
+    file: 'devops-ocean.svg',
+    options: {
+      name: 'Lee Minho',
+      role: 'DevOps / SRE',
+      domains: 'Kubernetes,Terraform,Prometheus,ArgoCD',
+      bio: '인프라가 코드가 되는 세상',
+      theme: 'ocean',
+    },
+  },
+]
 
+for (const ex of PROFILE_EXAMPLES) {
+  const svg = generateProfileCard(ex.options)
+  writeFileSync(path.join(root, 'examples', ex.file), svg, 'utf8')
+  console.log(`✅ ${ex.file}`)
+}
+
+try { unlinkSync(distFile) } catch {}
+try { unlinkSync(entryFile) } catch {}
 console.log('\n완료! examples/ 폴더를 확인하세요.')
