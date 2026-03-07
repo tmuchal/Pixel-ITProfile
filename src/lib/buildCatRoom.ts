@@ -661,9 +661,9 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const sleepX   = 26             // in bed (left side)
   const walkEndX = w - 340 + 78  // at desk (near keyboard)
 
-  // Animation timeline (40s total)
+  // Animation timeline (22s total)
   // Pattern: sleep → walk to desk → code → coffee → walk back → sleep
-  const DUR = 40
+  const DUR = 22
   const t1 = 8  / DUR * 100   // sleep ends, start walking to desk
   const t2 = 13 / DUR * 100   // arrive at desk, start coding
   const t3 = 27 / DUR * 100   // coding ends, coffee starts
