@@ -20,7 +20,7 @@ export const revalidate = 86400
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const sp = req.nextUrl.searchParams
   const theme = getTheme(sp.get('theme') as ThemeName)
-  const scene = (sp.get('scene') || 'night') as RoomScene
+  const scene = (sp.get('scene') || 'paris') as RoomScene
   const w = Math.min(parseInt(sp.get('width') || '800', 10), 1200)
   const h = Math.min(parseInt(sp.get('height') || '150', 10), 300)
 

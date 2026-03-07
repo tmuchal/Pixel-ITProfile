@@ -586,7 +586,7 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 function buildCSS(
   dur: number,
   t1: number, t2: number, t3: number, t4: number, t5: number,
-  sleepX: number, walkEndX: number,
+  walkFromX: number, walkEndX: number,
 ): string {
   // Timeline:
   //   0  → t1 : sleeping in bed
@@ -602,7 +602,7 @@ function buildCSS(
 
 /* Walk right: t1→t2 (bed → desk) */
 .wr{animation:wr-p ${dur}s linear infinite,wr-v ${dur}s step-end infinite}
-@keyframes wr-p{0%{transform:translateX(${sleepX}px)}${e(t1)}%{transform:translateX(${sleepX}px)}${e(t2)}%{transform:translateX(${walkEndX}px)}100%{transform:translateX(${walkEndX}px)}}
+@keyframes wr-p{0%{transform:translateX(${walkFromX}px)}${e(t1)}%{transform:translateX(${walkFromX}px)}${e(t2)}%{transform:translateX(${walkEndX}px)}100%{transform:translateX(${walkEndX}px)}}
 @keyframes wr-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}
 
 /* At desk: t2→t4 (coding + coffee) */
@@ -611,7 +611,7 @@ function buildCSS(
 
 /* Walk left: t4→t5 (desk → bed) */
 .wl{animation:wl-p ${dur}s linear infinite,wl-v ${dur}s step-end infinite}
-@keyframes wl-p{0%{transform:translateX(${walkEndX}px)}${e(t4)}%{transform:translateX(${walkEndX}px)}${e(t5)}%{transform:translateX(${sleepX}px)}100%{transform:translateX(${sleepX}px)}}
+@keyframes wl-p{0%{transform:translateX(${walkEndX}px)}${e(t4)}%{transform:translateX(${walkEndX}px)}${e(t5)}%{transform:translateX(${walkFromX}px)}100%{transform:translateX(${walkFromX}px)}}
 @keyframes wl-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
 
 /* Coffee cup lift: t3→t4 */
@@ -658,8 +658,9 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const sleepY  = floorY - sleepH - 8   // sleeping cat top (on bed)
 
   // Cat X positions
-  const sleepX   = 26             // in bed (left side)
-  const walkEndX = w - 340 + 78  // at desk (near keyboard)
+  const sleepX    = 26                        // sleeping cat: on pillow (left)
+  const walkFromX = BED_X + BED_W + 30       // walking: starts/ends at bed footboard (right edge ~195)
+  const walkEndX  = w - 340 + 78             // at desk (near keyboard)
 
   // Animation timeline (22s total)
   // Pattern: sleep → walk to desk → code → coffee → walk back → sleep
@@ -670,7 +671,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const t4 = 32 / DUR * 100   // coffee ends, start walking back
   const t5 = 37 / DUR * 100   // arrive at bed, sleep starts
 
-  const css  = buildCSS(DUR, t1, t2, t3, t4, t5, sleepX, walkEndX)
+  const css  = buildCSS(DUR, t1, t2, t3, t4, t5, walkFromX, walkEndX)
   const room = buildRoom(w, h, accent, scene)
 
   // ── Cat layers ──
