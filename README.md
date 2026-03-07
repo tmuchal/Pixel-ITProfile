@@ -9,7 +9,22 @@
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ftmuchal%2FPixel-ITProfile)
 
-![demo](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/tmuchal-cyberpunk.svg)
+</div>
+
+---
+
+## 미리보기
+
+<div align="center">
+
+**🗼 Paris**
+![paris](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-paris.svg)
+
+**🏙️ Dubai**
+![dubai](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-dubai.svg)
+
+**🍋 Italy**
+![italy](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-italy.svg)
 
 </div>
 
@@ -27,7 +42,7 @@
 ![Pixel IT Profile](https://your-app.vercel.app/api/cat?scene=paris&theme=cyberpunk)
 ```
 
-`your-app.vercel.app` 부분을 배포된 내 Vercel 주소로 교체하면 끝.
+`your-app.vercel.app` 부분을 배포된 내 Vercel 주소로 교체.
 
 ---
 
@@ -37,12 +52,18 @@
 
 | 파라미터 | 옵션 | 기본값 |
 |---------|------|--------|
-| `scene` | `dubai` `italy` `paris` `night` | `paris` |
+| `scene` | `paris` `dubai` `italy` `night` | `paris` |
 | `theme` | `matrix` `cyberpunk` `synthwave` `ocean` `nord` `dracula` `tokyonight` `monokai` `hacker` `neon` `terminal` `retro` | `matrix` |
 | `width` | 최대 `1200` | `800` |
 | `height` | 최대 `300` | `150` |
 
 ### `/api/snake` — 뱀 애니메이션
+
+<div align="center">
+
+![snake](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/snake-cyberpunk.svg)
+
+</div>
 
 | 파라미터 | 옵션 | 기본값 |
 |---------|------|--------|
@@ -50,25 +71,6 @@
 | `speed` | `slow` `normal` `fast` | `normal` |
 | `width` | 최대 `1200` | `800` |
 | `height` | 최대 `200` | `60` |
-
----
-
-## 예시
-
-<div align="center">
-
-| dubai | italy |
-|-------|-------|
-| ![dubai](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-dubai.svg) | ![italy](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-italy.svg) |
-
-| cyberpunk | synthwave |
-|-----------|-----------|
-| ![cyberpunk](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-cyberpunk.svg) | ![synthwave](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-synthwave.svg) |
-
-**snake**
-![snake](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/snake-cyberpunk.svg)
-
-</div>
 
 ---
 
