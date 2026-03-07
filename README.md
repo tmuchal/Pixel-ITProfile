@@ -40,6 +40,13 @@ PM · AI & Blockchain
 | `paris` | 밝은 하늘 + 에펠탑 + 센강 + 오스만 건물 |
 | `night` | 별밤 + 달 + 도시 야경 |
 
+<div align="center">
+
+![dubai](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-dubai.svg)
+![italy](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/cat-italy.svg)
+
+</div>
+
 ---
 
 ## GitHub README에 넣는 법
@@ -58,12 +65,27 @@ PM · AI & Blockchain
 
 ## 파라미터
 
+### `/api/cat` — 고양이 방
+
 | 파라미터 | 옵션 | 기본값 |
 |---------|------|--------|
-| `scene` | `dubai` `italy` `paris` `night` | `night` |
-| `theme` | `matrix` `cyberpunk` `synthwave` `ocean` `sunset` `nord` `dracula` `solarized` | `matrix` |
+| `scene` | `dubai` `italy` `paris` `night` | `paris` |
+| `theme` | `matrix` `cyberpunk` `synthwave` `ocean` `nord` `dracula` `tokyonight` `monokai` `hacker` `neon` `terminal` `retro` | `matrix` |
 | `width` | 최대 `1200` | `800` |
 | `height` | 최대 `300` | `150` |
+
+### `/api/snake` — 뱀 애니메이션
+
+```markdown
+![Snake](https://your-app.vercel.app/api/snake?theme=matrix)
+```
+
+| 파라미터 | 옵션 | 기본값 |
+|---------|------|--------|
+| `theme` | 위 테마 목록과 동일 | `matrix` |
+| `speed` | `slow` `normal` `fast` | `normal` |
+| `width` | 최대 `1200` | `800` |
+| `height` | 최대 `200` | `60` |
 
 ---
 
