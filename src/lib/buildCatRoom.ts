@@ -586,38 +586,40 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 function buildCSS(
   dur: number,
   t1: number, t2: number, t3: number, t4: number, t5: number,
-  walkFromX: number, walkEndX: number,
+  walkStartX: number, walkEndX: number,
 ): string {
-  // Timeline:
-  //   0  → t1 : sleeping in bed
-  //   t1 → t2 : walk right (bed → desk)
-  //   t2 → t4 : at desk (t2→t3 coding, t3→t4 coffee)
-  //   t4 → t5 : walk left (desk → bed)
-  //   t5 → end: sleeping in bed
   const e = (n: number) => n.toFixed(2)
   return `
-/* Sleeping: 0→t1 and t5→end */
-.sl{animation:sl-v ${dur}s step-end infinite}
-@keyframes sl-v{0%{opacity:1}${e(t1)}%{opacity:1}${e(t1+0.01)}%{opacity:0}${e(t5)}%{opacity:0}${e(t5+0.01)}%{opacity:1}100%{opacity:1}}
-
-/* Walk right: t1→t2 (bed → desk) */
+/* Walk right: 0 → t1 */
 .wr{animation:wr-p ${dur}s linear infinite,wr-v ${dur}s step-end infinite}
-@keyframes wr-p{0%{transform:translateX(${walkFromX}px)}${e(t1)}%{transform:translateX(${walkFromX}px)}${e(t2)}%{transform:translateX(${walkEndX}px)}100%{transform:translateX(${walkEndX}px)}}
-@keyframes wr-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes wr-p{0%{transform:translateX(${walkStartX}px)}${e(t1)}%{transform:translateX(${walkEndX}px)}100%{transform:translateX(${walkEndX}px)}}
+@keyframes wr-v{0%{opacity:1}${e(t1)}%{opacity:1}${e(t1+0.01)}%{opacity:0}100%{opacity:0}}
 
-/* At desk: t2→t4 (coding + coffee) */
+/* At desk: t1 → t3 (coding + coffee phases) */
 .ds{animation:ds-v ${dur}s step-end infinite}
-@keyframes ds-v{0%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes ds-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}
 
-/* Walk left: t4→t5 (desk → bed) */
+/* Walk left: t3 → t4 */
 .wl{animation:wl-p ${dur}s linear infinite,wl-v ${dur}s step-end infinite}
-@keyframes wl-p{0%{transform:translateX(${walkEndX}px)}${e(t4)}%{transform:translateX(${walkEndX}px)}${e(t5)}%{transform:translateX(${walkFromX}px)}100%{transform:translateX(${walkFromX}px)}}
-@keyframes wl-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes wl-p{0%{transform:translateX(${walkEndX}px)}${e(t3)}%{transform:translateX(${walkEndX}px)}${e(t4)}%{transform:translateX(${walkStartX}px)}100%{transform:translateX(${walkStartX}px)}}
+@keyframes wl-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
 
-/* Coffee cup lift: t3→t4 */
+/* Watch TV: t4 → t5 */
+.wt{animation:wt-v ${dur}s step-end infinite}
+@keyframes wt-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
+
+/* Sleeping: t5 → end */
+.sl{animation:sl-v ${dur}s step-end infinite}
+@keyframes sl-v{0%{opacity:0}${e(t5)}%{opacity:0}${e(t5+0.01)}%{opacity:1}100%{opacity:1}}
+
+/* Coffee cup lift: t2 → t3 */
 .cf{animation:cf-v ${dur}s step-end infinite,cf-y ${dur}s ease-in-out infinite}
-@keyframes cf-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
-@keyframes cf-y{${e(t3)}%{transform:translateY(0)}${e((t3+t4)/2)}%{transform:translateY(-8px) rotate(-12deg)}${e(t4)}%{transform:translateY(0)}}
+@keyframes cf-v{0%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes cf-y{${e(t2)}%{transform:translateY(0)}${e((t2+t3)/2)}%{transform:translateY(-8px) rotate(-12deg)}${e(t3)}%{transform:translateY(0)}}
+
+/* TV glow on: t4 → t5 */
+.tvg{animation:tvg-v ${dur}s step-end infinite}
+@keyframes tvg-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
 
 /* Leg alternation */
 .fa{animation:fa .45s step-end infinite}
@@ -635,13 +637,10 @@ function buildCSS(
 .z3{animation:zf 3s ease-out 1.8s infinite}
 @keyframes zf{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(8px,-22px);opacity:0}}
 
-/* Coding sparks — Claude ✳ and OpenClaw 🤖 float up */
-.ht{animation:htf 2.2s ease-out infinite}
-.ht2{animation:htf2 2.4s ease-out .8s infinite}
-.ht3{animation:htf3 2s ease-out 1.6s infinite}
-@keyframes htf{0%{transform:translate(0,0);opacity:0}18%{opacity:1}100%{transform:translate(5px,-22px);opacity:0}}
-@keyframes htf2{0%{transform:translate(0,0);opacity:0}18%{opacity:0.95}100%{transform:translate(-4px,-20px);opacity:0}}
-@keyframes htf3{0%{transform:translate(0,0);opacity:0}18%{opacity:1}100%{transform:translate(2px,-24px);opacity:0}}`
+/* Coding sparks */
+.ht{animation:htf 2s ease-out infinite}
+.ht2{animation:htf 2s ease-out 1s infinite}
+@keyframes htf{0%{transform:translate(0,0);opacity:0}20%{opacity:0.95}100%{transform:translate(4px,-18px);opacity:0}}`
 }
 
 // ── Main export ────────────────────────────────────────────────────────────────
@@ -658,25 +657,75 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const sleepY  = floorY - sleepH - 8   // sleeping cat top (on bed)
 
   // Cat X positions
-  const sleepX    = 26                        // sleeping cat: on pillow (left)
-  const walkFromX = BED_X + BED_W + 30       // walking: starts/ends at bed footboard (right edge ~195)
-  const walkEndX  = w - 340 + 78             // at desk (near keyboard)
+  const walkStartX = -55   // off-screen left (enters from left)
+  const walkEndX   = w - 340 + 78  // at desk (near keyboard)
+  const sleepX     = 26    // in bed (left side)
+  const deskSitX   = walkEndX
 
-  // Animation timeline (22s total)
-  // Pattern: sleep → walk to desk → code → coffee → walk back → sleep
-  const DUR = 22
-  const t1 = 8  / DUR * 100   // sleep ends, start walking to desk
-  const t2 = 13 / DUR * 100   // arrive at desk, start coding
-  const t3 = 27 / DUR * 100   // coding ends, coffee starts
-  const t4 = 32 / DUR * 100   // coffee ends, start walking back
-  const t5 = 37 / DUR * 100   // arrive at bed, sleep starts
+  // Animation timeline (40s total)
+  const DUR = 40
+  const t1 = 5  / DUR * 100   // walk right ends
+  const t2 = 16 / DUR * 100   // coding ends, coffee starts
+  const t3 = 21 / DUR * 100   // coffee ends, walk left starts
+  const t4 = 26 / DUR * 100   // walk left ends, TV watching starts
+  const t5 = 33 / DUR * 100   // TV ends, sleep starts
 
-  const css  = buildCSS(DUR, t1, t2, t3, t4, t5, walkFromX, walkEndX)
+  const css  = buildCSS(DUR, t1, t2, t3, t4, t5, walkStartX, walkEndX)
   const room = buildRoom(w, h, accent, scene)
+
+  // TV screen coordinates (matching buildRoom)
+  const tvScx = TV_X + 5, tvScy = TV_Y + 5, tvScw = TV_W - 10, tvSch = TV_H - 12
 
   // ── Cat layers ──
 
-  // 1. Sleeping (in bed) — visible at start and end
+  // 1. Walk right
+  const walkR = `<g class="wr">
+  <g class="fa">${bmp(WA, C, 0, walkY)}</g>
+  <g class="fb">${bmp(WB, C, 0, walkY)}</g>
+</g>`
+
+  // 2. At desk (coding + coffee)
+  const atDesk = `<g class="ds" transform="translate(${deskSitX},0)">
+  ${bmp(SI.slice(0, -1), C, 0, sitY)}
+  <g class="tw">${bmp([SI[SI.length - 1]], C, catW, sitY + (SI.length - 1) * PX)}</g>
+  <text class="ht" x="${catW - 4}" y="${sitY - 4}" font-family="monospace" font-size="12" fill="${accent}">★</text>
+  <text class="ht2" x="${catW + 6}" y="${sitY - 2}" font-family="monospace" font-size="9" fill="#ffaa20">✦</text>
+</g>`
+
+  // 2b. Coffee cup lift (visible during coffee phase, near cat's face at desk)
+  const coffeeLift = `<g class="cf" transform="translate(${deskSitX + 32},${sitY + 18})">
+  <rect x="0" y="0" width="12" height="9" fill="#2a1408" rx="2"/>
+  <ellipse cx="6" cy="0" rx="5" ry="2" fill="#3a2010"/>
+  <ellipse cx="6" cy="0" rx="4" ry="1.5" fill="#5a2808"/>
+  <path d="M 12 2 Q 17 2 17 6 Q 17 10 12 10" stroke="#3a2010" stroke-width="2" fill="none"/>
+</g>`
+
+  // 3. Walk left
+  const walkL = `<g class="wl">
+  <g class="fa">${bmp(WA_L, C, 0, walkY)}</g>
+  <g class="fb">${bmp(WB_L, C, 0, walkY)}</g>
+</g>`
+
+  // 4. TV on (YouTube-style content, visible during watch phase)
+  const tvOn = `<g class="tvg">
+  <rect x="${tvScx}" y="${tvScy}" width="${tvScw}" height="${tvSch}" fill="#cc0000" opacity="0.15" rx="2"/>
+  <rect x="${tvScx}" y="${tvScy}" width="${tvScw}" height="${tvSch}" fill="#111" opacity="0.7" rx="2"/>
+  <rect x="${tvScx + 2}" y="${tvScy + 2}" width="${tvScw - 4}" height="9" fill="#cc0000" opacity="0.6" rx="1"/>
+  <rect x="${tvScx + 4}" y="${tvScy + 3}" width="28" height="6" fill="#fff" opacity="0.35" rx="1"/>
+  <rect x="${tvScx + 2}" y="${tvScy + 12}" width="${tvScw - 4}" height="${tvSch - 20}" fill="#1a1a2a" opacity="0.8"/>
+  <polygon points="${tvScx + tvScw/2 - 8},${tvScy + 22} ${tvScx + tvScw/2 - 8},${tvScy + 38} ${tvScx + tvScw/2 + 10},${tvScy + 30}" fill="#fff" opacity="0.55"/>
+  <rect x="${tvScx + 2}" y="${tvScy + tvSch - 8}" width="${tvScw - 4}" height="3" fill="#444" opacity="0.6"/>
+  <rect x="${tvScx + 2}" y="${tvScy + tvSch - 8}" width="${Math.floor((tvScw - 4) * 0.38)}" height="3" fill="#cc0000" opacity="0.8"/>
+  <rect x="${tvScx}" y="${tvScy}" width="${tvScw}" height="${tvSch}" fill="${accent}" opacity="0.04" rx="2"/>
+</g>`
+
+  // 5. Watching TV (cat sitting in bed looking at TV)
+  const watchTV = `<g class="wt" transform="translate(${sleepX},0)">
+  ${bmp(SI.slice(0, -1), C, 0, sitY)}
+  <g class="tw">${bmp([SI[SI.length - 1]], C, catW, sitY + (SI.length - 1) * PX)}</g>
+</g>`
+
+  // 6. Sleeping (in bed)
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
   ${bmp(SL, CS, 0, sleepY)}
   <text class="z1" x="${catW + 6}" y="${sleepY - 2}" font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
@@ -684,55 +733,13 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   <text class="z3" x="${catW + 22}" y="${sleepY - 20}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
 </g>`
 
-  // 2. Walk right (bed → desk)
-  const walkR = `<g class="wr">
-  <g class="fa">${bmp(WA, C, 0, walkY)}</g>
-  <g class="fb">${bmp(WB, C, 0, walkY)}</g>
-</g>`
-
-  // 3. At desk (coding + coffee)
-  // Claude asterisk: 8-ray starburst in salmon (#cc785c), like the Claude logo
-  const claudeSpark = (cx: number, cy: number, r: number) =>
-    `<line x1="${cx}" y1="${cy-r}" x2="${cx}" y2="${cy+r}" stroke="#cc785c" stroke-width="1.5" stroke-linecap="round"/>` +
-    `<line x1="${cx-r}" y1="${cy}" x2="${cx+r}" y2="${cy}" stroke="#cc785c" stroke-width="1.5" stroke-linecap="round"/>` +
-    `<line x1="${cx-r*.7}" y1="${cy-r*.7}" x2="${cx+r*.7}" y2="${cy+r*.7}" stroke="#cc785c" stroke-width="1.5" stroke-linecap="round"/>` +
-    `<line x1="${cx+r*.7}" y1="${cy-r*.7}" x2="${cx-r*.7}" y2="${cy+r*.7}" stroke="#cc785c" stroke-width="1.5" stroke-linecap="round"/>`
-  // OpenClaw robot: red round bug with teal eyes and antennae
-  const openclawSpark = (cx: number, cy: number) =>
-    `<circle cx="${cx}" cy="${cy+2}" r="5" fill="#ff3a3a"/>` +
-    `<circle cx="${cx-1.5}" cy="${cy+1}" r="1" fill="#00ddcc"/>` +
-    `<circle cx="${cx+1.5}" cy="${cy+1}" r="1" fill="#00ddcc"/>` +
-    `<line x1="${cx-1.5}" y1="${cy-3}" x2="${cx-2.5}" y2="${cy-7}" stroke="#ff3a3a" stroke-width="1" stroke-linecap="round"/>` +
-    `<circle cx="${cx-2.5}" cy="${cy-7}" r="1.2" fill="#ff3a3a"/>` +
-    `<line x1="${cx+1.5}" y1="${cy-3}" x2="${cx+2.5}" y2="${cy-7}" stroke="#ff3a3a" stroke-width="1" stroke-linecap="round"/>` +
-    `<circle cx="${cx+2.5}" cy="${cy-7}" r="1.2" fill="#ff3a3a"/>`
-  const atDesk = `<g class="ds" transform="translate(${walkEndX},0)">
-  ${bmp(SI.slice(0, -1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length - 1]], C, catW, sitY + (SI.length - 1) * PX)}</g>
-  <g class="ht">${claudeSpark(catW + 6, sitY - 4, 6)}</g>
-  <g class="ht2">${openclawSpark(catW + 22, sitY - 2)}</g>
-  <g class="ht3">${claudeSpark(catW + 14, sitY - 8, 5)}</g>
-</g>`
-
-  // 3b. Coffee cup lift (visible during coffee phase)
-  const coffeeLift = `<g class="cf" transform="translate(${walkEndX + 32},${sitY + 18})">
-  <rect x="0" y="0" width="12" height="9" fill="#2a1408" rx="2"/>
-  <ellipse cx="6" cy="0" rx="5" ry="2" fill="#3a2010"/>
-  <ellipse cx="6" cy="0" rx="4" ry="1.5" fill="#5a2808"/>
-  <path d="M 12 2 Q 17 2 17 6 Q 17 10 12 10" stroke="#3a2010" stroke-width="2" fill="none"/>
-</g>`
-
-  // 4. Walk left (desk → bed)
-  const walkL = `<g class="wl">
-  <g class="fa">${bmp(WA_L, C, 0, walkY)}</g>
-  <g class="fb">${bmp(WB_L, C, 0, walkY)}</g>
-</g>`
-
   return `<style>${css}</style>
 ${room}
-${sleeping}
+${tvOn}
 ${walkR}
 ${atDesk}
 ${coffeeLift}
-${walkL}`
+${walkL}
+${watchTV}
+${sleeping}`
 }

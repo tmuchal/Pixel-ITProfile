@@ -25,7 +25,7 @@
 **UCHAL** ([@tmuchal](https://github.com/tmuchal))
 PM · AI & Blockchain
 
-![Cat Room](./preview.svg)
+![Cat Room](https://pixel-itprofile.vercel.app/api/cat?scene=paris&theme=cyberpunk)
 
 </div>
 
@@ -33,12 +33,14 @@ PM · AI & Blockchain
 
 ## 씬 미리보기
 
-| 씬 | 창문 뷰 |
-|---|---|
-| `dubai` | 노을 하늘 + 부르즈 할리파 실루엣 + 사막 모래언덕 |
-| `italy` | 지중해 파란 하늘 + 태양 + 아말피 알록달록 건물 + 바다 |
-| `paris` | 밝은 하늘 + 에펠탑 + 센강 + 오스만 건물 |
-| `night` | 별밤 + 달 + 도시 야경 |
+**paris** — cyberpunk
+![paris](https://pixel-itprofile.vercel.app/api/cat?scene=paris&theme=cyberpunk)
+
+**dubai** — sunset
+![dubai](https://pixel-itprofile.vercel.app/api/cat?scene=dubai&theme=sunset)
+
+**night** — dracula
+![night](https://pixel-itprofile.vercel.app/api/cat?scene=night&theme=dracula)
 
 <div align="center">
 
