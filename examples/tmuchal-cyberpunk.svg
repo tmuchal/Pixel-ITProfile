@@ -138,7 +138,6 @@
   </rect>
 </clipPath>
 <text x="118" y="58" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="21" fill="#ffffff" font-weight="bold" clip-path="url(#clip-nm)">UCHAL</text>
-<text x="766" y="50" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="10" fill="#9999aa" text-anchor="end">@tmuchal</text>
 <rect x="118" y="66" width="172" height="24" fill="#1a0a1a"/>
 <rect x="118" y="66" width="172" height="24" fill="none" stroke="#ff2d78" stroke-width="1" filter="url(#glow-sm)"/>
 <text x="129" y="82" font-family="'Courier New','Courier','Lucida Console',monospace" font-size="12.5" fill="#ff2d78">PM · AI &amp; Blockchain</text>

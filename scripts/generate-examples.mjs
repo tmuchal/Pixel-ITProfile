@@ -45,6 +45,16 @@ ${buildCatRoomContent(w, h, t.accent)}
 // ── Full profile card examples ───────────────────────────────────────────────
 const PROFILE_EXAMPLES = [
   {
+    file: 'tmuchal-cyberpunk.svg',
+    options: {
+      name: 'UCHAL',
+      role: 'PM · AI & Blockchain',
+      domains: 'AI,Enterprise,Agent,Voice,Blockchain',
+      bio: '관련없어보이는것들을연결하는사람',
+      theme: 'cyberpunk',
+    },
+  },
+  {
     file: 'pm-cyberpunk.svg',
     options: {
       name: '김철수',
