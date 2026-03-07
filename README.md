@@ -25,22 +25,13 @@
 **UCHAL** ([@tmuchal](https://github.com/tmuchal))
 PM · AI & Blockchain
 
-![Cat Room](https://pixel-itprofile.vercel.app/api/cat?scene=paris&theme=cyberpunk)
+![Cat Room](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/tmuchal-cyberpunk.svg)
 
 </div>
 
 ---
 
 ## 씬 미리보기
-
-**paris** — cyberpunk
-![paris](https://pixel-itprofile.vercel.app/api/cat?scene=paris&theme=cyberpunk)
-
-**dubai** — sunset
-![dubai](https://pixel-itprofile.vercel.app/api/cat?scene=dubai&theme=sunset)
-
-**night** — dracula
-![night](https://pixel-itprofile.vercel.app/api/cat?scene=night&theme=dracula)
 
 <div align="center">
 
@@ -78,9 +69,11 @@ PM · AI & Blockchain
 
 ### `/api/snake` — 뱀 애니메이션
 
-```markdown
-![Snake](https://your-app.vercel.app/api/snake?theme=matrix)
-```
+<div align="center">
+
+![snake](https://raw.githubusercontent.com/tmuchal/Pixel-ITProfile/main/examples/snake-cyberpunk.svg)
+
+</div>
 
 | 파라미터 | 옵션 | 기본값 |
 |---------|------|--------|
