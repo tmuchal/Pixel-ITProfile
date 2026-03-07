@@ -125,24 +125,203 @@ const TV_Y   = 10    // TV top
 const TV_W   = 100   // TV width
 const TV_H   = 68    // TV height
 
+// ── Scene type ─────────────────────────────────────────────────────────────────
+
+export type RoomScene = 'dubai' | 'italy' | 'aurora' | 'night'
+
+// ── Window scene builder ───────────────────────────────────────────────────────
+
+function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene: RoomScene): string {
+  const out: string[] = []
+
+  if (scene === 'dubai') {
+    // Sunset sky layers (top=deep blue → bottom=golden orange)
+    const skyColors = ['#1a1a6a','#3030a0','#6040c0','#c04060','#e06030','#f08020','#f0a020','#ffd060']
+    const layerH = Math.ceil(wh / skyColors.length)
+    skyColors.forEach((c, i) => out.push(`<rect x="${wx}" y="${wy + i * layerH}" width="${ww}" height="${layerH + 1}" fill="${c}"/>`))
+    // Burj Khalifa silhouette
+    const bkX = wx + ww - 28
+    out.push(`<rect x="${bkX + 9}" y="${wy + 4}" width="3" height="58" fill="#20204a"/>`)        // spire
+    out.push(`<rect x="${bkX + 5}" y="${wy + 40}" width="12" height="7" fill="#20204a"/>`)       // tier 1
+    out.push(`<rect x="${bkX + 2}" y="${wy + 50}" width="18" height="8" fill="#20204a"/>`)       // tier 2
+    out.push(`<rect x="${bkX}" y="${wy + 60}" width="22" height="${wh - 60}" fill="#20204a"/>`) // base
+    // Other skyscrapers
+    const skyBlds = [
+      {x:wx+4,w:10,h:50},{x:wx+16,w:7,h:60},{x:wx+25,w:12,h:45},
+      {x:wx+39,w:9,h:55},{x:wx+50,w:8,h:48},{x:wx+60,w:13,h:52},
+    ]
+    skyBlds.forEach(b => {
+      const top = wy + wh - b.h
+      out.push(`<rect x="${b.x}" y="${top}" width="${b.w}" height="${b.h}" fill="#20204a"/>`)
+      for (let ry = top + 3; ry < wy + wh - 2; ry += 6) {
+        for (let rx = b.x + 2; rx < b.x + b.w - 1; rx += 4) {
+          out.push(`<rect x="${rx}" y="${ry}" width="2" height="3" fill="#ffd080" opacity="0.45"/>`)
+        }
+      }
+    })
+    // Desert sand dunes at bottom
+    const sandY = wy + wh - 16
+    out.push(`<rect x="${wx}" y="${sandY}" width="${ww}" height="16" fill="#c8a040"/>`)
+    out.push(`<ellipse cx="${wx + 28}" cy="${sandY}" rx="38" ry="10" fill="#d4b055"/>`)
+    out.push(`<ellipse cx="${wx + 82}" cy="${sandY + 2}" rx="32" ry="8" fill="#b89035"/>`)
+
+  } else if (scene === 'italy') {
+    // Bright Mediterranean blue sky
+    out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#5aaaf0"/>`)
+    // Sky gradient (lighter at horizon)
+    out.push(`<rect x="${wx}" y="${wy + Math.floor(wh * 0.4)}" width="${ww}" height="${Math.floor(wh * 0.15)}" fill="#80c8ff" opacity="0.4"/>`)
+    // Sun
+    out.push(`<circle cx="${wx + 28}" cy="${wy + 18}" r="13" fill="#fff8a0" opacity="0.98"/>`)
+    out.push(`<circle cx="${wx + 28}" cy="${wy + 18}" r="18" fill="#fff080" opacity="0.2"/>`)
+    // Fluffy clouds
+    out.push(`<ellipse cx="${wx + 72}" cy="${wy + 16}" rx="18" ry="7" fill="#fff" opacity="0.85"/>`)
+    out.push(`<ellipse cx="${wx + 62}" cy="${wy + 17}" rx="11" ry="6" fill="#fff" opacity="0.75"/>`)
+    out.push(`<ellipse cx="${wx + 84}" cy="${wy + 17}" rx="10" ry="5" fill="#fff" opacity="0.8"/>`)
+    // Calm sea (bottom 40%)
+    const seaY = wy + Math.floor(wh * 0.55)
+    out.push(`<rect x="${wx}" y="${seaY}" width="${ww}" height="${wh - Math.floor(wh * 0.55)}" fill="#1e6abf"/>`)
+    out.push(`<rect x="${wx}" y="${seaY}" width="${ww}" height="4" fill="#4488cc" opacity="0.5"/>`)
+    // Sea shimmer lines
+    for (let i = 0; i < 6; i++) {
+      out.push(`<rect x="${wx + 5 + i * 16}" y="${seaY + 8 + i * 3}" width="10" height="1.5" fill="#88ccff" opacity="0.55"/>`)
+    }
+    // Colorful Amalfi cliffside buildings (left stack)
+    const houseData = [
+      {c:'#ff9944',yOff:22,xOff:2,w:16},{c:'#ffcc55',yOff:32,xOff:0,w:14},
+      {c:'#ff6655',yOff:18,xOff:18,w:15},{c:'#ee8844',yOff:28,xOff:16,w:14},
+      {c:'#ffddaa',yOff:15,xOff:34,w:13},
+    ]
+    houseData.forEach(d => {
+      const hx = wx + d.xOff, hy = wy + d.yOff, hh = seaY - hy
+      out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="${hh}" fill="${d.c}"/>`)
+      // Roof
+      out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="5" fill="#b04020" opacity="0.7"/>`)
+      // Windows
+      for (let wy2 = hy + 8; wy2 < seaY - 10; wy2 += 12) {
+        out.push(`<rect x="${hx + 3}" y="${wy2}" width="4" height="5" fill="#1a3a6a" opacity="0.65"/>`)
+        if (d.w > 13) out.push(`<rect x="${hx + 9}" y="${wy2}" width="4" height="5" fill="#1a3a6a" opacity="0.65"/>`)
+      }
+    })
+
+  } else if (scene === 'aurora') {
+    // Deep dark night sky
+    out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#020810"/>`)
+    // Stars
+    const auroraStars: [number,number,number][] = [
+      [wx+5,wy+4,1.5],[wx+18,wy+8,1],[wx+32,wy+3,2],[wx+55,wy+6,1.5],[wx+78,wy+4,1],
+      [wx+12,wy+18,1],[wx+44,wy+14,1.5],[wx+68,wy+20,1],[wx+90,wy+10,2],[wx+25,wy+28,1],
+      [wx+60,wy+25,1.5],[wx+85,wy+30,1],[wx+8,wy+38,1],[wx+35,wy+35,2],[wx+70,wy+42,1],
+      [wx+20,wy+50,1.5],[wx+50,wy+52,1],[wx+88,wy+45,1.5],[wx+15,wy+62,1],[wx+65,wy+55,2],
+      [wx+40,wy+68,1],[wx+80,wy+62,1],[wx+28,wy+72,1.5],[wx+55,wy+75,1],
+    ]
+    auroraStars.forEach(([sx,sy,sr]) => out.push(`<circle cx="${sx}" cy="${sy}" r="${sr}" fill="#ffffff" opacity="0.75"/>`))
+    // Aurora borealis — green wavy ribbons
+    const auroraGreen = ['#00ff80','#00ee60','#20dd70','#10cc60']
+    auroraGreen.forEach((c, i) => {
+      const aY = wy + 10 + i * 10
+      const op = 0.45 - i * 0.06
+      out.push(`<path d="M ${wx} ${aY+4} C ${wx+ww*0.25} ${aY-10} ${wx+ww*0.5} ${aY+8} ${wx+ww} ${aY}" stroke="${c}" stroke-width="${5 - i}" fill="none" opacity="${op.toFixed(2)}"/>`)
+    })
+    // Aurora purple streaks
+    for (let pi = 0; pi < 3; pi++) {
+      const px = wx + 15 + pi * 35
+      out.push(`<path d="M ${px} ${wy+2} Q ${px+6} ${wy+45} ${px-4} ${wy+wh-28}" stroke="#9040ff" stroke-width="2.5" fill="none" opacity="0.22"/>`)
+    }
+    // Snow-covered mountains
+    const mtnBase = wy + Math.floor(wh * 0.6)
+    out.push(`<rect x="${wx}" y="${mtnBase}" width="${ww}" height="${wh - Math.floor(wh * 0.6)}" fill="#080e1a"/>`)
+    const mtns = [{x:wx,w:48,h:58},{x:wx+28,w:55,h:72},{x:wx+68,w:46,h:52}]
+    mtns.forEach(m => {
+      const peak = mtnBase - m.h
+      out.push(`<polygon points="${m.x},${mtnBase} ${m.x+m.w/2},${peak} ${m.x+m.w},${mtnBase}" fill="#0c1828"/>`)
+      // Snow cap
+      const capW = m.w * 0.35
+      out.push(`<polygon points="${m.x+m.w/2-capW/2},${peak+m.h*0.22} ${m.x+m.w/2},${peak} ${m.x+m.w/2+capW/2},${peak+m.h*0.22}" fill="#ddeeff" opacity="0.92"/>`)
+    })
+    // Snow ground
+    out.push(`<rect x="${wx}" y="${wy+wh-10}" width="${ww}" height="10" fill="#c8d8ee" opacity="0.7"/>`)
+    // Pine trees (silhouette)
+    const pineXs = [wx+6, wx+52, wx+88]
+    pineXs.forEach(px => {
+      const pt = mtnBase - 26
+      out.push(`<polygon points="${px},${mtnBase} ${px+10},${mtnBase} ${px+5},${pt}" fill="#0a200a"/>`)
+      out.push(`<polygon points="${px+1},${mtnBase-8} ${px+9},${mtnBase-8} ${px+5},${pt+6}" fill="#122a12"/>`)
+      out.push(`<polygon points="${px+2},${mtnBase-10} ${px+8},${mtnBase-10} ${px+5},${pt+8}" fill="#c8dde8" opacity="0.65"/>`)
+    })
+
+  } else {
+    // Night city (original)
+    out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#06080e"/>`)
+    const stars: [number,number][] = [
+      [wx+8,wy+6],[wx+20,wy+4],[wx+44,wy+10],[wx+66,wy+3],[wx+86,wy+8],
+      [wx+16,wy+20],[wx+52,wy+16],[wx+78,wy+22],[wx+8,wy+32],[wx+38,wy+28],
+      [wx+68,wy+30],[wx+90,wy+18],[wx+28,wy+42],[wx+58,wy+38],[wx+84,wy+40],
+      [wx+5,wy+50],[wx+45,wy+55],[wx+72,wy+48],[wx+100,wy+35],[wx+15,wy+62],
+    ]
+    stars.forEach(([sx,sy]) => out.push(`<rect x="${sx}" y="${sy}" width="2" height="2" fill="#ffe8a0" opacity="0.65"/>`))
+    const moonX = wx + 72, moonY = wy + 50
+    out.push(`<circle cx="${moonX}" cy="${moonY}" r="15" fill="#ffd060" opacity="0.9"/>`)
+    out.push(`<circle cx="${moonX+7}" cy="${moonY-4}" r="11" fill="#06080e"/>`)
+    const cityY = wy + Math.floor(wh * 0.62)
+    out.push(`<rect x="${wx}" y="${cityY}" width="${ww}" height="${wh - Math.floor(wh * 0.62)}" fill="#080a14"/>`)
+    const blds: {x:number,w:number,h:number}[] = [
+      {x:wx+2,w:10,h:38},{x:wx+14,w:7,h:52},{x:wx+23,w:12,h:44},
+      {x:wx+37,w:9,h:58},{x:wx+48,w:7,h:32},{x:wx+57,w:11,h:47},
+      {x:wx+70,w:9,h:40},{x:wx+81,w:8,h:35},{x:wx+91,w:15,h:42},
+    ]
+    blds.forEach(b => {
+      const top = cityY - b.h + (wh - Math.floor(wh * 0.62))
+      out.push(`<rect x="${b.x}" y="${top}" width="${b.w}" height="${b.h}" fill="#0e1022"/>`)
+      for (let wy2 = top + 4; wy2 < cityY + 2; wy2 += 7) {
+        for (let wx2 = b.x + 1; wx2 < b.x + b.w - 1; wx2 += 4) {
+          if ((wx2 + wy2) % 13 < 7) out.push(`<rect x="${wx2}" y="${wy2}" width="2" height="3" fill="#ffe880" opacity="0.55"/>`)
+        }
+      }
+    })
+  }
+
+  return out.join('\n')
+}
+
 // ── Room builder ──────────────────────────────────────────────────────────────
 
-function buildRoom(w: number, h: number, accent: string): string {
+function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'night'): string {
   const floorY = h - 40
   const out: string[] = []
 
-  // ── Dark night wall ──
-  out.push(`<rect width="${w}" height="${floorY}" fill="#1a1228"/>`)
+  // ── Wall color per scene ──
+  const wallColor   = scene === 'dubai'  ? '#f5e8c8'
+                    : scene === 'italy'  ? '#f2e0c4'
+                    : scene === 'aurora' ? '#0a0e18'
+                    : '#1a1228'
+  const wallLine    = scene === 'dubai'  ? '#e8d8a8'
+                    : scene === 'italy'  ? '#e8d0b0'
+                    : scene === 'aurora' ? '#0e1420'
+                    : '#221840'
+  const floorColor  = scene === 'dubai'  ? '#d0bc88'
+                    : scene === 'italy'  ? '#b85030'
+                    : scene === 'aurora' ? '#1a0e08'
+                    : '#2a1a08'
+  const floorLine   = scene === 'dubai'  ? '#bca870'
+                    : scene === 'italy'  ? '#a04028'
+                    : scene === 'aurora' ? '#2a1810'
+                    : '#3a2810'
+  const floorEdge   = scene === 'dubai'  ? '#c8b078'
+                    : scene === 'italy'  ? '#c05840'
+                    : scene === 'aurora' ? '#1e1208'
+                    : '#3a2010'
+
+  out.push(`<rect width="${w}" height="${floorY}" fill="${wallColor}"/>`)
   for (let y = 0; y < floorY; y += 14) {
-    out.push(`<rect x="0" y="${y}" width="${w}" height="1" fill="#221840" opacity="0.35"/>`)
+    out.push(`<rect x="0" y="${y}" width="${w}" height="1" fill="${wallLine}" opacity="0.35"/>`)
   }
 
-  // ── Dark wood floor ──
-  out.push(`<rect y="${floorY}" width="${w}" height="${h - floorY}" fill="#2a1a08"/>`)
+  // ── Floor ──
+  out.push(`<rect y="${floorY}" width="${w}" height="${h - floorY}" fill="${floorColor}"/>`)
   for (let x = 0; x < w; x += 80) {
-    out.push(`<line x1="${x}" y1="${floorY}" x2="${x + 20}" y2="${h}" stroke="#3a2810" stroke-width="1" opacity="0.5"/>`)
+    out.push(`<line x1="${x}" y1="${floorY}" x2="${x + 20}" y2="${h}" stroke="${floorLine}" stroke-width="1" opacity="0.5"/>`)
   }
-  out.push(`<rect y="${floorY}" width="${w}" height="3" fill="#3a2010" opacity="0.8"/>`)
+  out.push(`<rect y="${floorY}" width="${w}" height="3" fill="${floorEdge}" opacity="0.8"/>`)
 
   // ── Bed (left side) ──
   const bedTop = floorY - 50
@@ -193,48 +372,18 @@ function buildRoom(w: number, h: number, accent: string): string {
 
   // ── Window (center-left, above bookshelf area) ──
   const wx = 195, wy = 8, ww = 108, wh = floorY - 16
+  const frameColor = scene === 'aurora' ? '#1a1008' : '#3a2010'
+  const frameInner = scene === 'aurora' ? '#100c04' : '#2a1408'
   // Frame
-  out.push(`<rect x="${wx - 5}" y="${wy - 5}" width="${ww + 10}" height="${wh + 10}" fill="#3a2010"/>`)
-  out.push(`<rect x="${wx - 3}" y="${wy - 3}" width="${ww + 6}" height="${wh + 6}" fill="#2a1408"/>`)
-  // Night sky
-  out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#06080e"/>`)
-  // Stars
-  const stars: [number, number][] = [
-    [wx+8,wy+6],[wx+20,wy+4],[wx+44,wy+10],[wx+66,wy+3],[wx+86,wy+8],
-    [wx+16,wy+20],[wx+52,wy+16],[wx+78,wy+22],[wx+8,wy+32],[wx+38,wy+28],
-    [wx+68,wy+30],[wx+90,wy+18],[wx+28,wy+42],[wx+58,wy+38],[wx+84,wy+40],
-    [wx+5,wy+50],[wx+45,wy+55],[wx+72,wy+48],[wx+100,wy+35],[wx+15,wy+62],
-  ]
-  stars.forEach(([sx, sy]) => {
-    out.push(`<rect x="${sx}" y="${sy}" width="2" height="2" fill="#ffe8a0" opacity="0.65"/>`)
-  })
-  // Moon (crescent)
-  const moonX = wx + 72, moonY = wy + 50
-  out.push(`<circle cx="${moonX}" cy="${moonY}" r="15" fill="#ffd060" opacity="0.9"/>`)
-  out.push(`<circle cx="${moonX + 7}" cy="${moonY - 4}" r="11" fill="#06080e"/>`)
-  // City skyline silhouette (bottom third)
-  const cityY = wy + Math.floor(wh * 0.62)
-  out.push(`<rect x="${wx}" y="${cityY}" width="${ww}" height="${wh - Math.floor(wh * 0.62)}" fill="#080a14"/>`)
-  const blds: {x:number,w:number,h:number}[] = [
-    {x:wx+2,w:10,h:38},{x:wx+14,w:7,h:52},{x:wx+23,w:12,h:44},
-    {x:wx+37,w:9,h:58},{x:wx+48,w:7,h:32},{x:wx+57,w:11,h:47},
-    {x:wx+70,w:9,h:40},{x:wx+81,w:8,h:35},{x:wx+91,w:15,h:42},
-  ]
-  blds.forEach(b => {
-    const top = cityY - b.h + (wh - Math.floor(wh * 0.62))
-    out.push(`<rect x="${b.x}" y="${top}" width="${b.w}" height="${b.h}" fill="#0e1022"/>`)
-    for (let wy2 = top + 4; wy2 < cityY + 2; wy2 += 7) {
-      for (let wx2 = b.x + 1; wx2 < b.x + b.w - 1; wx2 += 4) {
-        const lit = (wx2 + wy2) % 13 < 7
-        if (lit) out.push(`<rect x="${wx2}" y="${wy2}" width="2" height="3" fill="#ffe880" opacity="0.55"/>`)
-      }
-    }
-  })
+  out.push(`<rect x="${wx - 5}" y="${wy - 5}" width="${ww + 10}" height="${wh + 10}" fill="${frameColor}"/>`)
+  out.push(`<rect x="${wx - 3}" y="${wy - 3}" width="${ww + 6}" height="${wh + 6}" fill="${frameInner}"/>`)
+  // Scene content
+  out.push(buildWindowScene(wx, wy, ww, wh, scene))
   // Window sill
-  out.push(`<rect x="${wx - 6}" y="${wy + wh - 2}" width="${ww + 12}" height="8" fill="#3a2010"/>`)
+  out.push(`<rect x="${wx - 6}" y="${wy + wh - 2}" width="${ww + 12}" height="8" fill="${frameColor}"/>`)
   // Window cross dividers
-  out.push(`<rect x="${wx + Math.floor(ww / 2) - 2}" y="${wy}" width="4" height="${wh}" fill="#2a1408"/>`)
-  out.push(`<rect x="${wx}" y="${wy + Math.floor(wh / 2) - 2}" width="${ww}" height="4" fill="#2a1408"/>`)
+  out.push(`<rect x="${wx + Math.floor(ww / 2) - 2}" y="${wy}" width="4" height="${wh}" fill="${frameInner}"/>`)
+  out.push(`<rect x="${wx}" y="${wy + Math.floor(wh / 2) - 2}" width="${ww}" height="4" fill="${frameInner}"/>`)
 
   // ── Bookshelf (center-right of window) ──
   const bx = 325, by = 18, bw = 78, bh = floorY - 18
@@ -307,19 +456,61 @@ function buildRoom(w: number, h: number, accent: string): string {
   out.push(`<rect x="${monX}" y="${monY}" width="${monW}" height="${monH}" fill="none" stroke="${accent}" stroke-width="1.5" rx="6" opacity="0.55"/>`)
   // Screen
   const mscx = monX + 7, mscy = monY + 6, mscw = monW - 14, msch = monH - 18
-  out.push(`<rect x="${mscx}" y="${mscy}" width="${mscw}" height="${msch}" fill="#04060c" rx="3"/>`)
-  out.push(`<rect x="${mscx}" y="${mscy}" width="${mscw}" height="${msch}" fill="${accent}" opacity="0.04" rx="3"/>`)
-  // Code lines
-  const codeLines = [
-    {i:0, w:52, c:'#ff7040'},{i:10,w:76,c:'#ffd060'},{i:10,w:46,c:'#60c8ff'},
-    {i:10,w:84,c:'#ffd060'},{i:10,w:60,c:'#ff7040'},{i:20,w:50,c:'#c0e8ff'},
-    {i:20,w:72,c:'#ffd060'},{i:20,w:42,c:'#80ff80'},{i:10,w:34,c:'#80ff80'},{i:0,w:14,c:'#ff7040'},
-  ]
-  codeLines.forEach((l, idx) => {
-    out.push(`<rect x="${mscx + 6 + l.i}" y="${mscy + 5 + idx * 7}" width="${l.w}" height="3.5" fill="${l.c}" opacity="0.85" rx="1"/>`)
-  })
+  out.push(`<rect x="${mscx}" y="${mscy}" width="${mscw}" height="${msch}" fill="#0d1117" rx="3"/>`)
+  // Editor tab bar
+  out.push(`<rect x="${mscx}" y="${mscy}" width="${mscw}" height="11" fill="#161b22" rx="3"/>`)
+  out.push(`<rect x="${mscx}" y="${mscy + 8}" width="${mscw}" height="3" fill="#161b22"/>`)
+  out.push(`<rect x="${mscx}" y="${mscy + 11}" width="${mscw}" height="1" fill="#30363d"/>`)
+  // Active tab (index.ts)
+  out.push(`<rect x="${mscx + 2}" y="${mscy + 1}" width="42" height="10" fill="#0d1117" rx="1"/>`)
+  out.push(`<rect x="${mscx + 2}" y="${mscy + 11}" width="42" height="1" fill="${accent}" opacity="0.9"/>`)
+  out.push(`<rect x="${mscx + 5}" y="${mscy + 3}" width="5" height="5" fill="#4ec9b0" rx="1" opacity="0.85"/>`)
+  out.push(`<rect x="${mscx + 12}" y="${mscy + 4}" width="28" height="3" fill="#8b949e" rx="1"/>`)
+  // Line number gutter
+  const gutW = 16
+  out.push(`<rect x="${mscx}" y="${mscy + 12}" width="${gutW}" height="${msch - 12}" fill="#0d1117"/>`)
+  out.push(`<rect x="${mscx + gutW}" y="${mscy + 12}" width="1" fill="#21262d" height="${msch - 12}"/>`)
+  for (let ln = 0; ln < 9; ln++) {
+    out.push(`<rect x="${mscx + 4}" y="${mscy + 15 + ln * 7}" width="8" height="3" fill="#484f58" rx="1" opacity="0.7"/>`)
+  }
+  // Code area background
+  const cx = mscx + gutW + 4, cy = mscy + 13
+  // Syntax-highlighted code lines (VS Code Dark+ style)
+  // kw=blue, str=orange, fn=yellow, typ=teal, cmt=green, dim=gray
+  const kwC = '#569cd6', str_ = '#ce9178', fn_ = '#dcdcaa'
+  const typC = '#4ec9b0', cmt = '#6a9955', dim = '#8b949e'
+  // Line 1: import { useState } from 'react'
+  out.push(`<rect x="${cx}" y="${cy}" width="22" height="3" fill="${kwC}" rx="1"/>`)
+  out.push(`<rect x="${cx+24}" y="${cy}" width="28" height="3" fill="${fn_}" rx="1"/>`)
+  out.push(`<rect x="${cx+54}" y="${cy}" width="14" height="3" fill="${kwC}" rx="1"/>`)
+  out.push(`<rect x="${cx+70}" y="${cy}" width="20" height="3" fill="${str_}" rx="1"/>`)
+  // Line 2: comment
+  out.push(`<rect x="${cx}" y="${cy+7}" width="60" height="3" fill="${cmt}" rx="1" opacity="0.8"/>`)
+  // Line 3: const App = () => {
+  out.push(`<rect x="${cx}" y="${cy+14}" width="18" height="3" fill="${kwC}" rx="1"/>`)
+  out.push(`<rect x="${cx+20}" y="${cy+14}" width="16" height="3" fill="${fn_}" rx="1"/>`)
+  out.push(`<rect x="${cx+38}" y="${cy+14}" width="10" height="3" fill="${dim}" rx="1"/>`)
+  out.push(`<rect x="${cx+50}" y="${cy+14}" width="14" height="3" fill="${kwC}" rx="1"/>`)
+  // Line 4:   const [data] = useState(null)
+  out.push(`<rect x="${cx+8}" y="${cy+21}" width="18" height="3" fill="${kwC}" rx="1"/>`)
+  out.push(`<rect x="${cx+28}" y="${cy+21}" width="22" height="3" fill="${dim}" rx="1"/>`)
+  out.push(`<rect x="${cx+52}" y="${cy+21}" width="26" height="3" fill="${fn_}" rx="1"/>`)
+  // Line 5:   return (
+  out.push(`<rect x="${cx+8}" y="${cy+28}" width="20" height="3" fill="${kwC}" rx="1"/>`)
+  out.push(`<rect x="${cx+30}" y="${cy+28}" width="6" height="3" fill="${dim}" rx="1"/>`)
+  // Line 6:     <Component
+  out.push(`<rect x="${cx+16}" y="${cy+35}" width="6" height="3" fill="${dim}" rx="1"/>`)
+  out.push(`<rect x="${cx+24}" y="${cy+35}" width="32" height="3" fill="${typC}" rx="1"/>`)
+  // Line 7:       prop={value}
+  out.push(`<rect x="${cx+24}" y="${cy+42}" width="14" height="3" fill="${fn_}" rx="1"/>`)
+  out.push(`<rect x="${cx+40}" y="${cy+42}" width="4" height="3" fill="${dim}" rx="1"/>`)
+  out.push(`<rect x="${cx+46}" y="${cy+42}" width="16" height="3" fill="${str_}" rx="1"/>`)
+  // Line 8:     />
+  out.push(`<rect x="${cx+16}" y="${cy+49}" width="8" height="3" fill="${dim}" rx="1"/>`)
+  // Line 9: cursor line
+  out.push(`<rect x="${cx}" y="${cy+56}" width="30" height="3" fill="${kwC}" rx="1" opacity="0.4"/>`)
   // Cursor blink
-  out.push(`<rect x="${mscx + 6}" y="${mscy + 5 + codeLines.length * 7}" width="5" height="6" fill="${accent}" opacity="0.9">
+  out.push(`<rect x="${cx+32}" y="${cy+55}" width="4" height="5" fill="${accent}" opacity="0.9">
   <animate attributeName="opacity" values="0.9;0;0.9" keyTimes="0;0.5;1" dur="0.9s" repeatCount="indefinite"/>
 </rect>`)
   // LED
@@ -430,7 +621,7 @@ function buildCSS(
 
 // ── Main export ────────────────────────────────────────────────────────────────
 
-export function buildCatRoomContent(w: number, h: number, accent: string): string {
+export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'night'): string {
   const floorY  = h - 40
   const catH    = WA.length * PX    // 14 × 5 = 70
   const sitH    = SI.length * PX    // 13 × 5 = 65
@@ -456,7 +647,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string): strin
   const t5 = 33 / DUR * 100   // TV ends, sleep starts
 
   const css  = buildCSS(DUR, t1, t2, t3, t4, t5, walkStartX, walkEndX)
-  const room = buildRoom(w, h, accent)
+  const room = buildRoom(w, h, accent, scene)
 
   // TV screen coordinates (matching buildRoom)
   const tvScx = TV_X + 5, tvScy = TV_Y + 5, tvScw = TV_W - 10, tvSch = TV_H - 12

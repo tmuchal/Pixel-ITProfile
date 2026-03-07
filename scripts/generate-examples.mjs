@@ -26,17 +26,15 @@ const { buildCatRoomContent, themes, generateProfileCard } = mod
 
 // ── Cat-room only examples ──────────────────────────────────────────────────
 const CAT_EXAMPLES = [
-  { file: 'cat-matrix.svg',     theme: 'matrix' },
-  { file: 'cat-cyberpunk.svg',  theme: 'cyberpunk' },
-  { file: 'cat-synthwave.svg',  theme: 'synthwave' },
-  { file: 'cat-tokyonight.svg', theme: 'tokyonight' },
+  { file: 'cat-dubai.svg',    scene: 'dubai',  accent: '#d4a020' },
+  { file: 'cat-italy.svg',    scene: 'italy',  accent: '#2277cc' },
+  { file: 'cat-aurora.svg',   scene: 'aurora', accent: '#40ff80' },
 ]
 
 for (const ex of CAT_EXAMPLES) {
-  const t = themes[ex.theme]
   const w = 800, h = 200
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
-${buildCatRoomContent(w, h, t.accent)}
+${buildCatRoomContent(w, h, ex.accent, ex.scene)}
 </svg>`
   writeFileSync(path.join(root, 'examples', ex.file), svg, 'utf8')
   console.log(`✅ ${ex.file}`)
@@ -44,6 +42,16 @@ ${buildCatRoomContent(w, h, t.accent)}
 
 // ── Full profile card examples ───────────────────────────────────────────────
 const PROFILE_EXAMPLES = [
+  {
+    file: 'tmuchal-cyberpunk.svg',
+    options: {
+      name: 'UCHAL',
+      role: 'PM · AI & Blockchain',
+      domains: 'AI,Enterprise,Agent,Voice,Blockchain',
+      bio: '관련없어보이는것들을연결하는사람',
+      theme: 'cyberpunk',
+    },
+  },
   {
     file: 'pm-cyberpunk.svg',
     options: {
