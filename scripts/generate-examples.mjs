@@ -26,9 +26,11 @@ const { buildCatRoomContent, themes, generateProfileCard } = mod
 
 // ── Cat-room only examples ──────────────────────────────────────────────────
 const CAT_EXAMPLES = [
-  { file: 'cat-dubai.svg',    scene: 'dubai',  accent: '#d4a020' },
-  { file: 'cat-italy.svg',    scene: 'italy',  accent: '#2277cc' },
-  { file: 'cat-aurora.svg',   scene: 'aurora', accent: '#40ff80' },
+  { file: 'cat-dubai.svg',           scene: 'dubai',  accent: '#d4a020' },
+  { file: 'cat-italy.svg',           scene: 'italy',  accent: '#2277cc' },
+  { file: 'cat-paris.svg',           scene: 'paris',  accent: '#cc4477' },
+  { file: 'tmuchal-cat-cyberpunk.svg', scene: 'dubai', accent: '#ff2d78' },
+  { file: 'tmuchal-cat-matrix.svg',   scene: 'paris', accent: '#00ff41' },
 ]
 
 for (const ex of CAT_EXAMPLES) {
@@ -50,6 +52,16 @@ const PROFILE_EXAMPLES = [
       domains: 'AI,Enterprise,Agent,Voice,Blockchain',
       bio: '관련없어보이는것들을연결하는사람',
       theme: 'cyberpunk',
+    },
+  },
+  {
+    file: 'tmuchal-matrix.svg',
+    options: {
+      name: 'UCHAL',
+      role: 'PM · AI & Blockchain',
+      domains: 'AI,Enterprise,Agent,Voice,Blockchain',
+      bio: '관련없어보이는것들을연결하는사람',
+      theme: 'matrix',
     },
   },
   {
