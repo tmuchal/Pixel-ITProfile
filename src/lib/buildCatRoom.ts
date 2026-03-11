@@ -33,84 +33,88 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
-// ── Gray Pusheen-style cat ────────────────────────────────────────────────────
+// ── White lying cat (pixel art) ──────────────────────────────
 
 const C: Record<string, string> = {
-  K: '#333333',  // dark gray outline
-  O: '#aaaaaa',  // gray fur
-  o: '#777777',  // dark stripe / shadow
-  W: '#f5f5f5',  // white belly / muzzle
-  e: '#333333',  // eyes
-  N: '#ffaaaa',  // pink nose
-  T: '#999999',  // gray tail
+  K: '#000000',
+  W: '#FFFFFF',
+  B: '#9AC4E0',
+  P: '#FF8CA1',
+  e: '#000000',
+  n: '#000000',
+  p: '#FFAAAA',
+  T: '#9AC4E0',
 }
 
-// Walking frame A — right foot forward (10×14)
-const WA = [
-  '..OK..KO..',  // ears
-  '.OoK..KoO.',  // ear base + dark inner
-  'KOOOOOOOOK',  // top of head
-  'KOoOOOOoOK', // stripe 1
-  'KOOoOOoOOK', // stripe 2
-  'KOeOOOOeOK', // eyes (single pixel, Pusheen style)
-  'KOOoWNWoOK', // muzzle + nose
-  'KOOOOOOOOK',  // lower face / chin
-  'KOoWWWWoOK', // upper body / belly
-  'KOoWWWWoOK', // belly
-  'KOoWWWWoOK', // lower belly
-  '.KOOOOOOK.',  // body bottom (rounded)
-  '.KOK..KOK.',  // legs — frame A (right foot forward)
-  '..KK...KK.',  // feet — frame A
-]
-
-// Walking frame B — left foot forward (10×14)
-const WB = [
-  '..OK..KO..',
-  '.OoK..KoO.',
-  'KOOOOOOOOK',
-  'KOoOOOOoOK',
-  'KOOoOOoOOK',
-  'KOeOOOOeOK',
-  'KOOoWNWoOK',
-  'KOOOOOOOOK',
-  'KOoWWWWoOK',
-  'KOoWWWWoOK',
-  'KOoWWWWoOK',
-  '.KOOOOOOK.',
-  '..KOK.KOK.',  // legs — frame B (left foot forward)
-  '...KK..KK.',  // feet — frame B
-]
-
-// Sitting (10×13) — at desk
-const SI = [
-  '..OK..KO..',
-  '.OoK..KoO.',
-  'KOOOOOOOOK',
-  'KOoOOOOoOK',
-  'KOOoOOoOOK',
-  'KOeOOOOeOK',
-  'KOOoWNWoOK',
-  'KOOOOOOOOK',
-  'KOoWWWWoOK',
-  'KOoWWWWoOK',
-  '.KOOOOOOK.',
-  '.KOK.KOK..',  // front paws sitting
-  '.KoooooKT.',  // tail (wiggles separately)
-]
-
-// Sleeping (10×8) — lying flat, closed eyes
+// 자는 포즈 SL — 원본 이미지와 정확히 동일한 누워있는 고양이 (16×11)
 const SL = [
-  '..KOOOOOK.',  // head (side view)
-  '.KOOOOOOOK',
-  '.KO--O--OK',  // closed eyes
-  '.KOOOOOOOK',
-  '.KOOoWNOOK',  // muzzle + nose
-  'KOOOOOOOOK',  // body
-  'KOoWWWWoOK',  // belly
-  '.KoooooKT.',  // tail
+  '....KK....KK....',
+  '...KWWK..KWWK...',
+  '..KWWWWKKWWWWK..',
+  '.KWWWWWWWWWWWWK.',
+  '.KWWeWWWWWeWWWK.',
+  '.KWWWnWnnWWWWWK.',
+  'KBWWWWWWWWWWWWWK',
+  'KBWPKWWWWWWWWWWK',
+  '.KBPKWWWWWWKPWK.',
+  '..KKBBBBBBBKKPK.',
+  '....KKKKKKKK.KK.',
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#555555' }  // eyelid line
+// 걷기 A — 오른발 앞 (12×14)
+const WA = [
+  '....KK..KK....',
+  '...KWWKKWWK...',
+  '..KWWWWWWWWK..',
+  '.KWWWWWWWWWWK.',
+  '.KWWeWWWWeWWK.',
+  '.KWWWWnWWWWWK.',
+  '.KWWWWWWWWWWK.',
+  '.KBWWWWWWWWBK.',
+  '.KBWWWWWWWWBK.',
+  '.KBWWWWWWWWBK.',
+  '..KWWWWWWWWK..',
+  '..KWK....KWK..',
+  '..KPK....KPK..',
+  '...KK.....KK..',
+]
+
+// 걷기 B — 왼발 앞 (12×14)
+const WB = [
+  '....KK..KK....',
+  '...KWWKKWWK...',
+  '..KWWWWWWWWK..',
+  '.KWWWWWWWWWWK.',
+  '.KWWeWWWWeWWK.',
+  '.KWWWWnWWWWWK.',
+  '.KWWWWWWWWWWK.',
+  '.KBWWWWWWWWBK.',
+  '.KBWWWWWWWWBK.',
+  '.KBWWWWWWWWBK.',
+  '..KWWWWWWWWK..',
+  '...KWK..KWK...',
+  '...KPK..KPK...',
+  '....KK...KK...',
+]
+
+// 앉기 SI (12×13)
+const SI = [
+  '....KK..KK....',
+  '...KWWKKWWK...',
+  '..KWWWWWWWWK..',
+  '.KWWWWWWWWWWK.',
+  '.KWWeWWWWeWWK.',
+  '.KWWWWnWWWWWK.',
+  '.KWWWWWWWWWWK.',
+  '.KBWWWWWWWWBK.',
+  '.KBWWWWWWWWBK.',
+  '..KWWWWWWWWK..',
+  '..KWPK..KWPK..',
+  '..KBBBBBBBBBK.',
+  '...KKKKKKKKKKT.',
+]
+
+const CS: Record<string, string> = { ...C, '-': '#666666' }
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
