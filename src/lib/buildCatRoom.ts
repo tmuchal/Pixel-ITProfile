@@ -37,28 +37,28 @@ function mirror(rows: string[]): string[] {
 
 const C: Record<string, string> = {
   K: '#000000',
+  O: '#FFFFFF',
+  o: '#9AC4E0',
   W: '#FFFFFF',
+  e: '#000000',
+  N: '#FF8CA1',
+  T: '#9AC4E0',
+  n: '#000000',
+  // WA/WB/SI 호환용 alias
   B: '#9AC4E0',
   P: '#FF8CA1',
-  e: '#000000',
-  n: '#000000',
-  p: '#FFAAAA',
-  T: '#9AC4E0',
 }
 
-// 자는 포즈 SL — 원본 이미지와 정확히 동일한 누워있는 고양이 (16×11)
+// 자는 포즈 SL — 흰색 고양이 (10×8)
 const SL = [
-  '....KK....KK....',
-  '...KWWK..KWWK...',
-  '..KWWWWKKWWWWK..',
-  '.KWWWWWWWWWWWWK.',
-  '.KWWeWWWWWeWWWK.',
-  '.KWWWnWnnWWWWWK.',
-  'KBWWWWWWWWWWWWWK',
-  'KBWPKWWWWWWWWWWK',
-  '.KBPKWWWWWWKPWK.',
-  '..KKBBBBBBBKKPK.',
-  '....KKKKKKKK.KK.',
+  '..KOOOOOK.',
+  '.KOOOOOOOK',
+  '.KO--O--OK',
+  '.KOOOnnnOK',
+  '.KOOoWNOOK',
+  'KOOOOOOOOK',
+  'KOoWWWWoOK',
+  '.KoNoooKN.',
 ]
 
 // 걷기 A — 오른발 앞 (12×14)
