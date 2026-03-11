@@ -37,15 +37,15 @@ function mirror(rows: string[]): string[] {
 
 const C: Record<string, string> = {
   K: '#000000',
-  O: '#FFFFFF',
-  o: '#9AC4E0',
-  W: '#FFFFFF',
+  O: '#F09030',  // 주황색 몸통
+  o: '#C86020',  // 어두운 주황 그림자
+  W: '#F5A050',  // 밝은 주황/크림
   e: '#000000',
   N: '#FF8CA1',
-  T: '#9AC4E0',
+  T: '#C86020',  // 꼬리 그림자
   n: '#000000',
   // WA/WB/SI 호환용 alias
-  B: '#9AC4E0',
+  B: '#C86020',  // 몸통 그림자
   P: '#FF8CA1',
 }
 
@@ -114,7 +114,7 @@ const SI = [
   '...KKKKKKKKKKT.',
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#666666' }
+const CS: Record<string, string> = { ...C, '-': '#666666', O: '#F09030', W: '#F5A050', o: '#C86020', B: '#C86020', T: '#C86020' }
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
@@ -595,19 +595,19 @@ function buildCSS(dur: number, t1: number, t2: number, t3: number, t4: number, t
 .sl{animation:sl-v ${dur}s step-end infinite}
 @keyframes sl-v{0%{opacity:1}${e(t1)}%{opacity:1}${e(t1+0.01)}%{opacity:0}${e(t5)}%{opacity:0}${e(t5+0.01)}%{opacity:1}100%{opacity:1}}
 
-/* Walk right: t1→t2 (position animates sleepX → deskX) */
-.wk-r{animation:wkr-v ${dur}s step-end infinite,wkr-x ${dur}s linear infinite}
+/* Walk right: t1→t2 (position animates sleepX → deskX, ease-in-out for natural pacing) */
+.wk-r{animation:wkr-v ${dur}s step-end infinite,wkr-x ${dur}s ease-in-out infinite}
 @keyframes wkr-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}
 @keyframes wkr-x{0%{transform:translateX(0)}${e(t1)}%{transform:translateX(0)}${e(t2)}%{transform:translateX(${travel}px)}100%{transform:translateX(${travel}px)}}
 
-/* Walk left: t4→t5 (position animates deskX → sleepX) */
-.wk-l{animation:wkl-v ${dur}s step-end infinite,wkl-x ${dur}s linear infinite}
+/* Walk left: t4→t5 (position animates deskX → sleepX, ease-in-out) */
+.wk-l{animation:wkl-v ${dur}s step-end infinite,wkl-x ${dur}s ease-in-out infinite}
 @keyframes wkl-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
 @keyframes wkl-x{0%{transform:translateX(${travel}px)}${e(t4)}%{transform:translateX(${travel}px)}${e(t5)}%{transform:translateX(0)}100%{transform:translateX(0)}}
 
-/* Walk frame toggle (A and B alternate at 0.4s) */
-.wf-a{animation:wftog 0.4s step-end infinite}
-.wf-b{animation:wftog 0.4s step-end 0.2s infinite}
+/* Walk frame toggle (A and B alternate at 0.35s - slightly snappier) */
+.wf-a{animation:wftog 0.35s step-end infinite}
+.wf-b{animation:wftog 0.35s step-end 0.175s infinite}
 @keyframes wftog{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
 /* At desk (coding): t2→t3 */
@@ -621,15 +621,15 @@ function buildCSS(dur: number, t1: number, t2: number, t3: number, t4: number, t
 @keyframes cf-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
 @keyframes cf-y{${e(t3)}%{transform:translateY(0)}${mid(t3,t4)}%{transform:translateY(-10px) rotate(-15deg)}${e(t4)}%{transform:translateY(0)}}
 
-/* Tail wag */
-.tw{animation:tw 1.1s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%}
-@keyframes tw{from{transform:rotate(-18deg)}to{transform:rotate(12deg)}}
+/* Tail wag - more natural: slow swing with slight pause at each end */
+.tw{animation:tw 1.6s cubic-bezier(0.45,0.05,0.55,0.95) infinite alternate;transform-box:fill-box;transform-origin:0 50%}
+@keyframes tw{0%{transform:rotate(-20deg)}40%{transform:rotate(-20deg)}60%{transform:rotate(14deg)}100%{transform:rotate(14deg)}}
 
-/* Zzz bubbles */
-.z1{animation:zf 3.5s ease-out infinite}
-.z2{animation:zf 3.5s ease-out 1.1s infinite}
-.z3{animation:zf 3.5s ease-out 2.2s infinite}
-@keyframes zf{0%{transform:translate(0,0);opacity:0}15%{opacity:.9}100%{transform:translate(8px,-24px);opacity:0}}
+/* Zzz bubbles - slightly slower for cozier feel */
+.z1{animation:zf 4s ease-out infinite}
+.z2{animation:zf 4s ease-out 1.3s infinite}
+.z3{animation:zf 4s ease-out 2.6s infinite}
+@keyframes zf{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}85%{opacity:.5}100%{transform:translate(10px,-28px);opacity:0}}
 
 /* Keyboard impact sparks */
 .ht{animation:htf 1.4s ease-out infinite}
@@ -662,13 +662,13 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const deskX   = w - 262     // at desk (right side, near keyboard)
   const travel  = deskX - sleepX  // walk distance in px
 
-  // Animation timeline (44s: sleep→walk_r→code→coffee→walk_l→sleep)
-  const DUR = 44
-  const t1 = 5  / DUR * 100  // sleep 끝 / walk right 시작
-  const t2 = 8  / DUR * 100  // walk right 끝 / 코딩 시작
-  const t3 = 21 / DUR * 100  // 코딩 끝 / 커피 시작
-  const t4 = 26 / DUR * 100  // 커피 끝 / walk left 시작
-  const t5 = 29 / DUR * 100  // walk left 끝 / sleep 시작
+  // Animation timeline (52s: sleep→walk_r→code→coffee→walk_l→sleep)
+  const DUR = 52
+  const t1 = 8  / DUR * 100  // sleep 끝 / walk right 시작 (더 오래 자기)
+  const t2 = 13 / DUR * 100  // walk right 끝 / 코딩 시작 (여유 있는 걷기)
+  const t3 = 28 / DUR * 100  // 코딩 끝 / 커피 시작
+  const t4 = 35 / DUR * 100  // 커피 끝 / walk left 시작 (커피 더 천천히)
+  const t5 = 40 / DUR * 100  // walk left 끝 / sleep 시작
 
   const css  = buildCSS(DUR, t1, t2, t3, t4, t5, travel)
   const room = buildRoom(w, h, accent, scene)
