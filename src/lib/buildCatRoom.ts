@@ -1,7 +1,7 @@
 /**
  * Pixel art cat room
  *
- * Orange Pusheen-style cat (44s loop):
+ * Gray Pusheen-style cat (44s loop):
  *   sleep → walk right to desk → code → drink coffee → walk left → sleep
  *
  * Room layout: [Bed + TV] [Window] [Bookshelf] [Desk + Monitor]
@@ -33,16 +33,16 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
-// ── Orange Pusheen-style cat ───────────────────────────────────────────────────
+// ── Gray Pusheen-style cat ────────────────────────────────────────────────────
 
 const C: Record<string, string> = {
-  K: '#1a0800',  // dark brown outline
-  O: '#ff9944',  // orange fur
-  o: '#cc5500',  // dark stripe / shadow
-  W: '#fff0d0',  // cream belly / muzzle
-  e: '#1a0800',  // eyes
-  N: '#ff8899',  // nose
-  T: '#ee8833',  // tail
+  K: '#333333',  // dark gray outline
+  O: '#aaaaaa',  // gray fur
+  o: '#777777',  // dark stripe / shadow
+  W: '#f5f5f5',  // white belly / muzzle
+  e: '#333333',  // eyes
+  N: '#ffaaaa',  // pink nose
+  T: '#999999',  // gray tail
 }
 
 // Walking frame A — right foot forward (10×14)
@@ -110,7 +110,7 @@ const SL = [
   '.KoooooKT.',  // tail
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#664400' }  // eyelid line
+const CS: Record<string, string> = { ...C, '-': '#555555' }  // eyelid line
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
