@@ -649,12 +649,12 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const deskX   = w - 262     // at desk (right side, near keyboard)
   const windowX = 148         // near window (center-left, facing right)
 
-  // Animation timeline (70s: 잠자기→코딩→커피→창문→잠자기)
-  const DUR = 70
-  const t1 = 15 / DUR * 100  // 잠자기 끝 / 코딩 시작
-  const t2 = 35 / DUR * 100  // 코딩 끝 / 커피 시작
-  const t3 = 45 / DUR * 100  // 커피 끝 / 창문 시작
-  const t4 = 60 / DUR * 100  // 창문 끝 / 잠자기 시작
+  // Animation timeline (28s: 잠자기→코딩→커피→잠자기)
+  const DUR = 28
+  const t1 = 7  / DUR * 100  // 잠자기 끝 / 코딩 시작
+  const t2 = 20 / DUR * 100  // 코딩 끝 / 커피 시작
+  const t3 = 27 / DUR * 100  // 커피 끝 / 잠자기 시작
+  const t4 = t3               // 창문 없음 — 커피 직후 바로 잠자기
 
   const css  = buildCSS(DUR, t1, t2, t3, t4)
   const room = buildRoom(w, h, accent, scene)
