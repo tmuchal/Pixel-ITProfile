@@ -45,6 +45,17 @@ ${buildCatRoomContent(w, h, ex.accent, ex.scene)}
 // ── Full profile card examples ───────────────────────────────────────────────
 const PROFILE_EXAMPLES = [
   {
+    file: 'tmuchal-dubai.svg',
+    options: {
+      name: 'UCHAL',
+      role: 'PM · AI & Blockchain',
+      domains: 'AI,Enterprise,Agent,Voice,Blockchain',
+      bio: '관련없어보이는것들을연결하는사람',
+      theme: 'cyberpunk',
+      scene: 'dubai',
+    },
+  },
+  {
     file: 'tmuchal-cyberpunk.svg',
     options: {
       name: 'UCHAL',
