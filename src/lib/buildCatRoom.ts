@@ -37,15 +37,15 @@ function mirror(rows: string[]): string[] {
 
 const C: Record<string, string> = {
   K: '#000000',
-  O: '#F09030',  // 주황색 몸통
-  o: '#C86020',  // 어두운 주황 그림자
-  W: '#F5A050',  // 밝은 주황/크림
+  O: '#F07820',  // 주황색 몸통 (진한 주황)
+  o: '#B85010',  // 어두운 주황 그림자
+  W: '#F09030',  // 밝은 주황 (body main)
   e: '#000000',
   N: '#FF8CA1',
-  T: '#C86020',  // 꼬리 그림자
+  T: '#B85010',  // 꼬리 그림자
   n: '#000000',
   // WA/WB/SI 호환용 alias
-  B: '#C86020',  // 몸통 그림자
+  B: '#B85010',  // 몸통 그림자 (진하게)
   P: '#FF8CA1',
 }
 
@@ -114,7 +114,7 @@ const SI = [
   '...KKKKKKKKKKT.',
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#666666', O: '#F09030', W: '#F5A050', o: '#C86020', B: '#C86020', T: '#C86020' }
+const CS: Record<string, string> = { ...C, '-': '#666666', O: '#F07820', W: '#F09030', o: '#B85010', B: '#B85010', T: '#B85010' }
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
@@ -573,6 +573,32 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 </path>`)
   }
 
+  // ── Office chair at desk (always visible) ──
+  // Cat sits at deskX = w - 262, body is 70px wide, 65px tall, sitY = floorY - 65
+  const catDeskX  = w - 262
+  const chairSeatY = floorY - 28      // chair seat (cat haunches rest here)
+  const chairX    = catDeskX - 12    // seat left edge (wider than cat)
+  const chairW    = 94               // seat width (cat=70, sticks out both sides)
+  // Chair back (high-back, visible above cat)
+  out.push(`<rect x="${chairX + 42}" y="${floorY - 90}" width="10" height="64" fill="#111118" rx="4"/>`)
+  out.push(`<rect x="${chairX + 44}" y="${floorY - 88}" width="6" height="60" fill="#1a1a28" rx="3"/>`)
+  // Headrest bump
+  out.push(`<rect x="${chairX + 40}" y="${floorY - 92}" width="14" height="12" fill="#111118" rx="5"/>`)
+  out.push(`<rect x="${chairX + 43}" y="${floorY - 90}" width="8" height="8" fill="${accent}" opacity="0.18" rx="3"/>`)
+  // Chair seat
+  out.push(`<rect x="${chairX}" y="${chairSeatY}" width="${chairW}" height="13" fill="#111118" rx="4"/>`)
+  out.push(`<rect x="${chairX + 2}" y="${chairSeatY + 1}" width="${chairW - 4}" height="9" fill="#1a1a28" rx="3"/>`)
+  // Seat accent stripe
+  out.push(`<rect x="${chairX + 2}" y="${chairSeatY + 1}" width="${chairW - 4}" height="2" fill="${accent}" opacity="0.25" rx="2"/>`)
+  // Armrests
+  out.push(`<rect x="${chairX - 4}" y="${floorY - 55}" width="10" height="28" fill="#0e0e18" rx="3"/>`)
+  out.push(`<rect x="${chairX + chairW - 6}" y="${floorY - 55}" width="10" height="28" fill="#0e0e18" rx="3"/>`)
+  // Center post
+  out.push(`<rect x="${chairX + chairW/2 - 5}" y="${chairSeatY + 13}" width="10" height="${floorY - chairSeatY - 13}" fill="#1a1a1a" rx="2"/>`)
+  // Base (simple 5-point)
+  out.push(`<ellipse cx="${chairX + chairW/2}" cy="${floorY + 3}" rx="32" ry="5" fill="#111118"/>`)
+  out.push(`<ellipse cx="${chairX + chairW/2}" cy="${floorY + 2}" rx="28" ry="3" fill="#1a1a28"/>`)
+
   // ── Ceiling lamp ──
   const lx = Math.floor(w * 0.55)
   out.push(`<line x1="${lx}" y1="0" x2="${lx}" y2="12" stroke="#555" stroke-width="2"/>`)
@@ -727,13 +753,17 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
 </g>`
 
-  const coffeeCup = `<g class="cf" transform="translate(${deskX+30},${sitY+12})">
-  <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
-  <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
-  <ellipse cx="10" cy="4" rx="7" ry="2.5" fill="#6b3010"/>
-  <path d="M20 6 Q26 6 26 12 Q26 18 20 18" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <ellipse cx="10" cy="4" rx="5" ry="1.5" fill="#8b4513" opacity="0.8"/>
-  <text x="28" y="4" font-family="monospace" font-size="10" fill="#ffcc88">☕</text>
+  // NOTE: Outer group holds the base position; inner group has the CSS animation.
+  // This prevents the CSS transform animation from overriding the SVG transform attribute.
+  const coffeeCup = `<g transform="translate(${deskX+30},${sitY+12})">
+  <g class="cf">
+    <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
+    <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
+    <ellipse cx="10" cy="4" rx="7" ry="2.5" fill="#6b3010"/>
+    <path d="M20 6 Q26 6 26 12 Q26 18 20 18" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="10" cy="4" rx="5" ry="1.5" fill="#8b4513" opacity="0.8"/>
+    <text x="28" y="4" font-family="monospace" font-size="10" fill="#ffcc88">☕</text>
+  </g>
 </g>`
 
   // ── 5. 걷기 왼쪽 (desk → sleep pos) ──
