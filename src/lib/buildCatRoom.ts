@@ -1,5 +1,5 @@
 /**
- * Pixel art cat room — Orange tabby cat (60s loop)
+ * Pixel art cat room — Orange tabby cat (30s loop)
  *
  * Behavior: sleep → stretch → walk right → code → coffee → walk to window →
  *           gaze outside → walk left → sleep
@@ -38,7 +38,7 @@ function mirror(rows: string[]): string[] {
 const C: Record<string, string> = {
   // Outline & features
   K: '#1a1008',      // dark outline
-  e: '#222211',      // eye color (dark)
+  e: '#335522',      // eye color (green cat eyes)
   n: '#2a1a0a',      // nose bridge dark
   // Orange body tones
   O: '#F28C28',      // main orange
@@ -54,70 +54,71 @@ const C: Record<string, string> = {
   T: '#C06810',      // tail (same as dark orange)
 }
 
-// ── Sleep pose (SL) — curled up, 12×7 ──
+// ── Sleep pose (SL) — round curled-up cat, 12×8 ──
+// Classic cat circle: tail wraps around, head tucked into body
 const SL = [
-  '..KKKKKKK...',
-  '.KOOLOOLOK..',
-  '.KOWWnPWOK..',
-  '.KOGGWGGOK..',
-  'KSOOOOOOOSSK',
-  'KOLDDDDDLODK',
-  '.KKKKKKKKKK.',
+  '....KKKKKK..',
+  '..KKOOOOOOKK',
+  '.KOOOOLOOOOK',
+  '.KOOOOPWOOKK',
+  'KSOOOOOOOOSK',
+  'KDDOOOOOODDK',
+  'KTKKKKKKKKSK',
+  '.KTTTTKKK...',
 ]
 
-// ── Stretch pose (ST) — front paws out, back arched, 18×8 ──
+// ── Stretch pose (ST) — front paws out, back arched, 16×8 ──
 const ST = [
-  '......KKKKKKK.....',
-  '.....KOOLOOLOK....',
-  '.....KOWWnPWOK....',
-  '..KKKKOOOOOOOKK...',
-  '.KDDOOOOOOOOOOSKK.',
-  'KLLOOOOOOOOOOO.KPK',
-  '.KKKSKKSKK.....KPK',
-  '...KK..KK.......KK',
+  '.....KK.KK........',
+  '....KOOLOOKK......',
+  '....KOWWPWOK......',
+  '..KKKOOOOOOKKKK...',
+  '.KDDOOOOOOOOOOSK..',
+  'KLLOOOOOOOOOOOKPK.',
+  '.KKKSKKSKKK...KPK.',
+  '...KK..KK......KK.',
 ]
 
-// ── Walk A — right foot forward, 11×12 (all rows 11 chars) ──
+// ── Walk A — right foot forward, 11×11 ──
+// Rounder head, distinct pointy ears, visible whiskers
 const WA = [
-  '..KK..KK...',
-  '.KOOKKLOOK.',
-  'KOOOOOOOOOK',
+  '.KK...KK...',
+  'KOOKK.KOOK.',
+  'KOOOLOOOOK.',
   'KOeOOOOeOK.',
-  'KOOWWNWWOK.',
-  '.KOGGWGGOK.',
+  '.KOWWPWWOK.',
+  '.KGOWWOGK..',
   '.KSOOOOSK..',
   '.KDOOOODK..',
-  '.KSOOOOSK..',
   '..KOOOOOK..',
   '..KOK.KODK.',
   '..KPK..KPK.',
 ]
 
-// ── Walk B — left foot forward, 11×12 (all rows 11 chars) ──
+// ── Walk B — left foot forward, 11×11 ──
 const WB = [
-  '..KK..KK...',
-  '.KOOKKLOOK.',
-  'KOOOOOOOOOK',
+  '.KK...KK...',
+  'KOOKK.KOOK.',
+  'KOOOLOOOOK.',
   'KOeOOOOeOK.',
-  'KOOWWNWWOK.',
-  '.KOGGWGGOK.',
+  '.KOWWPWWOK.',
+  '.KGOWWOGK..',
   '.KSOOOOSK..',
   '.KDOOOODK..',
-  '.KSOOOOSK..',
   '..KOOOOOK..',
   '.KDOK..KOK.',
   '.KPK...KPK.',
 ]
 
-// ── Sit pose (SI) — at desk coding, 11×11 (all rows 11 chars) ──
+// ── Sit pose (SI) — at desk coding, 11×11 ──
 // Last row = tail (rendered separately with wag animation)
 const SI = [
-  '..KK..KK...',
-  '.KOOKKLOOK.',
-  'KOOOOOOOOOK',
+  '.KK...KK...',
+  'KOOKK.KOOK.',
+  'KOOOLOOOOK.',
   'KOeOOOOeOK.',
-  'KOOWWNWWOK.',
-  '.KOGGWGGOK.',
+  '.KOWWPWWOK.',
+  '.KGOWWOGK..',
   '.KSOOOOSK..',
   '.KDOOOODK..',
   '..KOOOOOK..',
@@ -128,12 +129,12 @@ const SI = [
 // ── Window gaze pose (WG) — sitting, looking left toward window, 11×11 ──
 // Last row = tail extending left (rendered separately)
 const WG = [
-  '.KK..KK....',
-  'KOOLKKLOOK.',
-  'KOOOOOOOOOK',
+  'KK...KK....',
+  'KOOLKKOOK..',
+  'KOOOLOOOOK.',
   'KeOOOOeOOK.',
-  'KWWnWWOOOK.',
-  'KOGGWGGOK..',
+  'KOWWPWWOOK.',
+  'KGOWWOGOK..',
   '.KSOOOOSK..',
   '.KDOOOODK..',
   '..KOOOOOK..',
@@ -141,20 +142,27 @@ const WG = [
   '.KTDDDDDKK.',
 ]
 
-// ── Coffee hold pose (CF) — sitting with paw up, 11×11 (all rows 11 chars) ──
+// ── Coffee hold pose (CF) — sitting, one paw raised to mouth holding cup, 13×11 ──
 const CF = [
-  '..KK..KK...',
-  '.KOOKKLOOK.',
-  'KOOOOOOOOOK',
-  'KOeOOOOeOK.',
-  'KOOWWNWWOK.',
-  '.KOGGWGGOK.',
-  '.KSOOPOOSK.',
-  '.KDOOPOODK.',
-  '..KOOOOOK..',
-  '..KPKKPK...',
-  '..KDDDDDDTK',
+  '.KK...KK.....',
+  'KOOKK.KOOK...',
+  'KOOOLOOOOK...',
+  'KOeOOOOeOK...',
+  '.KOWWpWWOKm..',
+  '.KGOWWOGOKmcK',
+  '.KSOOOOKKKCKK',
+  '.KDOOOODK....',
+  '..KOOOOOK....',
+  '..KPKKPK.....',
+  '..KDDDDDDTK..',
 ]
+
+// Coffee cup palette extension
+const CC: Record<string, string> = {
+  ...C,
+  m: '#F28C28',      // paw reaching (same as orange body)
+  c: '#6b3010',      // coffee color
+}
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
@@ -568,16 +576,16 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 // ── CSS Animations ─────────────────────────────────────────────────────────────
 
 /**
- * Timeline (60s):
- * 0-10s:  sleep
- * 10-12s: stretch (on bed)
- * 12-16s: walk right (bed → desk)
- * 16-30s: code at desk
- * 30-36s: coffee
- * 36-38s: walk left (desk → window)
- * 38-44s: gaze at window
- * 44-48s: walk left (window → bed)
- * 48-60s: sleep
+ * Timeline (30s):
+ * 0-5s:   sleep
+ * 5-6s:   stretch (on bed)
+ * 6-8s:   walk right (bed → desk)
+ * 8-15s:  code at desk
+ * 15-18s: coffee
+ * 18-19s: walk left (desk → window)
+ * 19-22s: gaze at window
+ * 22-24s: walk left (window → bed)
+ * 24-30s: sleep
  */
 function buildCSS(
   dur: number,
@@ -591,15 +599,15 @@ function buildCSS(
   const eps = 0.02
 
   // Phase boundaries (in seconds)
-  const S1_END = 10    // sleep1 end
-  const ST_END = 12    // stretch end
-  const WR_END = 16    // walk right end (at desk)
-  const CD_END = 30    // coding end
-  const CF_END = 36    // coffee end
-  const WW_END = 38    // walk to window end
-  const GZ_END = 44    // gaze end
-  const WL_END = 48    // walk left to bed end
-  // 48-60: sleep2
+  const S1_END = 5     // sleep1 end
+  const ST_END = 6     // stretch end
+  const WR_END = 8     // walk right end (at desk)
+  const CD_END = 15    // coding end
+  const CF_END = 18    // coffee end
+  const WW_END = 19    // walk to window end
+  const GZ_END = 22    // gaze end
+  const WL_END = 24    // walk left to bed end
+  // 24-30: sleep2
 
   return `
 /* ── Sleep (0-${S1_END}s, ${WL_END}-${dur}s) ── */
@@ -636,8 +644,8 @@ function buildCSS(
 }
 
 /* ── Walk frame toggle ── */
-.wf-a{animation:wftog 0.35s step-end infinite}
-.wf-b{animation:wftog 0.35s step-end 0.175s infinite}
+.wf-a{animation:wftog 0.25s step-end infinite}
+.wf-b{animation:wftog 0.25s step-end 0.125s infinite}
 @keyframes wftog{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
 /* ── Coding (${WR_END}-${CD_END}s) ── */
@@ -657,18 +665,7 @@ function buildCSS(
   ${p(CF_END)}%{opacity:1}${e(parseFloat(p(CF_END))+eps)}%{opacity:0}
   100%{opacity:0}
 }
-.cf{animation:cf-v ${dur}s step-end infinite,cf-y ${dur}s ease-in-out infinite}
-@keyframes cf-v{
-  0%{opacity:0}
-  ${p(CD_END)}%{opacity:0}${e(parseFloat(p(CD_END))+eps)}%{opacity:1}
-  ${p(CF_END)}%{opacity:1}${e(parseFloat(p(CF_END))+eps)}%{opacity:0}
-  100%{opacity:0}
-}
-@keyframes cf-y{
-  ${p(CD_END)}%{transform:translateY(0)}
-  ${p((CD_END+CF_END)/2)}%{transform:translateY(-10px) rotate(-15deg)}
-  ${p(CF_END)}%{transform:translateY(0)}
-}
+/* coffee cup is now part of CF sprite, no separate animation needed */
 
 /* ── Walk desk→window (${CF_END}-${WW_END}s) ── */
 .wk-w{animation:wkw-v ${dur}s step-end infinite,wkw-x ${dur}s ease-in-out infinite}
@@ -783,7 +780,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const travel  = deskX - sleepX
   const travelDeskToWin = deskX - windowX
 
-  const DUR = 60
+  const DUR = 30
 
   const css  = buildCSS(DUR, sleepX, deskX, windowX, travel, travelDeskToWin)
   const room = buildRoom(w, h, accent, scene)
@@ -842,21 +839,12 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   <text class="ht3" x="${spriteW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
 </g>`
 
-  // ── 5. Coffee (at desk) ──
+  // ── 5. Coffee (at desk) — cup is part of the CF sprite (held at mouth) ──
   const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
-  ${bmp(CF.slice(0,-1), C, 0, sitY)}
-  <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
+  ${bmp(CF.slice(0,-1), CC, 0, sitY)}
+  <g class="tw">${bmp([CF[CF.length-1]], CC, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
-  const coffeeCup = `<g transform="translate(${deskX+30},${sitY+12})">
-  <g class="cf">
-    <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
-    <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
-    <ellipse cx="10" cy="4" rx="7" ry="2.5" fill="#6b3010"/>
-    <path d="M20 6 Q26 6 26 12 Q26 18 20 18" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <ellipse cx="10" cy="4" rx="5" ry="1.5" fill="#8b4513" opacity="0.8"/>
-    <text x="28" y="4" font-family="monospace" font-size="10" fill="#ffcc88">☕</text>
-  </g>
-</g>`
+  const coffeeCup = ''  // cup is now integrated into the CF sprite
 
   // ── 6. Walk desk → window (facing left) ──
   const walkToWindow = `<g transform="translate(${deskX},0)">
