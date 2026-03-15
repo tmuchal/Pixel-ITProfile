@@ -1,8 +1,8 @@
 /**
- * Pixel art cat room
+ * Pixel art cat room — Orange tabby cat (60s loop)
  *
- * Gray Pusheen-style cat (44s loop):
- *   sleep → walk right to desk → code → drink coffee → walk left → sleep
+ * Behavior: sleep → stretch → walk right → code → coffee → walk to window →
+ *           gaze outside → walk left → sleep
  *
  * Room layout: [Bed + TV] [Window] [Bookshelf] [Desk + Monitor]
  */
@@ -33,100 +33,141 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
-// ── White lying cat (pixel art) ──────────────────────────────
+// ── Orange tabby cat palette ──────────────────────────────────────────────────
 
 const C: Record<string, string> = {
-  K: '#000000',
-  O: '#F07820',  // 주황색 몸통 (진한 주황)
-  o: '#B85010',  // 어두운 주황 그림자
-  W: '#F09030',  // 밝은 주황 (body main)
-  e: '#000000',
-  N: '#FF8CA1',
-  T: '#B85010',  // 꼬리 그림자
-  n: '#000000',
-  // WA/WB/SI 호환용 alias
-  B: '#B85010',  // 몸통 그림자 (진하게)
-  P: '#FF8CA1',
+  // Outline & features
+  K: '#1a1008',      // dark outline
+  e: '#222211',      // eye color (dark)
+  n: '#2a1a0a',      // nose bridge dark
+  // Orange body tones
+  O: '#F28C28',      // main orange
+  L: '#FFAA44',      // light orange (belly, inner ear glow)
+  D: '#C06810',      // dark orange (stripes, shadow)
+  S: '#A05008',      // stripe dark
+  // Face details
+  P: '#FFB0B8',      // pink (nose, inner ear, paw pads)
+  W: '#FFF8F0',      // white (muzzle, chest patch)
+  w: '#F0E8D8',      // off-white (muzzle shadow)
+  // Whiskers / misc
+  G: '#888878',      // whiskers
+  T: '#C06810',      // tail (same as dark orange)
 }
 
-// 자는 포즈 SL — 흰색 고양이 (10×8)
+// ── Sleep pose (SL) — curled up, 12×7 ──
 const SL = [
-  '..KOOOOOK.',
-  '.KOOOOOOOK',
-  '.KO--O--OK',
-  '.KOOOnnnOK',
-  '.KOOoWNOOK',
-  'KOOOOOOOOK',
-  'KOoWWWWoOK',
-  '.KoNoooKN.',
+  '..KKKKKKK...',
+  '.KOOLOOLOK..',
+  '.KOWWnPWOK..',
+  '.KOGGWGGOK..',
+  'KSOOOOOOOSSK',
+  'KOLDDDDDLODK',
+  '.KKKKKKKKKK.',
 ]
 
-// 걷기 A — 오른발 앞 (12×14)
+// ── Stretch pose (ST) — front paws out, back arched, 18×8 ──
+const ST = [
+  '......KKKKKKK.....',
+  '.....KOOLOOLOK....',
+  '.....KOWWnPWOK....',
+  '..KKKKOOOOOOOKK...',
+  '.KDDOOOOOOOOOOSKK.',
+  'KLLOOOOOOOOOOO.KPK',
+  '.KKKSKKSKK.....KPK',
+  '...KK..KK.......KK',
+]
+
+// ── Walk A — right foot forward, 11×12 (all rows 11 chars) ──
 const WA = [
-  '....KK..KK....',
-  '...KWWKKWWK...',
-  '..KWWWWWWWWK..',
-  '.KWWWWWWWWWWK.',
-  '.KWWeWWWWeWWK.',
-  '.KWWWWnWWWWWK.',
-  '.KWWWWWWWWWWK.',
-  '.KBWWWWWWWWBK.',
-  '.KBWWWWWWWWBK.',
-  '.KBWWWWWWWWBK.',
-  '..KWWWWWWWWK..',
-  '..KWK....KWK..',
-  '..KPK....KPK..',
-  '...KK.....KK..',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
+  'KOOOOOOOOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
+  '.KOGGWGGOK.',
+  '.KSOOOOSK..',
+  '.KDOOOODK..',
+  '.KSOOOOSK..',
+  '..KOOOOOK..',
+  '..KOK.KODK.',
+  '..KPK..KPK.',
 ]
 
-// 걷기 B — 왼발 앞 (12×14)
+// ── Walk B — left foot forward, 11×12 (all rows 11 chars) ──
 const WB = [
-  '....KK..KK....',
-  '...KWWKKWWK...',
-  '..KWWWWWWWWK..',
-  '.KWWWWWWWWWWK.',
-  '.KWWeWWWWeWWK.',
-  '.KWWWWnWWWWWK.',
-  '.KWWWWWWWWWWK.',
-  '.KBWWWWWWWWBK.',
-  '.KBWWWWWWWWBK.',
-  '.KBWWWWWWWWBK.',
-  '..KWWWWWWWWK..',
-  '...KWK..KWK...',
-  '...KPK..KPK...',
-  '....KK...KK...',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
+  'KOOOOOOOOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
+  '.KOGGWGGOK.',
+  '.KSOOOOSK..',
+  '.KDOOOODK..',
+  '.KSOOOOSK..',
+  '..KOOOOOK..',
+  '.KDOK..KOK.',
+  '.KPK...KPK.',
 ]
 
-// 앉기 SI (12×13)
+// ── Sit pose (SI) — at desk coding, 11×11 (all rows 11 chars) ──
+// Last row = tail (rendered separately with wag animation)
 const SI = [
-  '....KK..KK....',
-  '...KWWKKWWK...',
-  '..KWWWWWWWWK..',
-  '.KWWWWWWWWWWK.',
-  '.KWWeWWWWeWWK.',
-  '.KWWWWnWWWWWK.',
-  '.KWWWWWWWWWWK.',
-  '.KBWWWWWWWWBK.',
-  '.KBWWWWWWWWBK.',
-  '..KWWWWWWWWK..',
-  '..KWPK..KWPK..',
-  '..KBBBBBBBBBK.',
-  '...KKKKKKKKKKT.',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
+  'KOOOOOOOOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
+  '.KOGGWGGOK.',
+  '.KSOOOOSK..',
+  '.KDOOOODK..',
+  '..KOOOOOK..',
+  '..KPKKPK...',
+  '..KDDDDDDTK',
 ]
 
-const CS: Record<string, string> = { ...C, '-': '#666666', O: '#F07820', W: '#F09030', o: '#B85010', B: '#B85010', T: '#B85010' }
+// ── Window gaze pose (WG) — sitting, looking left toward window, 11×11 ──
+// Last row = tail extending left (rendered separately)
+const WG = [
+  '.KK..KK....',
+  'KOOLKKLOOK.',
+  'KOOOOOOOOOK',
+  'KeOOOOeOOK.',
+  'KWWnWWOOOK.',
+  'KOGGWGGOK..',
+  '.KSOOOOSK..',
+  '.KDOOOODK..',
+  '..KOOOOOK..',
+  '..KPKKPK...',
+  '.KTDDDDDKK.',
+]
+
+// ── Coffee hold pose (CF) — sitting with paw up, 11×11 (all rows 11 chars) ──
+const CF = [
+  '..KK..KK...',
+  '.KOOKKLOOK.',
+  'KOOOOOOOOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
+  '.KOGGWGGOK.',
+  '.KSOOPOOSK.',
+  '.KDOOPOODK.',
+  '..KOOOOOK..',
+  '..KPKKPK...',
+  '..KDDDDDDTK',
+]
 
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
+const WG_R = WG  // already faces left (toward window)
 
 // ── Room layout constants ──────────────────────────────────────────────────────
 
-const BED_X  = 15    // bed left edge
-const BED_W  = 150   // bed width
-const TV_X   = BED_X + 16  // TV left edge = 31
-const TV_Y   = 10    // TV top
-const TV_W   = 100   // TV width
-const TV_H   = 68    // TV height
+const BED_X  = 15
+const BED_W  = 150
+const TV_X   = BED_X + 16
+const TV_Y   = 10
+const TV_W   = 100
+const TV_H   = 68
 
 // ── Scene type ─────────────────────────────────────────────────────────────────
 
@@ -138,17 +179,14 @@ function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene:
   const out: string[] = []
 
   if (scene === 'dubai') {
-    // Sunset sky layers (top=deep blue → bottom=golden orange)
     const skyColors = ['#1a1a6a','#3030a0','#6040c0','#c04060','#e06030','#f08020','#f0a020','#ffd060']
     const layerH = Math.ceil(wh / skyColors.length)
     skyColors.forEach((c, i) => out.push(`<rect x="${wx}" y="${wy + i * layerH}" width="${ww}" height="${layerH + 1}" fill="${c}"/>`))
-    // Burj Khalifa silhouette
     const bkX = wx + ww - 28
-    out.push(`<rect x="${bkX + 9}" y="${wy + 4}" width="3" height="58" fill="#20204a"/>`)        // spire
-    out.push(`<rect x="${bkX + 5}" y="${wy + 40}" width="12" height="7" fill="#20204a"/>`)       // tier 1
-    out.push(`<rect x="${bkX + 2}" y="${wy + 50}" width="18" height="8" fill="#20204a"/>`)       // tier 2
-    out.push(`<rect x="${bkX}" y="${wy + 60}" width="22" height="${wh - 60}" fill="#20204a"/>`) // base
-    // Other skyscrapers
+    out.push(`<rect x="${bkX + 9}" y="${wy + 4}" width="3" height="58" fill="#20204a"/>`)
+    out.push(`<rect x="${bkX + 5}" y="${wy + 40}" width="12" height="7" fill="#20204a"/>`)
+    out.push(`<rect x="${bkX + 2}" y="${wy + 50}" width="18" height="8" fill="#20204a"/>`)
+    out.push(`<rect x="${bkX}" y="${wy + 60}" width="22" height="${wh - 60}" fill="#20204a"/>`)
     const skyBlds = [
       {x:wx+4,w:10,h:50},{x:wx+16,w:7,h:60},{x:wx+25,w:12,h:45},
       {x:wx+39,w:9,h:55},{x:wx+50,w:8,h:48},{x:wx+60,w:13,h:52},
@@ -162,33 +200,25 @@ function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene:
         }
       }
     })
-    // Desert sand dunes at bottom
     const sandY = wy + wh - 16
     out.push(`<rect x="${wx}" y="${sandY}" width="${ww}" height="16" fill="#c8a040"/>`)
     out.push(`<ellipse cx="${wx + 28}" cy="${sandY}" rx="38" ry="10" fill="#d4b055"/>`)
     out.push(`<ellipse cx="${wx + 82}" cy="${sandY + 2}" rx="32" ry="8" fill="#b89035"/>`)
 
   } else if (scene === 'italy') {
-    // Bright Mediterranean blue sky
     out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#5aaaf0"/>`)
-    // Sky gradient (lighter at horizon)
     out.push(`<rect x="${wx}" y="${wy + Math.floor(wh * 0.4)}" width="${ww}" height="${Math.floor(wh * 0.15)}" fill="#80c8ff" opacity="0.4"/>`)
-    // Sun
     out.push(`<circle cx="${wx + 28}" cy="${wy + 18}" r="13" fill="#fff8a0" opacity="0.98"/>`)
     out.push(`<circle cx="${wx + 28}" cy="${wy + 18}" r="18" fill="#fff080" opacity="0.2"/>`)
-    // Fluffy clouds
     out.push(`<ellipse cx="${wx + 72}" cy="${wy + 16}" rx="18" ry="7" fill="#fff" opacity="0.85"/>`)
     out.push(`<ellipse cx="${wx + 62}" cy="${wy + 17}" rx="11" ry="6" fill="#fff" opacity="0.75"/>`)
     out.push(`<ellipse cx="${wx + 84}" cy="${wy + 17}" rx="10" ry="5" fill="#fff" opacity="0.8"/>`)
-    // Calm sea (bottom 40%)
     const seaY = wy + Math.floor(wh * 0.55)
     out.push(`<rect x="${wx}" y="${seaY}" width="${ww}" height="${wh - Math.floor(wh * 0.55)}" fill="#1e6abf"/>`)
     out.push(`<rect x="${wx}" y="${seaY}" width="${ww}" height="4" fill="#4488cc" opacity="0.5"/>`)
-    // Sea shimmer lines
     for (let i = 0; i < 6; i++) {
       out.push(`<rect x="${wx + 5 + i * 16}" y="${seaY + 8 + i * 3}" width="10" height="1.5" fill="#88ccff" opacity="0.55"/>`)
     }
-    // Colorful Amalfi cliffside buildings (left stack)
     const houseData = [
       {c:'#ff9944',yOff:22,xOff:2,w:16},{c:'#ffcc55',yOff:32,xOff:0,w:14},
       {c:'#ff6655',yOff:18,xOff:18,w:15},{c:'#ee8844',yOff:28,xOff:16,w:14},
@@ -197,9 +227,7 @@ function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene:
     houseData.forEach(d => {
       const hx = wx + d.xOff, hy = wy + d.yOff, hh = seaY - hy
       out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="${hh}" fill="${d.c}"/>`)
-      // Roof
       out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="5" fill="#b04020" opacity="0.7"/>`)
-      // Windows
       for (let wy2 = hy + 8; wy2 < seaY - 10; wy2 += 12) {
         out.push(`<rect x="${hx + 3}" y="${wy2}" width="4" height="5" fill="#1a3a6a" opacity="0.65"/>`)
         if (d.w > 13) out.push(`<rect x="${hx + 9}" y="${wy2}" width="4" height="5" fill="#1a3a6a" opacity="0.65"/>`)
@@ -207,30 +235,22 @@ function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene:
     })
 
   } else if (scene === 'paris') {
-    // Bright Paris blue sky
     out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#7ec8f5"/>`)
-    // Sky gradient (lighter near horizon)
     out.push(`<rect x="${wx}" y="${wy + Math.floor(wh * 0.45)}" width="${ww}" height="${Math.floor(wh * 0.15)}" fill="#aaddf8" opacity="0.45"/>`)
-    // Sun (bright, top-right)
     out.push(`<circle cx="${wx + ww - 24}" cy="${wy + 16}" r="12" fill="#fffbe0" opacity="0.98"/>`)
     out.push(`<circle cx="${wx + ww - 24}" cy="${wy + 16}" r="18" fill="#fff8a0" opacity="0.18"/>`)
-    // Fluffy clouds
     out.push(`<ellipse cx="${wx + 30}" cy="${wy + 14}" rx="16" ry="6" fill="#fff" opacity="0.9"/>`)
     out.push(`<ellipse cx="${wx + 20}" cy="${wy + 15}" rx="10" ry="5" fill="#fff" opacity="0.8"/>`)
     out.push(`<ellipse cx="${wx + 42}" cy="${wy + 15}" rx="9" ry="5" fill="#fff" opacity="0.85"/>`)
     out.push(`<ellipse cx="${wx + 74}" cy="${wy + 20}" rx="12" ry="5" fill="#fff" opacity="0.75"/>`)
     out.push(`<ellipse cx="${wx + 64}" cy="${wy + 21}" rx="8" ry="4" fill="#fff" opacity="0.7"/>`)
-    // Seine river (bottom 30%)
     const seineY = wy + Math.floor(wh * 0.68)
     out.push(`<rect x="${wx}" y="${seineY}" width="${ww}" height="${wh - Math.floor(wh * 0.68)}" fill="#5aacdc"/>`)
-    // River shimmer
     for (let i = 0; i < 5; i++) {
       out.push(`<rect x="${wx + 6 + i * 18}" y="${seineY + 4 + i * 2}" width="12" height="1.5" fill="#c8eaff" opacity="0.5"/>`)
     }
-    // Quai (riverbank) — stone path
     const quaiY = seineY - 10
     out.push(`<rect x="${wx}" y="${quaiY}" width="${ww}" height="10" fill="#c4b090"/>`)
-    // Parisian Haussmann buildings (cream/pale stone)
     const hausData = [
       {x:wx, w:32, h:60, c:'#f5e8c8'}, {x:wx+34, w:28, h:52, c:'#ede0b8'},
       {x:wx+64, w:30, h:58, c:'#f0e4c0'},
@@ -238,45 +258,33 @@ function buildWindowScene(wx: number, wy: number, ww: number, wh: number, scene:
     hausData.forEach(d => {
       const hx = d.x, hy = quaiY - d.h, hh = d.h
       out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="${hh}" fill="${d.c}"/>`)
-      // Mansard roof (dark grey)
       out.push(`<rect x="${hx}" y="${hy}" width="${d.w}" height="10" fill="#6a7080"/>`)
-      // Roof dormer windows
       for (let di = 0; di < 2; di++) {
         const dox = hx + 5 + di * 12
         out.push(`<rect x="${dox}" y="${hy + 1}" width="6" height="6" fill="#4a90c8" opacity="0.7" rx="1"/>`)
       }
-      // Windows rows
       for (let wy2 = hy + 14; wy2 < quaiY - 8; wy2 += 13) {
         for (let wx2 = hx + 4; wx2 < hx + d.w - 4; wx2 += 10) {
           out.push(`<rect x="${wx2}" y="${wy2}" width="5" height="7" fill="#4a7db0" opacity="0.6" rx="1"/>`)
-          // Balcony ledge
           out.push(`<rect x="${wx2 - 1}" y="${wy2 + 7}" width="7" height="1.5" fill="#8a7a60" opacity="0.7"/>`)
         }
       }
     })
-    // Eiffel Tower (center-right, iconic silhouette)
     const etX = wx + ww - 50, etBase = quaiY
-    // Base legs
     out.push(`<polygon points="${etX},${etBase} ${etX+6},${etBase-28} ${etX+9},${etBase-28}" fill="#5a6070"/>`)
     out.push(`<polygon points="${etX+22},${etBase} ${etX+13},${etBase-28} ${etX+16},${etBase-28}" fill="#5a6070"/>`)
-    // First platform
     out.push(`<rect x="${etX+5}" y="${etBase-30}" width="12" height="4" fill="#4e5a68"/>`)
-    // Middle section
     out.push(`<polygon points="${etX+6},${etBase-30} ${etX+9},${etBase-56} ${etX+13},${etBase-56} ${etX+16},${etBase-30}" fill="#5a6070"/>`)
-    // Second platform
     out.push(`<rect x="${etX+8}" y="${etBase-58}" width="6" height="3" fill="#4e5a68"/>`)
-    // Top spire
     out.push(`<polygon points="${etX+9},${etBase-58} ${etX+11},${etBase-85} ${etX+13},${etBase-58}" fill="#5a6070"/>`)
-    // Antenna tip
     out.push(`<rect x="${etX+10.5}" y="${etBase-95}" width="1.5" height="12" fill="#6a7080"/>`)
-    // Tower lattice lines
     for (let li = 0; li < 3; li++) {
       const ly = etBase - 10 - li * 9
       out.push(`<line x1="${etX+1+li*2}" y1="${ly}" x2="${etX+21-li*2}" y2="${ly}" stroke="#4a5560" stroke-width="0.8" opacity="0.6"/>`)
     }
 
   } else {
-    // Night city (original)
+    // Night city
     out.push(`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="#06080e"/>`)
     const stars: [number,number][] = [
       [wx+8,wy+6],[wx+20,wy+4],[wx+44,wy+10],[wx+66,wy+3],[wx+86,wy+8],
@@ -315,7 +323,6 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
   const floorY = h - 40
   const out: string[] = []
 
-  // ── Wall color per scene ──
   const wallColor   = scene === 'dubai'  ? '#f5e8c8'
                     : scene === 'italy'  ? '#f2e0c4'
                     : scene === 'paris'  ? '#f7f0e8'
@@ -342,76 +349,55 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
     out.push(`<rect x="0" y="${y}" width="${w}" height="1" fill="${wallLine}" opacity="0.35"/>`)
   }
 
-  // ── Floor ──
+  // Floor
   out.push(`<rect y="${floorY}" width="${w}" height="${h - floorY}" fill="${floorColor}"/>`)
   for (let x = 0; x < w; x += 80) {
     out.push(`<line x1="${x}" y1="${floorY}" x2="${x + 20}" y2="${h}" stroke="${floorLine}" stroke-width="1" opacity="0.5"/>`)
   }
   out.push(`<rect y="${floorY}" width="${w}" height="3" fill="${floorEdge}" opacity="0.8"/>`)
 
-  // ── Bed (left side) ──
+  // ── Bed ──
   const bedTop = floorY - 50
-
-  // Headboard
   out.push(`<rect x="${BED_X}" y="${bedTop - 42}" width="22" height="92" fill="#3a2010" rx="3"/>`)
   out.push(`<rect x="${BED_X + 5}" y="${bedTop - 36}" width="12" height="32" fill="#2a1408" rx="2"/>`)
   out.push(`<rect x="${BED_X + 5}" y="${bedTop - 2}" width="12" height="22" fill="#2a1408" rx="2"/>`)
-
-  // Bed frame
   out.push(`<rect x="${BED_X + 20}" y="${bedTop}" width="${BED_W}" height="50" fill="#3a2010" rx="2"/>`)
-
-  // Mattress
-  out.push(`<rect x="${BED_X + 22}" y="${bedTop + 3}" width="${BED_W - 6}" height="47" fill="#e8ddc8" rx="2"/>`)
-  // Quilting lines
+  out.push(`<rect x="${BED_X + 22}" y="${bedTop + 3}" width="${BED_V - 6}" height="47" fill="#e8ddc8" rx="2"/>`)
   for (let qx = BED_X + 30; qx < BED_X + BED_W + 12; qx += 22) {
     out.push(`<line x1="${qx}" y1="${bedTop + 3}" x2="${qx}" y2="${bedTop + 50}" stroke="#d4c8a8" stroke-width="1" opacity="0.4"/>`)
   }
   for (let qy = bedTop + 14; qy < bedTop + 48; qy += 16) {
     out.push(`<line x1="${BED_X + 22}" y1="${qy}" x2="${BED_X + BED_W + 16}" y2="${qy}" stroke="#d4c8a8" stroke-width="1" opacity="0.4"/>`)
   }
-
-  // Pillow
   out.push(`<rect x="${BED_X + 26}" y="${bedTop + 6}" width="44" height="22" fill="#f8f4e8" rx="4"/>`)
   out.push(`<ellipse cx="${BED_X + 48}" cy="${bedTop + 17}" rx="16" ry="7" fill="#f0ead8" opacity="0.5"/>`)
-
-  // Blanket (accent colored)
   out.push(`<rect x="${BED_X + 72}" y="${bedTop + 3}" width="${BED_W - 56}" height="47" fill="${accent}" opacity="0.55" rx="2"/>`)
   out.push(`<rect x="${BED_X + 72}" y="${bedTop + 3}" width="${BED_W - 56}" height="10" fill="${accent}" opacity="0.8" rx="2"/>`)
   for (let bqx = BED_X + 80; bqx < BED_X + BED_W + 12; bqx += 20) {
     out.push(`<line x1="${bqx}" y1="${bedTop + 3}" x2="${bqx}" y2="${bedTop + 50}" stroke="#000" stroke-width="1" opacity="0.08"/>`)
   }
-
-  // Footboard
   out.push(`<rect x="${BED_X + BED_W + 16}" y="${bedTop}" width="14" height="50" fill="#3a2010" rx="2"/>`)
 
-  // ── TV on wall above bed (dark/off state) ──
+  // ── TV ──
   const scx = TV_X + 5, scy = TV_Y + 5, scw = TV_W - 10, sch = TV_H - 12
-  // Wall mount arm
   out.push(`<rect x="${TV_X + TV_W / 2 - 2}" y="${TV_Y + TV_H}" width="4" height="16" fill="#222"/>`)
-  // Bezel
   out.push(`<rect x="${TV_X}" y="${TV_Y}" width="${TV_W}" height="${TV_H}" fill="#0d0d14" rx="4"/>`)
   out.push(`<rect x="${TV_X}" y="${TV_Y}" width="${TV_W}" height="${TV_H}" fill="none" stroke="#333" stroke-width="1.5" rx="4"/>`)
-  // Screen (off = very dark)
   out.push(`<rect x="${scx}" y="${scy}" width="${scw}" height="${sch}" fill="#040408" rx="2"/>`)
-  // LED indicator
   out.push(`<circle cx="${TV_X + TV_W - 7}" cy="${TV_Y + TV_H - 7}" r="2" fill="#440000" opacity="0.8"/>`)
 
-  // ── Window (center-left, above bookshelf area) ──
+  // ── Window ──
   const wx = 195, wy = 8, ww = 108, wh = floorY - 16
   const frameColor = '#3a2010'
   const frameInner = '#2a1408'
-  // Frame
   out.push(`<rect x="${wx - 5}" y="${wy - 5}" width="${ww + 10}" height="${wh + 10}" fill="${frameColor}"/>`)
   out.push(`<rect x="${wx - 3}" y="${wy - 3}" width="${ww + 6}" height="${wh + 6}" fill="${frameInner}"/>`)
-  // Scene content
   out.push(buildWindowScene(wx, wy, ww, wh, scene))
-  // Window sill
   out.push(`<rect x="${wx - 6}" y="${wy + wh - 2}" width="${ww + 12}" height="8" fill="${frameColor}"/>`)
-  // Window cross dividers
   out.push(`<rect x="${wx + Math.floor(ww / 2) - 2}" y="${wy}" width="4" height="${wh}" fill="${frameInner}"/>`)
   out.push(`<rect x="${wx}" y="${wy + Math.floor(wh / 2) - 2}" width="${ww}" height="4" fill="${frameInner}"/>`)
 
-  // ── Bookshelf (center-right of window) ──
+  // ── Bookshelf ──
   const bx = 325, by = 18, bw = 78, bh = floorY - 18
   out.push(`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="#1c0c04"/>`)
   out.push(`<rect x="${bx}" y="${by}" width="8" height="${bh}" fill="#3a1c08"/>`)
@@ -450,7 +436,7 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
     })
   })
 
-  // Small plant on top of shelf
+  // Plant on top shelf
   const plantX = bx + 54, plantY = by - 18
   out.push(`<rect x="${plantX + 4}" y="${plantY + 8}" width="10" height="14" fill="#3a2010" rx="2"/>`)
   out.push(`<rect x="${plantX + 5}" y="${plantY + 6}" width="8" height="4" fill="#2a1408"/>`)
@@ -458,88 +444,66 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
   out.push(`<ellipse cx="${plantX + 3}" cy="${plantY + 6}" rx="6" ry="5" fill="#1a7025"/>`)
   out.push(`<ellipse cx="${plantX + 15}" cy="${plantY + 5}" rx="7" ry="5" fill="#158020"/>`)
 
-  // ── Desk (right side) ──
+  // ── Desk ──
   const dx = w - 340, dw = 320, dtop = floorY - 42
   out.push(`<rect x="${dx}" y="${dtop}" width="${dw}" height="14" fill="#2a1408"/>`)
   out.push(`<rect x="${dx}" y="${dtop}" width="${dw}" height="3" fill="${accent}" opacity="0.5"/>`)
   out.push(`<rect x="${dx}" y="${dtop + 11}" width="${dw}" height="3" fill="#1a0c04" opacity="0.8"/>`)
   out.push(`<rect x="${dx}" y="${dtop + 14}" width="${dw}" height="${floorY - dtop - 14}" fill="#1e1008"/>`)
-  // Legs
   out.push(`<rect x="${dx + 14}" y="${floorY}" width="16" height="22" fill="#1e1008"/>`)
   out.push(`<rect x="${dx + dw - 30}" y="${floorY}" width="16" height="22" fill="#1e1008"/>`)
   out.push(`<rect x="${dx + 14}" y="${floorY + 18}" width="16" height="4" fill="${accent}" opacity="0.35"/>`)
   out.push(`<rect x="${dx + dw - 30}" y="${floorY + 18}" width="16" height="4" fill="${accent}" opacity="0.35"/>`)
-  // Under-desk LED strip
   out.push(`<rect x="${dx}" y="${dtop + 12}" width="${dw}" height="2" fill="${accent}" opacity="0.12"/>`)
 
   // ── Monitor ──
   const monX = dx + 48, monY = dtop - 102, monW = 164, monH = 98
-  // Stand
   out.push(`<rect x="${monX + monW / 2 - 28}" y="${dtop - 4}" width="56" height="5" fill="#0f0f18"/>`)
   out.push(`<rect x="${monX + monW / 2 - 10}" y="${dtop - 22}" width="20" height="20" fill="#0f0f18"/>`)
-  // Bezel
   out.push(`<rect x="${monX}" y="${monY}" width="${monW}" height="${monH}" fill="#0a0a12" rx="6"/>`)
   out.push(`<rect x="${monX}" y="${monY}" width="${monW}" height="${monH}" fill="none" stroke="${accent}" stroke-width="1.5" rx="6" opacity="0.55"/>`)
-  // Screen
   const mscx = monX + 7, mscy = monY + 6, mscw = monW - 14, msch = monH - 18
   out.push(`<rect x="${mscx}" y="${mscy}" width="${mscw}" height="${msch}" fill="#0d1117" rx="3"/>`)
-  // Editor tab bar
   out.push(`<rect x="${mscx}" y="${mscy}" width="${mscw}" height="11" fill="#161b22" rx="3"/>`)
   out.push(`<rect x="${mscx}" y="${mscy + 8}" width="${mscw}" height="3" fill="#161b22"/>`)
   out.push(`<rect x="${mscx}" y="${mscy + 11}" width="${mscw}" height="1" fill="#30363d"/>`)
-  // Active tab (index.ts)
   out.push(`<rect x="${mscx + 2}" y="${mscy + 1}" width="42" height="10" fill="#0d1117" rx="1"/>`)
   out.push(`<rect x="${mscx + 2}" y="${mscy + 11}" width="42" height="1" fill="${accent}" opacity="0.9"/>`)
   out.push(`<rect x="${mscx + 5}" y="${mscy + 3}" width="5" height="5" fill="#4ec9b0" rx="1" opacity="0.85"/>`)
   out.push(`<rect x="${mscx + 12}" y="${mscy + 4}" width="28" height="3" fill="#8b949e" rx="1"/>`)
-  // Line number gutter
   const gutW = 16
   out.push(`<rect x="${mscx}" y="${mscy + 12}" width="${gutW}" height="${msch - 12}" fill="#0d1117"/>`)
   out.push(`<rect x="${mscx + gutW}" y="${mscy + 12}" width="1" fill="#21262d" height="${msch - 12}"/>`)
   for (let ln = 0; ln < 9; ln++) {
     out.push(`<rect x="${mscx + 4}" y="${mscy + 15 + ln * 7}" width="8" height="3" fill="#484f58" rx="1" opacity="0.7"/>`)
   }
-  // Code area background
   const cx = mscx + gutW + 4, cy = mscy + 13
-  // Syntax-highlighted code lines (VS Code Dark+ style)
-  // kw=blue, str=orange, fn=yellow, typ=teal, cmt=green, dim=gray
   const kwC = '#569cd6', str_ = '#ce9178', fn_ = '#dcdcaa'
   const typC = '#4ec9b0', cmt = '#6a9955', dim = '#8b949e'
-  // Line 1: import { useState } from 'react'
   out.push(`<rect x="${cx}" y="${cy}" width="22" height="3" fill="${kwC}" rx="1"/>`)
   out.push(`<rect x="${cx+24}" y="${cy}" width="28" height="3" fill="${fn_}" rx="1"/>`)
   out.push(`<rect x="${cx+54}" y="${cy}" width="14" height="3" fill="${kwC}" rx="1"/>`)
   out.push(`<rect x="${cx+70}" y="${cy}" width="20" height="3" fill="${str_}" rx="1"/>`)
-  // Line 2: comment
   out.push(`<rect x="${cx}" y="${cy+7}" width="60" height="3" fill="${cmt}" rx="1" opacity="0.8"/>`)
-  // Line 3: const App = () => {
   out.push(`<rect x="${cx}" y="${cy+14}" width="18" height="3" fill="${kwC}" rx="1"/>`)
   out.push(`<rect x="${cx+20}" y="${cy+14}" width="16" height="3" fill="${fn_}" rx="1"/>`)
   out.push(`<rect x="${cx+38}" y="${cy+14}" width="10" height="3" fill="${dim}" rx="1"/>`)
   out.push(`<rect x="${cx+50}" y="${cy+14}" width="14" height="3" fill="${kwC}" rx="1"/>`)
-  // Line 4:   const [data] = useState(null)
   out.push(`<rect x="${cx+8}" y="${cy+21}" width="18" height="3" fill="${kwC}" rx="1"/>`)
   out.push(`<rect x="${cx+28}" y="${cy+21}" width="22" height="3" fill="${dim}" rx="1"/>`)
   out.push(`<rect x="${cx+52}" y="${cy+21}" width="26" height="3" fill="${fn_}" rx="1"/>`)
-  // Line 5:   return (
   out.push(`<rect x="${cx+8}" y="${cy+28}" width="20" height="3" fill="${kwC}" rx="1"/>`)
   out.push(`<rect x="${cx+30}" y="${cy+28}" width="6" height="3" fill="${dim}" rx="1"/>`)
-  // Line 6:     <Component
   out.push(`<rect x="${cx+16}" y="${cy+35}" width="6" height="3" fill="${dim}" rx="1"/>`)
   out.push(`<rect x="${cx+24}" y="${cy+35}" width="32" height="3" fill="${typC}" rx="1"/>`)
-  // Line 7:       prop={value}
   out.push(`<rect x="${cx+24}" y="${cy+42}" width="14" height="3" fill="${fn_}" rx="1"/>`)
   out.push(`<rect x="${cx+40}" y="${cy+42}" width="4" height="3" fill="${dim}" rx="1"/>`)
   out.push(`<rect x="${cx+46}" y="${cy+42}" width="16" height="3" fill="${str_}" rx="1"/>`)
-  // Line 8:     />
   out.push(`<rect x="${cx+16}" y="${cy+49}" width="8" height="3" fill="${dim}" rx="1"/>`)
-  // Line 9: cursor line
   out.push(`<rect x="${cx}" y="${cy+56}" width="30" height="3" fill="${kwC}" rx="1" opacity="0.4"/>`)
-  // Cursor blink
   out.push(`<rect x="${cx+32}" y="${cy+55}" width="4" height="5" fill="${accent}" opacity="0.9">
   <animate attributeName="opacity" values="0.9;0;0.9" keyTimes="0;0.5;1" dur="0.9s" repeatCount="indefinite"/>
 </rect>`)
-  // LED
   out.push(`<circle cx="${monX + monW / 2}" cy="${monY + monH - 5}" r="2.5" fill="${accent}" opacity="0.8">
   <animate attributeName="opacity" values="0.8;0.2;0.8" dur="3.2s" repeatCount="indefinite"/>
 </circle>`)
@@ -559,7 +523,7 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
     }
   }
 
-  // ── Coffee cup (on desk right side) ──
+  // ── Coffee cup on desk ──
   const cupX = dx + 224, cupY = dtop + 4
   out.push(`<ellipse cx="${cupX + 14}" cy="${cupY + 25}" rx="20" ry="5" fill="#3a2010"/>`)
   out.push(`<rect x="${cupX + 4}" y="${cupY + 8}" width="20" height="17" fill="#2a1408" rx="3"/>`)
@@ -573,29 +537,21 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 </path>`)
   }
 
-  // ── Office chair at desk (always visible) ──
-  // Cat sits at deskX = w - 262, body is 70px wide, 65px tall, sitY = floorY - 65
+  // ── Office chair ──
   const catDeskX  = w - 262
-  const chairSeatY = floorY - 28      // chair seat (cat haunches rest here)
-  const chairX    = catDeskX - 12    // seat left edge (wider than cat)
-  const chairW    = 94               // seat width (cat=70, sticks out both sides)
-  // Chair back (high-back, visible above cat)
+  const chairSeatY = floorY - 28
+  const chairX    = catDeskX - 12
+  const chairW    = 94
   out.push(`<rect x="${chairX + 42}" y="${floorY - 90}" width="10" height="64" fill="#111118" rx="4"/>`)
   out.push(`<rect x="${chairX + 44}" y="${floorY - 88}" width="6" height="60" fill="#1a1a28" rx="3"/>`)
-  // Headrest bump
   out.push(`<rect x="${chairX + 40}" y="${floorY - 92}" width="14" height="12" fill="#111118" rx="5"/>`)
   out.push(`<rect x="${chairX + 43}" y="${floorY - 90}" width="8" height="8" fill="${accent}" opacity="0.18" rx="3"/>`)
-  // Chair seat
   out.push(`<rect x="${chairX}" y="${chairSeatY}" width="${chairW}" height="13" fill="#111118" rx="4"/>`)
   out.push(`<rect x="${chairX + 2}" y="${chairSeatY + 1}" width="${chairW - 4}" height="9" fill="#1a1a28" rx="3"/>`)
-  // Seat accent stripe
   out.push(`<rect x="${chairX + 2}" y="${chairSeatY + 1}" width="${chairW - 4}" height="2" fill="${accent}" opacity="0.25" rx="2"/>`)
-  // Armrests
   out.push(`<rect x="${chairX - 4}" y="${floorY - 55}" width="10" height="28" fill="#0e0e18" rx="3"/>`)
   out.push(`<rect x="${chairX + chairW - 6}" y="${floorY - 55}" width="10" height="28" fill="#0e0e18" rx="3"/>`)
-  // Center post
   out.push(`<rect x="${chairX + chairW/2 - 5}" y="${chairSeatY + 13}" width="10" height="${floorY - chairSeatY - 13}" fill="#1a1a1a" rx="2"/>`)
-  // Base (simple 5-point)
   out.push(`<ellipse cx="${chairX + chairW/2}" cy="${floorY + 3}" rx="32" ry="5" fill="#111118"/>`)
   out.push(`<ellipse cx="${chairX + chairW/2}" cy="${floorY + 2}" rx="28" ry="3" fill="#1a1a28"/>`)
 
@@ -611,126 +567,265 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 
 // ── CSS Animations ─────────────────────────────────────────────────────────────
 
-// t1=sleep끝/walk_r시작, t2=walk_r끝/코딩시작, t3=코딩끝/커피시작, t4=커피끝/walk_l시작, t5=walk_l끝/sleep시작
-// travel = deskX - sleepX (px)
-function buildCSS(dur: number, t1: number, t2: number, t3: number, t4: number, t5: number, travel: number): string {
+/**
+ * Timeline (60s):
+ * 0-10s:  sleep
+ * 10-12s: stretch (on bed)
+ * 12-16s: walk right (bed → desk)
+ * 16-30s: code at desk
+ * 30-36s: coffee
+ * 36-38s: walk left (desk → window)
+ * 38-44s: gaze at window
+ * 44-48s: walk left (window → bed)
+ * 48-60s: sleep
+ */
+function buildCSS(
+  dur: number,
+  sleepX: number, deskX: number, windowX: number, travel: number,
+  travelDeskToWin: number,
+): string {
   const e = (n: number) => n.toFixed(2)
-  const mid = (a: number, b: number) => ((a + b) / 2).toFixed(2)
+
+  // Timeline percentages
+  const p = (sec: number) => (sec / dur * 100).toFixed(2)
+  const eps = 0.02
+
+  // Phase boundaries (in seconds)
+  const S1_END = 10    // sleep1 end
+  const ST_END = 12    // stretch end
+  const WR_END = 16    // walk right end (at desk)
+  const CD_END = 30    // coding end
+  const CF_END = 36    // coffee end
+  const WW_END = 38    // walk to window end
+  const GZ_END = 44    // gaze end
+  const WL_END = 48    // walk left to bed end
+  // 48-60: sleep2
+
   return `
-/* Sleeping: 0→t1, t5→end */
+/* ── Sleep (0-${S1_END}s, ${WL_END}-${dur}s) ── */
 .sl{animation:sl-v ${dur}s step-end infinite}
-@keyframes sl-v{0%{opacity:1}${e(t1)}%{opacity:1}${e(t1+0.01)}%{opacity:0}${e(t5)}%{opacity:0}${e(t5+0.01)}%{opacity:1}100%{opacity:1}}
+@keyframes sl-v{
+  0%{opacity:1}
+  ${p(S1_END)}%{opacity:1}${e(parseFloat(p(S1_END))+eps)}%{opacity:0}
+  ${p(WL_END)}%{opacity:0}${e(parseFloat(p(WL_END))+eps)}%{opacity:1}
+  100%{opacity:1}
+}
 
-/* Walk right: t1→t2 (position animates sleepX → deskX, ease-in-out for natural pacing) */
+/* ── Stretch (${S1_END}-${ST_END}s, on bed) ── */
+.st{animation:st-v ${dur}s step-end infinite}
+@keyframes st-v{
+  0%{opacity:0}
+  ${p(S1_END)}%{opacity:0}${e(parseFloat(p(S1_END))+eps)}%{opacity:1}
+  ${p(ST_END)}%{opacity:1}${e(parseFloat(p(ST_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+
+/* ── Walk right: bed→desk (${ST_END}-${WR_END}s) ── */
 .wk-r{animation:wkr-v ${dur}s step-end infinite,wkr-x ${dur}s ease-in-out infinite}
-@keyframes wkr-v{0%{opacity:0}${e(t1)}%{opacity:0}${e(t1+0.01)}%{opacity:1}${e(t2)}%{opacity:1}${e(t2+0.01)}%{opacity:0}100%{opacity:0}}
-@keyframes wkr-x{0%{transform:translateX(0)}${e(t1)}%{transform:translateX(0)}${e(t2)}%{transform:translateX(${travel}px)}100%{transform:translateX(${travel}px)}}
+@keyframes wkr-v{
+  0%{opacity:0}
+  ${p(ST_END)}%{opacity:0}${e(parseFloat(p(ST_END))+eps)}%{opacity:1}
+  ${p(WR_END)}%{opacity:1}${e(parseFloat(p(WR_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+@keyframes wkr-x{
+  0%{transform:translateX(0)}
+  ${p(ST_END)}%{transform:translateX(0)}
+  ${p(WR_END)}%{transform:translateX(${travel}px)}
+  100%{transform:translateX(${travel}px)}
+}
 
-/* Walk left: t4→t5 (position animates deskX → sleepX, ease-in-out) */
-.wk-l{animation:wkl-v ${dur}s step-end infinite,wkl-x ${dur}s ease-in-out infinite}
-@keyframes wkl-v{0%{opacity:0}${e(t4)}%{opacity:0}${e(t4+0.01)}%{opacity:1}${e(t5)}%{opacity:1}${e(t5+0.01)}%{opacity:0}100%{opacity:0}}
-@keyframes wkl-x{0%{transform:translateX(${travel}px)}${e(t4)}%{transform:translateX(${travel}px)}${e(t5)}%{transform:translateX(0)}100%{transform:translateX(0)}}
-
-/* Walk frame toggle (A and B alternate at 0.35s - slightly snappier) */
+/* ── Walk frame toggle ── */
 .wf-a{animation:wftog 0.35s step-end infinite}
 .wf-b{animation:wftog 0.35s step-end 0.175s infinite}
 @keyframes wftog{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
-/* At desk (coding): t2→t3 */
+/* ── Coding (${WR_END}-${CD_END}s) ── */
 .ds{animation:ds-v ${dur}s step-end infinite}
-@keyframes ds-v{0%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes ds-v{
+  0%{opacity:0}
+  ${p(WR_END)}%{opacity:0}${e(parseFloat(p(WR_END))+eps)}%{opacity:1}
+  ${p(CD_END)}%{opacity:1}${e(parseFloat(p(CD_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
 
-/* Coffee: t3→t4 */
+/* ── Coffee (${CD_END}-${CF_END}s) ── */
 .cf-cat{animation:cf-cat-v ${dur}s step-end infinite}
-@keyframes cf-cat-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
+@keyframes cf-cat-v{
+  0%{opacity:0}
+  ${p(CD_END)}%{opacity:0}${e(parseFloat(p(CD_END))+eps)}%{opacity:1}
+  ${p(CF_END)}%{opacity:1}${e(parseFloat(p(CF_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
 .cf{animation:cf-v ${dur}s step-end infinite,cf-y ${dur}s ease-in-out infinite}
-@keyframes cf-v{0%{opacity:0}${e(t3)}%{opacity:0}${e(t3+0.01)}%{opacity:1}${e(t4)}%{opacity:1}${e(t4+0.01)}%{opacity:0}100%{opacity:0}}
-@keyframes cf-y{${e(t3)}%{transform:translateY(0)}${mid(t3,t4)}%{transform:translateY(-10px) rotate(-15deg)}${e(t4)}%{transform:translateY(0)}}
+@keyframes cf-v{
+  0%{opacity:0}
+  ${p(CD_END)}%{opacity:0}${e(parseFloat(p(CD_END))+eps)}%{opacity:1}
+  ${p(CF_END)}%{opacity:1}${e(parseFloat(p(CF_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+@keyframes cf-y{
+  ${p(CD_END)}%{transform:translateY(0)}
+  ${p((CD_END+CF_END)/2)}%{transform:translateY(-10px) rotate(-15deg)}
+  ${p(CF_END)}%{transform:translateY(0)}
+}
 
-/* Tail wag - more natural: slow swing with slight pause at each end */
+/* ── Walk desk→window (${CF_END}-${WW_END}s) ── */
+.wk-w{animation:wkw-v ${dur}s step-end infinite,wkw-x ${dur}s ease-in-out infinite}
+@keyframes wkw-v{
+  0%{opacity:0}
+  ${p(CF_END)}%{opacity:0}${e(parseFloat(p(CF_END))+eps)}%{opacity:1}
+  ${p(WW_END)}%{opacity:1}${e(parseFloat(p(WW_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+@keyframes wkw-x{
+  0%{transform:translateX(0)}
+  ${p(CF_END)}%{transform:translateX(0)}
+  ${p(WW_END)}%{transform:translateX(${-travelDeskToWin}px)}
+  100%{transform:translateX(${-travelDeskToWin}px)}
+}
+
+/* ── Window gaze (${WW_END}-${GZ_END}s) ── */
+.gz{animation:gz-v ${dur}s step-end infinite}
+@keyframes gz-v{
+  0%{opacity:0}
+  ${p(WW_END)}%{opacity:0}${e(parseFloat(p(WW_END))+eps)}%{opacity:1}
+  ${p(GZ_END)}%{opacity:1}${e(parseFloat(p(GZ_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+
+/* ── Walk window→bed (${GZ_END}-${WL_END}s) ── */
+.wk-l{animation:wkl-v ${dur}s step-end infinite,wkl-x ${dur}s ease-in-out infinite}
+@keyframes wkl-v{
+  0%{opacity:0}
+  ${p(GZ_END)}%{opacity:0}${e(parseFloat(p(GZ_END))+eps)}%{opacity:1}
+  ${p(WL_END)}%{opacity:1}${e(parseFloat(p(WL_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+@keyframes wkl-x{
+  0%{transform:translateX(0)}
+  ${p(GZ_END)}%{transform:translateX(0)}
+  ${p(WL_END)}%{transform:translateX(${-(windowX - sleepX)}px)}
+  100%{transform:translateX(${-(windowX - sleepX)}px)}
+}
+
+/* ── Tail wag ── */
 .tw{animation:tw 1.6s cubic-bezier(0.45,0.05,0.55,0.95) infinite alternate;transform-box:fill-box;transform-origin:0 50%}
 @keyframes tw{0%{transform:rotate(-20deg)}40%{transform:rotate(-20deg)}60%{transform:rotate(14deg)}100%{transform:rotate(14deg)}}
 
-/* Zzz bubbles - slightly slower for cozier feel */
+/* ── Tail slow sway (for window gazing — gentle, right-extending tail) ── */
+.tw-slow{animation:tw-slow 3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%}
+@keyframes tw-slow{0%{transform:rotate(-8deg)}100%{transform:rotate(8deg)}}
+
+/* ── Tail slow sway left (tail extends left, pivot from right edge) ── */
+.tw-slow-l{animation:tw-slow-l 3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:100% 50%}
+@keyframes tw-slow-l{0%{transform:rotate(8deg)}100%{transform:rotate(-8deg)}}
+
+/* ── Zzz bubbles ── */
 .z1{animation:zf 4s ease-out infinite}
 .z2{animation:zf 4s ease-out 1.3s infinite}
 .z3{animation:zf 4s ease-out 2.6s infinite}
 @keyframes zf{0%{transform:translate(0,0);opacity:0}10%{opacity:.9}85%{opacity:.5}100%{transform:translate(10px,-28px);opacity:0}}
 
-/* Keyboard impact sparks */
+/* ── Keyboard sparks ── */
 .ht{animation:htf 1.4s ease-out infinite}
 .ht2{animation:htf 1.4s ease-out .7s infinite}
 .ht3{animation:htf 1.4s ease-out 0.35s infinite}
 @keyframes htf{0%{transform:translate(0,0);opacity:0}15%{opacity:1}100%{transform:translate(6px,-24px);opacity:0}}
 
-/* Monitor logos: Claude t2→mid(t2,t3), OpenClaw mid→t3 */
+/* ── Ear twitch (for window gazing) ── */
+.ear-twitch{animation:eartw 2.5s ease-in-out infinite}
+@keyframes eartw{0%,80%{transform:scaleY(1)}85%{transform:scaleY(0.85)}90%{transform:scaleY(1)}95%{transform:scaleY(0.9)}100%{transform:scaleY(1)}}
+
+/* ── Monitor logos ── */
 .mon-claude{animation:mon-cl ${dur}s step-end infinite}
 .mon-openclaw{animation:mon-oc ${dur}s step-end infinite}
-@keyframes mon-cl{0%{opacity:0}${e(t2)}%{opacity:0}${e(t2+0.01)}%{opacity:1}${mid(t2,t3)}%{opacity:1}${e(parseFloat(mid(t2,t3))+0.01)}%{opacity:0}100%{opacity:0}}
-@keyframes mon-oc{0%{opacity:0}${mid(t2,t3)}%{opacity:0}${e(parseFloat(mid(t2,t3))+0.01)}%{opacity:1}${e(t3)}%{opacity:1}${e(t3+0.01)}%{opacity:0}100%{opacity:0}}`
+@keyframes mon-cl{
+  0%{opacity:0}
+  ${p(WR_END)}%{opacity:0}${e(parseFloat(p(WR_END))+eps)}%{opacity:1}
+  ${p((WR_END+CD_END)/2)}%{opacity:1}${e(parseFloat(p((WR_END+CD_END)/2))+eps)}%{opacity:0}
+  100%{opacity:0}
+}
+@keyframes mon-oc{
+  0%{opacity:0}
+  ${p((WR_END+CD_END)/2)}%{opacity:0}${e(parseFloat(p((WR_END+CD_END)/2))+eps)}%{opacity:1}
+  ${p(CD_END)}%{opacity:1}${e(parseFloat(p(CD_END))+eps)}%{opacity:0}
+  100%{opacity:0}
+}`
 }
 
 // ── Main export ────────────────────────────────────────────────────────────────
 
+// Mattress width constant
+const BED_V = BED_W
+
 export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'paris'): string {
   const floorY  = h - 40
-  const sitH    = SI.length * PX      // 13 × 5 = 65
-  const sleepH  = SL.length * PX      // 8 × 5 = 40
-  const walkH   = WA.length * PX      // 14 × 5 = 70
-  const catW    = SI[0].length * PX   // 10 × 5 = 50
+  const sitH    = SI.length * PX      // 11 × 5 = 55
+  const sleepH  = SL.length * PX      // 7 × 5 = 35
+  const walkH   = WA.length * PX      // 12 × 5 = 60
+  const stretchH = ST.length * PX     // 8 × 5 = 40
+  const gazeH   = WG.length * PX      // 11 × 5 = 55
+  const spriteW = WA[0].length * PX   // 11 × 5 = 55 (full sprite width)
+  // Tail offset: connect tail to body's right edge (body K at col 8 = 40px)
+  const tailOff = 8 * PX - 2 * PX     // body right edge(40) - tail first pixel col(2×5=10) = 30
 
   const sitY    = floorY - sitH
-  const sleepY  = floorY - sleepH - 8
+  const sleepY  = floorY - sleepH - 8   // on bed, slightly raised
   const walkY   = floorY - walkH
+  const stretchY = floorY - stretchH - 6 // on bed
+  const gazeY   = floorY - gazeH
 
   // Cat positions
-  const sleepX  = 26          // in bed (left side)
-  const deskX   = w - 262     // at desk (right side, near keyboard)
-  const travel  = deskX - sleepX  // walk distance in px
+  const sleepX  = 26           // bed
+  const deskX   = w - 262      // desk
+  const windowX = 210          // in front of window
+  const travel  = deskX - sleepX
+  const travelDeskToWin = deskX - windowX
 
-  // Animation timeline (52s: sleep→walk_r→code→coffee→walk_l→sleep)
-  const DUR = 52
-  const t1 = 8  / DUR * 100  // sleep 끝 / walk right 시작 (더 오래 자기)
-  const t2 = 13 / DUR * 100  // walk right 끝 / 코딩 시작 (여유 있는 걷기)
-  const t3 = 28 / DUR * 100  // 코딩 끝 / 커피 시작
-  const t4 = 35 / DUR * 100  // 커피 끝 / walk left 시작 (커피 더 천천히)
-  const t5 = 40 / DUR * 100  // walk left 끝 / sleep 시작
+  const DUR = 60
 
-  const css  = buildCSS(DUR, t1, t2, t3, t4, t5, travel)
+  const css  = buildCSS(DUR, sleepX, deskX, windowX, travel, travelDeskToWin)
   const room = buildRoom(w, h, accent, scene)
 
-  // Monitor screen (on the desk monitor)
-  const monX = deskX + 2, monY = 8, monW = 138, monH = 78
+  // Monitor overlay positions
+  const monOvX = deskX + 2, monOvY = 8, monOvW = 138, monOvH = 78
 
   // ── Claude logo on monitor ──
   const claudeLogo = `<g class="mon-claude">
-  <rect x="${monX+2}" y="${monY+2}" width="${monW-4}" height="${monH-4}" fill="#0a0a0a" rx="3"/>
-  <text x="${monX+monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#ff6b35" text-anchor="middle" font-weight="bold">◆ CLAUDE ◆</text>
-  <text x="${monX+monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#ff9955" text-anchor="middle">Anthropic</text>
-  <rect x="${monX+10}" y="${monY+36}" width="${monW-20}" height="1" fill="#ff6b35" opacity="0.4"/>
-  <text x="${monX+monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffaa" text-anchor="middle">&gt; analyzing...</text>
-  <text x="${monX+monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88cc88" text-anchor="middle">&gt; output ready_</text>
+  <rect x="${monOvX+2}" y="${monOvY+2}" width="${monOvW-4}" height="${monOvH-4}" fill="#0a0a0a" rx="3"/>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+18}" font-family="monospace" font-size="8" fill="#ff6b35" text-anchor="middle" font-weight="bold">◆ CLAUDE ◆</text>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+30}" font-family="monospace" font-size="6" fill="#ff9955" text-anchor="middle">Anthropic</text>
+  <rect x="${monOvX+10}" y="${monOvY+36}" width="${monOvW-20}" height="1" fill="#ff6b35" opacity="0.4"/>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+48}" font-family="monospace" font-size="6" fill="#aaffaa" text-anchor="middle">&gt; analyzing...</text>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+58}" font-family="monospace" font-size="6" fill="#88cc88" text-anchor="middle">&gt; output ready_</text>
 </g>`
 
   // ── OpenClaw logo on monitor ──
   const openclawLogo = `<g class="mon-openclaw">
-  <rect x="${monX+2}" y="${monY+2}" width="${monW-4}" height="${monH-4}" fill="#0a0a0a" rx="3"/>
-  <text x="${monX+monW/2}" y="${monY+18}" font-family="monospace" font-size="8" fill="#10a37f" text-anchor="middle" font-weight="bold">✦ OPENCLAW ✦</text>
-  <text x="${monX+monW/2}" y="${monY+30}" font-family="monospace" font-size="6" fill="#1dc9a0" text-anchor="middle">model: gpt-claw</text>
-  <rect x="${monX+10}" y="${monY+36}" width="${monW-20}" height="1" fill="#10a37f" opacity="0.4"/>
-  <text x="${monX+monW/2}" y="${monY+48}" font-family="monospace" font-size="6" fill="#aaffee" text-anchor="middle">&gt; processing...</text>
-  <text x="${monX+monW/2}" y="${monY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
+  <rect x="${monOvX+2}" y="${monOvY+2}" width="${monOvW-4}" height="${monOvH-4}" fill="#0a0a0a" rx="3"/>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+18}" font-family="monospace" font-size="8" fill="#10a37f" text-anchor="middle" font-weight="bold">✦ OPENCLAW ✦</text>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+30}" font-family="monospace" font-size="6" fill="#1dc9a0" text-anchor="middle">model: gpt-claw</text>
+  <rect x="${monOvX+10}" y="${monOvY+36}" width="${monOvW-20}" height="1" fill="#10a37f" opacity="0.4"/>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+48}" font-family="monospace" font-size="6" fill="#aaffee" text-anchor="middle">&gt; processing...</text>
+  <text x="${monOvX+monOvW/2}" y="${monOvY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
 </g>`
 
-  // ── 1. 잠자기 (bed) ──
+  // ── 1. Sleep (bed) ──
+  const sleepW = SL[0].length * PX  // 12 × 5 = 60
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
-  ${bmp(SL, CS, 0, sleepY)}
-  <text class="z1" x="${catW+6}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
-  <text class="z2" x="${catW+14}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
-  <text class="z3" x="${catW+22}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
+  ${bmp(SL, C, 0, sleepY)}
+  <text class="z1" x="${sleepW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
+  <text class="z2" x="${sleepW+12}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
+  <text class="z3" x="${sleepW+20}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
 </g>`
 
-  // ── 2. 걷기 오른쪽 (sleep pos → desk) ──
+  // ── 2. Stretch (on bed) ──
+  const stretching = `<g class="st" transform="translate(${sleepX - 10},0)">
+  ${bmp(ST, C, 0, stretchY)}
+</g>`
+
+  // ── 3. Walk right (bed → desk) ──
   const walkRight = `<g transform="translate(${sleepX},0)">
   <g class="wk-r">
     <g class="wf-a">${bmp(WA, C, 0, walkY)}</g>
@@ -738,23 +833,20 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   </g>
 </g>`
 
-  // ── 3. 코딩 (desk) ──
+  // ── 4. Coding (at desk) ──
   const coding = `<g class="ds" transform="translate(${deskX},0)">
   ${bmp(SI.slice(0,-1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
-  <text class="ht"  x="${catW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
-  <text class="ht2" x="${catW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
-  <text class="ht3" x="${catW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
+  <g class="tw">${bmp([SI[SI.length-1]], C, tailOff, sitY+(SI.length-1)*PX)}</g>
+  <text class="ht"  x="${spriteW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
+  <text class="ht2" x="${spriteW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
+  <text class="ht3" x="${spriteW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
 </g>`
 
-  // ── 4. 커피 (desk) ──
+  // ── 5. Coffee (at desk) ──
   const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
-  ${bmp(SI.slice(0,-1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
+  ${bmp(CF.slice(0,-1), C, 0, sitY)}
+  <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
-
-  // NOTE: Outer group holds the base position; inner group has the CSS animation.
-  // This prevents the CSS transform animation from overriding the SVG transform attribute.
   const coffeeCup = `<g transform="translate(${deskX+30},${sitY+12})">
   <g class="cf">
     <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
@@ -766,8 +858,23 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   </g>
 </g>`
 
-  // ── 5. 걷기 왼쪽 (desk → sleep pos) ──
-  const walkLeft = `<g transform="translate(${sleepX},0)">
+  // ── 6. Walk desk → window (facing left) ──
+  const walkToWindow = `<g transform="translate(${deskX},0)">
+  <g class="wk-w">
+    <g class="wf-a">${bmp(WA_L, C, 0, walkY)}</g>
+    <g class="wf-b">${bmp(WB_L, C, 0, walkY)}</g>
+  </g>
+</g>`
+
+  // ── 7. Gaze at window ──
+  // WG tail extends left: tail row at normal position (no offset), slow sway from right edge
+  const windowGaze = `<g class="gz" transform="translate(${windowX},0)">
+  ${bmp(WG_R.slice(0,-1), C, 0, gazeY)}
+  <g class="tw-slow-l">${bmp([WG_R[WG_R.length-1]], C, 0, gazeY+(WG_R.length-1)*PX)}</g>
+</g>`
+
+  // ── 8. Walk window → bed (facing left) ──
+  const walkToBed = `<g transform="translate(${windowX},0)">
   <g class="wk-l">
     <g class="wf-a">${bmp(WA_L, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB_L, C, 0, walkY)}</g>
@@ -779,9 +886,12 @@ ${room}
 ${claudeLogo}
 ${openclawLogo}
 ${sleeping}
+${stretching}
 ${walkRight}
 ${coding}
 ${coffeeCat}
 ${coffeeCup}
-${walkLeft}`
+${walkToWindow}
+${windowGaze}
+${walkToBed}`
 }
