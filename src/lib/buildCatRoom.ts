@@ -62,10 +62,10 @@ const SL = [
   '.KOGGWGGOK..',
   'KSOOOOOOOSSK',
   'KOLDDDDDLODK',
-  '.KKKKKKKKKKK',
+  '.KKKKKKKKKK.',
 ]
 
-// ── Stretch pose (ST) — front paws out, back arched, 16×8 ──
+// ── Stretch pose (ST) — front paws out, back arched, 18×8 ──
 const ST = [
   '......KKKKKKK.....',
   '.....KOOLOOLOK....',
@@ -77,13 +77,13 @@ const ST = [
   '...KK..KK.......KK',
 ]
 
-// ── Walk A — right foot forward, 10×12 ──
+// ── Walk A — right foot forward, 11×12 (all rows 11 chars) ──
 const WA = [
-  '..KK..KK..',
-  '.KOOKKOOLK',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
   'KOOOOOOOOOK',
-  'KOOeOOOeOOK',
-  'KOOWWnWWOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
   '.KOGGWGGOK.',
   '.KSOOOOSK..',
   '.KDOOOODK..',
@@ -93,13 +93,13 @@ const WA = [
   '..KPK..KPK.',
 ]
 
-// ── Walk B — left foot forward, 10×12 ──
+// ── Walk B — left foot forward, 11×12 (all rows 11 chars) ──
 const WB = [
-  '..KK..KK..',
-  '.KOOKKOOLK',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
   'KOOOOOOOOOK',
-  'KOOeOOOeOOK',
-  'KOOWWnWWOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
   '.KOGGWGGOK.',
   '.KSOOOOSK..',
   '.KDOOOODK..',
@@ -109,13 +109,14 @@ const WB = [
   '.KPK...KPK.',
 ]
 
-// ── Sit pose (SI) — at desk coding, 10×11 ──
+// ── Sit pose (SI) — at desk coding, 11×11 (all rows 11 chars) ──
+// Last row = tail (rendered separately with wag animation)
 const SI = [
-  '..KK..KK..',
-  '.KOOKKOOLK',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
   'KOOOOOOOOOK',
-  'KOOeOOOeOOK',
-  'KOOWWnWWOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
   '.KOGGWGGOK.',
   '.KSOOOOSK..',
   '.KDOOOODK..',
@@ -124,28 +125,29 @@ const SI = [
   '..KDDDDDDTK',
 ]
 
-// ── Window gaze pose (WG) — sitting, looking left toward window, 10×11 ──
+// ── Window gaze pose (WG) — sitting, looking left toward window, 11×11 ──
+// Last row = tail extending left (rendered separately)
 const WG = [
-  '.KK..KK...',
-  'KOOKKOOLK..',
-  'KOOOOOOOOK.',
-  'KeOOOeOOOK.',
+  '.KK..KK....',
+  'KOOLKKLOOK.',
+  'KOOOOOOOOOK',
+  'KeOOOOeOOK.',
   'KWWnWWOOOK.',
   'KOGGWGGOK..',
   '.KSOOOOSK..',
   '.KDOOOODK..',
   '..KOOOOOK..',
   '..KPKKPK...',
-  'KTDDDDDDKK.',
+  '.KTDDDDDKK.',
 ]
 
-// ── Coffee hold pose (CF) — sitting with paw up, 10×11 ──
+// ── Coffee hold pose (CF) — sitting with paw up, 11×11 (all rows 11 chars) ──
 const CF = [
-  '..KK..KK..',
-  '.KOOKKOOLK',
+  '..KK..KK...',
+  '.KOOKKLOOK.',
   'KOOOOOOOOOK',
-  'KOOeOOOeOOK',
-  'KOOWWnWWOOK',
+  'KOeOOOOeOK.',
+  'KOOWWNWWOK.',
   '.KOGGWGGOK.',
   '.KSOOPOOSK.',
   '.KDOOPOODK.',
@@ -711,9 +713,13 @@ function buildCSS(
 .tw{animation:tw 1.6s cubic-bezier(0.45,0.05,0.55,0.95) infinite alternate;transform-box:fill-box;transform-origin:0 50%}
 @keyframes tw{0%{transform:rotate(-20deg)}40%{transform:rotate(-20deg)}60%{transform:rotate(14deg)}100%{transform:rotate(14deg)}}
 
-/* ── Tail slow sway (for window gazing — gentle) ── */
+/* ── Tail slow sway (for window gazing — gentle, right-extending tail) ── */
 .tw-slow{animation:tw-slow 3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%}
 @keyframes tw-slow{0%{transform:rotate(-8deg)}100%{transform:rotate(8deg)}}
+
+/* ── Tail slow sway left (tail extends left, pivot from right edge) ── */
+.tw-slow-l{animation:tw-slow-l 3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:100% 50%}
+@keyframes tw-slow-l{0%{transform:rotate(8deg)}100%{transform:rotate(-8deg)}}
 
 /* ── Zzz bubbles ── */
 .z1{animation:zf 4s ease-out infinite}
@@ -755,12 +761,14 @@ const BED_V = BED_W
 
 export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'paris'): string {
   const floorY  = h - 40
-  const sitH    = SI.length * PX
-  const sleepH  = SL.length * PX
-  const walkH   = WA.length * PX
-  const stretchH = ST.length * PX
-  const gazeH   = WG.length * PX
-  const catW    = WA[0].length * PX
+  const sitH    = SI.length * PX      // 11 × 5 = 55
+  const sleepH  = SL.length * PX      // 7 × 5 = 35
+  const walkH   = WA.length * PX      // 12 × 5 = 60
+  const stretchH = ST.length * PX     // 8 × 5 = 40
+  const gazeH   = WG.length * PX      // 11 × 5 = 55
+  const spriteW = WA[0].length * PX   // 11 × 5 = 55 (full sprite width)
+  // Tail offset: connect tail to body's right edge (body K at col 8 = 40px)
+  const tailOff = 8 * PX - 2 * PX     // body right edge(40) - tail first pixel col(2×5=10) = 30
 
   const sitY    = floorY - sitH
   const sleepY  = floorY - sleepH - 8   // on bed, slightly raised
@@ -804,11 +812,12 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 </g>`
 
   // ── 1. Sleep (bed) ──
+  const sleepW = SL[0].length * PX  // 12 × 5 = 60
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
   ${bmp(SL, C, 0, sleepY)}
-  <text class="z1" x="${catW+6}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
-  <text class="z2" x="${catW+14}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
-  <text class="z3" x="${catW+22}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
+  <text class="z1" x="${sleepW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
+  <text class="z2" x="${sleepW+12}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
+  <text class="z3" x="${sleepW+20}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
 </g>`
 
   // ── 2. Stretch (on bed) ──
@@ -827,16 +836,16 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   // ── 4. Coding (at desk) ──
   const coding = `<g class="ds" transform="translate(${deskX},0)">
   ${bmp(SI.slice(0,-1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length-1]], C, catW, sitY+(SI.length-1)*PX)}</g>
-  <text class="ht"  x="${catW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
-  <text class="ht2" x="${catW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
-  <text class="ht3" x="${catW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
+  <g class="tw">${bmp([SI[SI.length-1]], C, tailOff, sitY+(SI.length-1)*PX)}</g>
+  <text class="ht"  x="${spriteW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
+  <text class="ht2" x="${spriteW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
+  <text class="ht3" x="${spriteW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
 </g>`
 
   // ── 5. Coffee (at desk) ──
   const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
   ${bmp(CF.slice(0,-1), C, 0, sitY)}
-  <g class="tw">${bmp([CF[CF.length-1]], C, catW, sitY+(CF.length-1)*PX)}</g>
+  <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
   const coffeeCup = `<g transform="translate(${deskX+30},${sitY+12})">
   <g class="cf">
@@ -858,9 +867,10 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 </g>`
 
   // ── 7. Gaze at window ──
+  // WG tail extends left: tail row at normal position (no offset), slow sway from right edge
   const windowGaze = `<g class="gz" transform="translate(${windowX},0)">
   ${bmp(WG_R.slice(0,-1), C, 0, gazeY)}
-  <g class="tw-slow">${bmp([WG_R[WG_R.length-1]], C, 0, gazeY+(WG_R.length-1)*PX)}</g>
+  <g class="tw-slow-l">${bmp([WG_R[WG_R.length-1]], C, 0, gazeY+(WG_R.length-1)*PX)}</g>
 </g>`
 
   // ── 8. Walk window → bed (facing left) ──
