@@ -141,16 +141,16 @@ const WG = [
   '.KTDDDDDKK.',
 ]
 
-// ── Coffee hold pose (CF) — sitting with paw up, 11×11 (all rows 11 chars) ──
+// ── Coffee hold pose (CF) — sitting, right arm extended holding cup, 11×11 ──
 const CF = [
   '..KK..KK...',
   '.KOOKKLOOK.',
   'KOOOOOOOOOK',
-  'KOeOOOOeOK.',
+  'KOnOOOOnOK.',
   'KOOWWNWWOK.',
   '.KOGGWGGOK.',
-  '.KSOOPOOSK.',
-  '.KDOOPOODK.',
+  '.KSOOOOOKPK',
+  '.KDOOOODK..',
   '..KOOOOOK..',
   '..KPKKPK...',
   '..KDDDDDDTK',
@@ -848,7 +848,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   ${bmp(CF.slice(0,-1), C, 0, sitY)}
   <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
-  const coffeeCup = `<g transform="translate(${deskX+30},${sitY+12})">
+  const coffeeCup = `<g transform="translate(${deskX+46},${sitY+22})">
   <g class="cf">
     <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
     <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
