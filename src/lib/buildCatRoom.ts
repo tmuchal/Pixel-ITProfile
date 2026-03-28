@@ -59,6 +59,7 @@ const C: Record<string, string> = {
   // Whiskers / misc
   G: '#888878',      // whiskers
   T: '#C06810',      // tail (same as dark orange)
+  R: '#cc1111',      // cape red
 }
 
 // ── Sleep pose (SL) — lying on belly, side view, 18×8 ──
@@ -66,7 +67,7 @@ const SL = [
   '..KK..KK..........',
   '.KOOKKLOOK........',
   'KOOOOOOOOOKKKKKK..',
-  'KOnOOOOnOOOODOOSK.',
+  'KOOOOOOOOOOODOOSK.',
   'KOOWWnWWOODOOSOK..',
   '.KOGGWGGOODDSOOK..',
   '..KKOOOOLOOOOLK...',
@@ -164,6 +165,36 @@ const CF = [
   '..KDDDDDDTK',
 ]
 
+// ── Back-view sit (SI_B) — facing away, cape visible, tail right, 11×11 ──
+const SI_B = [
+  '..KK..KK...',
+  '.KOOKKLOOK.',
+  '.KOOOOOOOK.',
+  '..KOOOOK...',
+  '.KRRRRRRSK.',
+  '.KRRRRRRDK.',
+  '.KRRRRRRSK.',
+  '.KRRRRRRDK.',
+  '..KOOOOOK..',
+  '..KPKKPK...',
+  '..KDDDDDDTK',
+]
+
+// ── Back-view window gaze (WG_B) — facing window, cape visible, tail left, 11×11 ──
+const WG_B = [
+  '..KK..KK...',
+  '.KOOKKLOOK.',
+  '.KOOOOOOOK.',
+  '..KOOOOK...',
+  '.KRRRRRRSK.',
+  '.KRRRRRRDK.',
+  '.KRRRRRRSK.',
+  '.KRRRRRRDK.',
+  '..KOOOOOK..',
+  '..KPKKPK...',
+  '.KTDDDDDKK.',
+]
+
 const WA_L = mirror(WA)
 const WB_L = mirror(WB)
 const WG_R = WG  // already faces left (toward window)
@@ -172,10 +203,6 @@ const WG_R = WG  // already faces left (toward window)
 
 const BED_X  = 15
 const BED_W  = 150
-const TV_X   = BED_X + 16
-const TV_Y   = 10
-const TV_W   = 100
-const TV_H   = 68
 
 // ── Scene type ─────────────────────────────────────────────────────────────────
 
@@ -386,14 +413,6 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
   }
   out.push(`<rect x="${BED_X + BED_W + 16}" y="${bedTop}" width="14" height="50" fill="#3a2010" rx="2"/>`)
 
-  // ── TV ──
-  const scx = TV_X + 5, scy = TV_Y + 5, scw = TV_W - 10, sch = TV_H - 12
-  out.push(`<rect x="${TV_X + TV_W / 2 - 2}" y="${TV_Y + TV_H}" width="4" height="16" fill="#222"/>`)
-  out.push(`<rect x="${TV_X}" y="${TV_Y}" width="${TV_W}" height="${TV_H}" fill="#0d0d14" rx="4"/>`)
-  out.push(`<rect x="${TV_X}" y="${TV_Y}" width="${TV_W}" height="${TV_H}" fill="none" stroke="#333" stroke-width="1.5" rx="4"/>`)
-  out.push(`<rect x="${scx}" y="${scy}" width="${scw}" height="${sch}" fill="#040408" rx="2"/>`)
-  out.push(`<circle cx="${TV_X + TV_W - 7}" cy="${TV_Y + TV_H - 7}" r="2" fill="#440000" opacity="0.8"/>`)
-
   // ── Window ──
   const wx = 195, wy = 8, ww = 108, wh = floorY - 16
   const frameColor = '#3a2010'
@@ -529,20 +548,6 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
       const isAcc = (row === 1 && col === keys - 1) || (row === 2 && col === 0)
       out.push(`<rect x="${kx + 6 + offX + col * (keyW + 1)}" y="${ky + 5 + row * 7}" width="${keyW}" height="5" fill="${isAcc ? accent + '44' : '#18182a'}" rx="1"/>`)
     }
-  }
-
-  // ── Coffee cup on desk ──
-  const cupX = dx + 224, cupY = dtop + 4
-  out.push(`<ellipse cx="${cupX + 14}" cy="${cupY + 25}" rx="20" ry="5" fill="#3a2010"/>`)
-  out.push(`<rect x="${cupX + 4}" y="${cupY + 8}" width="20" height="17" fill="#2a1408" rx="3"/>`)
-  out.push(`<ellipse cx="${cupX + 14}" cy="${cupY + 8}" rx="10" ry="4" fill="#3a2010"/>`)
-  out.push(`<ellipse cx="${cupX + 14}" cy="${cupY + 8}" rx="8" ry="3" fill="#6a3010"/>`)
-  out.push(`<path d="M ${cupX + 24} ${cupY + 10} Q ${cupX + 32} ${cupY + 10} ${cupX + 32} ${cupY + 18} Q ${cupX + 32} ${cupY + 24} ${cupX + 24} ${cupY + 24}" stroke="#3a2010" stroke-width="3" fill="none"/>`)
-  for (let si = 0; si < 2; si++) {
-    const sx = cupX + 8 + si * 8
-    out.push(`<path d="M ${sx} ${cupY + 4} Q ${sx - 3} ${cupY - 2} ${sx} ${cupY - 8}" stroke="#ffe8a0" stroke-width="1.5" fill="none" opacity="0.5">
-  <animate attributeName="opacity" values="0.5;0.1;0.5" dur="${1.8 + si * 0.5}s" repeatCount="indefinite"/>
-</path>`)
   }
 
   // ── Office chair ──
@@ -864,17 +869,17 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   </g>
 </g>`
 
-  // ── 4. Coding (at desk) ──
+  // ── 4. Coding (at desk) — BACK VIEW, cape with "AI" ──
   const coding = `<g class="ds" transform="translate(${deskX},0)">
-  <g class="cape-dr-l">${capeSvg(capeNeckR, sitY + 27, 'L', 22)}</g>
-  ${bmp(SI.slice(0,-1), C, 0, sitY)}
-  <g class="tw">${bmp([SI[SI.length-1]], C, tailOff, sitY+(SI.length-1)*PX)}</g>
+  ${bmp(SI_B.slice(0,-1), C, 0, sitY)}
+  <g class="tw">${bmp([SI_B[SI_B.length-1]], C, tailOff, sitY+(SI_B.length-1)*PX)}</g>
+  <text x="${25}" y="${sitY+35}" fill="#ffd700" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">AI</text>
   <text class="ht"  x="${spriteW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
   <text class="ht2" x="${spriteW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
   <text class="ht3" x="${spriteW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
 </g>`
 
-  // ── 5. Coffee (at desk) ──
+  // ── 5. Coffee (at desk) — FRONT VIEW, cup appears only here ──
   const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
   <g class="cape-dr-l">${capeSvg(capeNeckR, sitY + 27, 'L', 22)}</g>
   ${bmp(CF.slice(0,-1), C, 0, sitY)}
@@ -887,7 +892,6 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
     <ellipse cx="10" cy="4" rx="7" ry="2.5" fill="#6b3010"/>
     <path d="M20 6 Q26 6 26 12 Q26 18 20 18" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
     <ellipse cx="10" cy="4" rx="5" ry="1.5" fill="#8b4513" opacity="0.8"/>
-    <text x="28" y="4" font-family="monospace" font-size="10" fill="#ffcc88">☕</text>
   </g>
 </g>`
 
@@ -900,11 +904,11 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   </g>
 </g>`
 
-  // ── 7. Gaze at window ──
+  // ── 7. Gaze at window — BACK VIEW, cape with "AI" ──
   const windowGaze = `<g class="gz" transform="translate(${windowX},0)">
-  <g class="cape-dr-r">${capeSvg(capeNeckL, gazeY + 27, 'R', 22)}</g>
-  ${bmp(WG_R.slice(0,-1), C, 0, gazeY)}
-  <g class="tw-slow-l">${bmp([WG_R[WG_R.length-1]], C, 0, gazeY+(WG_R.length-1)*PX)}</g>
+  ${bmp(WG_B.slice(0,-1), C, 0, gazeY)}
+  <g class="tw-slow-l">${bmp([WG_B[WG_B.length-1]], C, 0, gazeY+(WG_B.length-1)*PX)}</g>
+  <text x="${25}" y="${gazeY+35}" fill="#ffd700" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">AI</text>
 </g>`
 
   // ── 8. Walk window → bed (facing left) ──
