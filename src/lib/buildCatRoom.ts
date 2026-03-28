@@ -54,15 +54,15 @@ const C: Record<string, string> = {
   T: '#C06810',      // tail (same as dark orange)
 }
 
-// ── Sleep pose (SL) — curled up, 12×7 ──
+// ── Sleep pose (SL) — lying on belly, side view, 18×7 ──
 const SL = [
-  '..KKKKKKK...',
-  '.KOOLOOLOK..',
-  '.KOWWnPWOK..',
-  '.KOGGWGGOK..',
-  'KSOOOOOOOSSK',
-  'KOLDDDDDLODK',
-  '.KKKKKKKKKK.',
+  '..KK..KK..........',
+  '.KOOKKLOOK........',
+  'KOnOOOOnOOKKKKKKK.',
+  'KOOWWnWWOOOODOOOSK',
+  '.KOGGWGGOOODDSOOKK',
+  '..KKOOOOOLOOOOLK..',
+  '...KPKKPKKKKKKKKTK',
 ]
 
 // ── Stretch pose (ST) — front paws out, back arched, 18×8 ──
@@ -141,16 +141,16 @@ const WG = [
   '.KTDDDDDKK.',
 ]
 
-// ── Coffee hold pose (CF) — sitting with paw up, 11×11 (all rows 11 chars) ──
+// ── Coffee hold pose (CF) — sitting, right arm extended holding cup, 11×11 ──
 const CF = [
   '..KK..KK...',
   '.KOOKKLOOK.',
   'KOOOOOOOOOK',
-  'KOeOOOOeOK.',
+  'KOnOOOOnOK.',
   'KOOWWNWWOK.',
   '.KOGGWGGOK.',
-  '.KSOOPOOSK.',
-  '.KDOOPOODK.',
+  '.KSOOOOOKPK',
+  '.KDOOOODK..',
   '..KOOOOOK..',
   '..KPKKPK...',
   '..KDDDDDDTK',
@@ -762,7 +762,7 @@ const BED_V = BED_W
 export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'paris'): string {
   const floorY  = h - 40
   const sitH    = SI.length * PX      // 11 × 5 = 55
-  const sleepH  = SL.length * PX      // 7 × 5 = 35
+  const sleepH  = SL.length * PX      // 7 × 5 = 35 (side-lying pose)
   const walkH   = WA.length * PX      // 12 × 5 = 60
   const stretchH = ST.length * PX     // 8 × 5 = 40
   const gazeH   = WG.length * PX      // 11 × 5 = 55
@@ -812,12 +812,13 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 </g>`
 
   // ── 1. Sleep (bed) ──
-  const sleepW = SL[0].length * PX  // 12 × 5 = 60
+  const sleepW = SL[0].length * PX  // 18 × 5 = 90
+  const headW  = 10 * PX             // head is ~10 sprite cols wide
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
   ${bmp(SL, C, 0, sleepY)}
-  <text class="z1" x="${sleepW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
-  <text class="z2" x="${sleepW+12}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
-  <text class="z3" x="${sleepW+20}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
+  <text class="z1" x="${headW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
+  <text class="z2" x="${headW+12}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
+  <text class="z3" x="${headW+20}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
 </g>`
 
   // ── 2. Stretch (on bed) ──
@@ -847,7 +848,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   ${bmp(CF.slice(0,-1), C, 0, sitY)}
   <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
-  const coffeeCup = `<g transform="translate(${deskX+30},${sitY+12})">
+  const coffeeCup = `<g transform="translate(${deskX+46},${sitY+22})">
   <g class="cf">
     <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
     <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
