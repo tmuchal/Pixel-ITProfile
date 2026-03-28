@@ -33,6 +33,13 @@ function mirror(rows: string[]): string[] {
   return rows.map(r => r.split('').reverse().join(''))
 }
 
+// ── Cape SVG generator ────────────────────────────────────────────────────────
+function capeSvg(ax: number, ay: number, dir: 'L' | 'R', h: number): string {
+  const d = dir === 'L' ? -1 : 1
+  return `<polygon points="${ax},${ay} ${ax+d*12},${ay+h*0.3} ${ax+d*18},${ay+h} ${ax+d*10},${ay+h+3} ${ax+d*2},${ay+h*0.5}" fill="#cc1111"/>
+<polygon points="${ax+d*12},${ay+h*0.3} ${ax+d*20},${ay+h*0.8} ${ax+d*18},${ay+h}" fill="#991010"/>`
+}
+
 // ── Orange tabby cat palette ──────────────────────────────────────────────────
 
 const C: Record<string, string> = {
@@ -54,15 +61,16 @@ const C: Record<string, string> = {
   T: '#C06810',      // tail (same as dark orange)
 }
 
-// ── Sleep pose (SL) — lying on belly, side view, 18×7 ──
+// ── Sleep pose (SL) — lying on belly, side view, 18×8 ──
 const SL = [
   '..KK..KK..........',
   '.KOOKKLOOK........',
-  'KOnOOOOnOOKKKKKKK.',
-  'KOOWWnWWOOOODOOOSK',
-  '.KOGGWGGOOODDSOOKK',
-  '..KKOOOOOLOOOOLK..',
-  '...KPKKPKKKKKKKKTK',
+  'KOOOOOOOOOKKKKKK..',
+  'KOnOOOOnOOOODOOSK.',
+  'KOOWWnWWOODOOSOK..',
+  '.KOGGWGGOODDSOOK..',
+  '..KKOOOOLOOOOLK...',
+  '...KPKKPKKKKKKKTK.',
 ]
 
 // ── Stretch pose (ST) — front paws out, back arched, 18×8 ──
@@ -721,6 +729,18 @@ function buildCSS(
 .tw-slow-l{animation:tw-slow-l 3s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:100% 50%}
 @keyframes tw-slow-l{0%{transform:rotate(8deg)}100%{transform:rotate(-8deg)}}
 
+/* ── Cape flutter (walk — fast flutter from neck) ── */
+.cape-fl-l{animation:cfl .6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:100% 0}
+@keyframes cfl{from{transform:rotate(0)}to{transform:rotate(-10deg)}}
+.cape-fl-r{animation:cfr .6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 0}
+@keyframes cfr{from{transform:rotate(0)}to{transform:rotate(10deg)}}
+
+/* ── Cape drape (sit — slow gentle sway) ── */
+.cape-dr-l{animation:cdl 2.5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:100% 0}
+@keyframes cdl{from{transform:rotate(0)}to{transform:rotate(-4deg)}}
+.cape-dr-r{animation:cdr 2.5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 0}
+@keyframes cdr{from{transform:rotate(0)}to{transform:rotate(4deg)}}
+
 /* ── Zzz bubbles ── */
 .z1{animation:zf 4s ease-out infinite}
 .z2{animation:zf 4s ease-out 1.3s infinite}
@@ -762,7 +782,7 @@ const BED_V = BED_W
 export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'paris'): string {
   const floorY  = h - 40
   const sitH    = SI.length * PX      // 11 × 5 = 55
-  const sleepH  = SL.length * PX      // 7 × 5 = 35 (side-lying pose)
+  const sleepH  = SL.length * PX      // 8 × 5 = 40 (side-lying pose)
   const walkH   = WA.length * PX      // 12 × 5 = 60
   const stretchH = ST.length * PX     // 8 × 5 = 40
   const gazeH   = WG.length * PX      // 11 × 5 = 55
@@ -811,10 +831,18 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   <text x="${monOvX+monOvW/2}" y="${monOvY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
 </g>`
 
+  // ── Cape attachment points ──
+  // Right-facing: cape attaches at left edge of body (col 1 = 5px), shoulder row 5 → +27px
+  // Left-facing: cape attaches at right edge of body (col 9 = 45px)
+  const capeNeckR = 5    // right-facing cat, cape attach x
+  const capeNeckL = 47   // left-facing cat, cape attach x
+
   // ── 1. Sleep (bed) ──
   const sleepW = SL[0].length * PX  // 18 × 5 = 90
   const headW  = 10 * PX             // head is ~10 sprite cols wide
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
+  <path d="M${50} ${sleepY+8} L${88} ${sleepY+4} L${92} ${sleepY+38} L${46} ${sleepY+40} Z" fill="#cc1111" opacity="0.8"/>
+  <path d="M${78} ${sleepY+6} L${92} ${sleepY+20} L${92} ${sleepY+38} L${84} ${sleepY+34} Z" fill="#991010" opacity="0.7"/>
   ${bmp(SL, C, 0, sleepY)}
   <text class="z1" x="${headW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
   <text class="z2" x="${headW+12}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
@@ -823,12 +851,14 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 
   // ── 2. Stretch (on bed) ──
   const stretching = `<g class="st" transform="translate(${sleepX - 10},0)">
+  <g class="cape-fl-l">${capeSvg(25, stretchY + 16, 'L', 20)}</g>
   ${bmp(ST, C, 0, stretchY)}
 </g>`
 
   // ── 3. Walk right (bed → desk) ──
   const walkRight = `<g transform="translate(${sleepX},0)">
   <g class="wk-r">
+    <g class="cape-fl-l">${capeSvg(capeNeckR, walkY + 27, 'L', 28)}</g>
     <g class="wf-a">${bmp(WA, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB, C, 0, walkY)}</g>
   </g>
@@ -836,6 +866,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 
   // ── 4. Coding (at desk) ──
   const coding = `<g class="ds" transform="translate(${deskX},0)">
+  <g class="cape-dr-l">${capeSvg(capeNeckR, sitY + 27, 'L', 22)}</g>
   ${bmp(SI.slice(0,-1), C, 0, sitY)}
   <g class="tw">${bmp([SI[SI.length-1]], C, tailOff, sitY+(SI.length-1)*PX)}</g>
   <text class="ht"  x="${spriteW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
@@ -845,6 +876,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
 
   // ── 5. Coffee (at desk) ──
   const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
+  <g class="cape-dr-l">${capeSvg(capeNeckR, sitY + 27, 'L', 22)}</g>
   ${bmp(CF.slice(0,-1), C, 0, sitY)}
   <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
@@ -862,14 +894,15 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   // ── 6. Walk desk → window (facing left) ──
   const walkToWindow = `<g transform="translate(${deskX},0)">
   <g class="wk-w">
+    <g class="cape-fl-r">${capeSvg(capeNeckL, walkY + 27, 'R', 28)}</g>
     <g class="wf-a">${bmp(WA_L, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB_L, C, 0, walkY)}</g>
   </g>
 </g>`
 
   // ── 7. Gaze at window ──
-  // WG tail extends left: tail row at normal position (no offset), slow sway from right edge
   const windowGaze = `<g class="gz" transform="translate(${windowX},0)">
+  <g class="cape-dr-r">${capeSvg(capeNeckL, gazeY + 27, 'R', 22)}</g>
   ${bmp(WG_R.slice(0,-1), C, 0, gazeY)}
   <g class="tw-slow-l">${bmp([WG_R[WG_R.length-1]], C, 0, gazeY+(WG_R.length-1)*PX)}</g>
 </g>`
@@ -877,6 +910,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   // ── 8. Walk window → bed (facing left) ──
   const walkToBed = `<g transform="translate(${windowX},0)">
   <g class="wk-l">
+    <g class="cape-fl-r">${capeSvg(capeNeckL, walkY + 27, 'R', 28)}</g>
     <g class="wf-a">${bmp(WA_L, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB_L, C, 0, walkY)}</g>
   </g>
