@@ -66,7 +66,7 @@ const SL = [
   '..KK..KK..........',
   '.KOOKKLOOK........',
   'KOOOOOOOOOKKKKKK..',
-  'KOnOOOOnOOOODOOSK.',
+  'KOOOOOOOOOOODOOSK.',
   'KOOWWnWWOODOOSOK..',
   '.KOGGWGGOODDSOOK..',
   '..KKOOOOLOOOOLK...',
