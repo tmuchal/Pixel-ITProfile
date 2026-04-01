@@ -1,13 +1,13 @@
 /**
  * Pixel art cat room — Orange tabby cat (60s loop)
  *
- * Behavior: sleep → stretch → walk right → code → coffee → walk to window →
- *           gaze outside → walk left → sleep
+ * Behavior: sleep → walk right → code → coffee → walk to window →
+ *           gaze outside → walk left → sleep  (36s loop)
  *
- * Room layout: [Bed + TV] [Window] [Bookshelf] [Desk + Monitor]
+ * Room layout: [Bed] [Window] [Bookshelf] [Desk + Monitor]
  */
 
-const PX = 5
+const PX = 6
 
 // ── Pixel renderer ────────────────────────────────────────────────────────────
 
@@ -63,11 +63,12 @@ const C: Record<string, string> = {
 }
 
 // ── Sleep pose (SL) — lying on belly, side view, 18×8 ──
+// Eyes: 'n' pixels give thin dark closed-eye slit look on orange face
 const SL = [
   '..KK..KK..........',
   '.KOOKKLOOK........',
   'KOOOOOOOOOKKKKKK..',
-  'KOOOOOOOOOOODOOSK.',
+  'KOnOOOOnOOOODOOSK.',
   'KOOWWnWWOODOOSOK..',
   '.KOGGWGGOODDSOOK..',
   '..KKOOOOLOOOOLK...',
@@ -581,16 +582,15 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 // ── CSS Animations ─────────────────────────────────────────────────────────────
 
 /**
- * Timeline (60s):
- * 0-10s:  sleep
- * 10-12s: stretch (on bed)
- * 12-16s: walk right (bed → desk)
- * 16-30s: code at desk
- * 30-36s: coffee
- * 36-38s: walk left (desk → window)
- * 38-44s: gaze at window
- * 44-48s: walk left (window → bed)
- * 48-60s: sleep
+ * Timeline (36s — fast loop, no stretch):
+ * 0-7s:   sleep
+ * 7-10s:  walk right (bed → desk)
+ * 10-19s: code at desk
+ * 19-23s: coffee
+ * 23-25s: walk left (desk → window)
+ * 25-29s: gaze at window
+ * 29-33s: walk left (window → bed)
+ * 33-36s: sleep
  */
 function buildCSS(
   dur: number,
@@ -603,16 +603,15 @@ function buildCSS(
   const p = (sec: number) => (sec / dur * 100).toFixed(2)
   const eps = 0.02
 
-  // Phase boundaries (in seconds)
-  const S1_END = 10    // sleep1 end
-  const ST_END = 12    // stretch end
-  const WR_END = 16    // walk right end (at desk)
-  const CD_END = 30    // coding end
-  const CF_END = 36    // coffee end
-  const WW_END = 38    // walk to window end
-  const GZ_END = 44    // gaze end
-  const WL_END = 48    // walk left to bed end
-  // 48-60: sleep2
+  // Phase boundaries (in seconds) — no stretch, faster pace
+  const S1_END = 7     // sleep1 end
+  const WR_END = 10    // walk right end (at desk)
+  const CD_END = 19    // coding end
+  const CF_END = 23    // coffee end
+  const WW_END = 25    // walk to window end
+  const GZ_END = 29    // gaze end
+  const WL_END = 33    // walk left to bed end
+  // 33-36: sleep2
 
   return `
 /* ── Sleep (0-${S1_END}s, ${WL_END}-${dur}s) ── */
@@ -624,26 +623,17 @@ function buildCSS(
   100%{opacity:1}
 }
 
-/* ── Stretch (${S1_END}-${ST_END}s, on bed) ── */
-.st{animation:st-v ${dur}s step-end infinite}
-@keyframes st-v{
-  0%{opacity:0}
-  ${p(S1_END)}%{opacity:0}${e(parseFloat(p(S1_END))+eps)}%{opacity:1}
-  ${p(ST_END)}%{opacity:1}${e(parseFloat(p(ST_END))+eps)}%{opacity:0}
-  100%{opacity:0}
-}
-
-/* ── Walk right: bed→desk (${ST_END}-${WR_END}s) ── */
+/* ── Walk right: bed→desk (${S1_END}-${WR_END}s) ── */
 .wk-r{animation:wkr-v ${dur}s step-end infinite,wkr-x ${dur}s ease-in-out infinite}
 @keyframes wkr-v{
   0%{opacity:0}
-  ${p(ST_END)}%{opacity:0}${e(parseFloat(p(ST_END))+eps)}%{opacity:1}
+  ${p(S1_END)}%{opacity:0}${e(parseFloat(p(S1_END))+eps)}%{opacity:1}
   ${p(WR_END)}%{opacity:1}${e(parseFloat(p(WR_END))+eps)}%{opacity:0}
   100%{opacity:0}
 }
 @keyframes wkr-x{
   0%{transform:translateX(0)}
-  ${p(ST_END)}%{transform:translateX(0)}
+  ${p(S1_END)}%{transform:translateX(0)}
   ${p(WR_END)}%{transform:translateX(${travel}px)}
   100%{transform:translateX(${travel}px)}
 }
@@ -786,19 +776,16 @@ const BED_V = BED_W
 
 export function buildCatRoomContent(w: number, h: number, accent: string, scene: RoomScene = 'paris'): string {
   const floorY  = h - 40
-  const sitH    = SI.length * PX      // 11 × 5 = 55
-  const sleepH  = SL.length * PX      // 8 × 5 = 40 (side-lying pose)
-  const walkH   = WA.length * PX      // 12 × 5 = 60
-  const stretchH = ST.length * PX     // 8 × 5 = 40
-  const gazeH   = WG.length * PX      // 11 × 5 = 55
-  const spriteW = WA[0].length * PX   // 11 × 5 = 55 (full sprite width)
-  // Tail offset: connect tail to body's right edge (body K at col 8 = 40px)
-  const tailOff = 8 * PX - 2 * PX     // body right edge(40) - tail first pixel col(2×5=10) = 30
+  const sitH    = SI.length * PX
+  const sleepH  = SL.length * PX
+  const walkH   = WA.length * PX
+  const gazeH   = WG.length * PX
+  const spriteW = WA[0].length * PX
+  const tailOff = 8 * PX - 2 * PX
 
   const sitY    = floorY - sitH
-  const sleepY  = floorY - sleepH - 8   // on bed, slightly raised
+  const sleepY  = floorY - sleepH - 10  // on bed, slightly raised
   const walkY   = floorY - walkH
-  const stretchY = floorY - stretchH - 6 // on bed
   const gazeY   = floorY - gazeH
 
   // Cat positions
@@ -808,7 +795,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const travel  = deskX - sleepX
   const travelDeskToWin = deskX - windowX
 
-  const DUR = 60
+  const DUR = 36
 
   const css  = buildCSS(DUR, sleepX, deskX, windowX, travel, travelDeskToWin)
   const room = buildRoom(w, h, accent, scene)
@@ -836,85 +823,100 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   <text x="${monOvX+monOvW/2}" y="${monOvY+58}" font-family="monospace" font-size="6" fill="#88ddcc" text-anchor="middle">&gt; tokens: 9999_</text>
 </g>`
 
-  // ── Cape attachment points ──
-  // Right-facing: cape attaches at left edge of body (col 1 = 5px), shoulder row 5 → +27px
-  // Left-facing: cape attaches at right edge of body (col 9 = 45px)
-  const capeNeckR = 5    // right-facing cat, cape attach x
-  const capeNeckL = 47   // left-facing cat, cape attach x
+  // ── Cape attachment points (PX-relative) ──
+  const capeNeckR = PX              // right-facing cat, cape left edge
+  const capeNeckL = 9 * PX + 2     // left-facing cat, cape right edge
+  const capeShoulder = Math.round(4.5 * PX)  // shoulder y-offset from pose top
+  const capeH = 6 * PX             // cape polygon height
 
   // ── 1. Sleep (bed) ──
-  const sleepW = SL[0].length * PX  // 18 × 5 = 90
-  const headW  = 10 * PX             // head is ~10 sprite cols wide
+  const sleepW = SL[0].length * PX
+  const headW  = 10 * PX
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
-  <path d="M${50} ${sleepY+8} L${88} ${sleepY+4} L${92} ${sleepY+38} L${46} ${sleepY+40} Z" fill="#cc1111" opacity="0.8"/>
-  <path d="M${78} ${sleepY+6} L${92} ${sleepY+20} L${92} ${sleepY+38} L${84} ${sleepY+34} Z" fill="#991010" opacity="0.7"/>
+  <path d="M${10*PX} ${sleepY+PX} L${17*PX} ${sleepY} L${18*PX} ${sleepY+7*PX} L${9*PX} ${sleepY+8*PX} Z" fill="#cc1111" opacity="0.8"/>
+  <path d="M${15*PX} ${sleepY+PX} L${18*PX} ${sleepY+3*PX} L${18*PX} ${sleepY+7*PX} L${16*PX} ${sleepY+6*PX} Z" fill="#991010" opacity="0.7"/>
   ${bmp(SL, C, 0, sleepY)}
-  <text class="z1" x="${headW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="11" fill="${accent}" font-weight="bold">z</text>
-  <text class="z2" x="${headW+12}" y="${sleepY-11}" font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">z</text>
-  <text class="z3" x="${headW+20}" y="${sleepY-22}" font-family="monospace" font-size="17" fill="${accent}" font-weight="bold">Z</text>
+  <text class="z1" x="${headW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="13" fill="${accent}" font-weight="bold">z</text>
+  <text class="z2" x="${headW+14}" y="${sleepY-13}" font-family="monospace" font-size="16" fill="${accent}" font-weight="bold">z</text>
+  <text class="z3" x="${headW+24}" y="${sleepY-26}" font-family="monospace" font-size="20" fill="${accent}" font-weight="bold">Z</text>
 </g>`
 
-  // ── 2. Stretch (on bed) ──
-  const stretching = `<g class="st" transform="translate(${sleepX - 10},0)">
-  <g class="cape-fl-l">${capeSvg(25, stretchY + 16, 'L', 20)}</g>
-  ${bmp(ST, C, 0, stretchY)}
-</g>`
-
-  // ── 3. Walk right (bed → desk) ──
+  // ── 2. Walk right (bed → desk) ──
   const walkRight = `<g transform="translate(${sleepX},0)">
   <g class="wk-r">
-    <g class="cape-fl-l">${capeSvg(capeNeckR, walkY + 27, 'L', 28)}</g>
+    <g class="cape-fl-l">${capeSvg(capeNeckR, walkY + capeShoulder, 'L', capeH)}</g>
     <g class="wf-a">${bmp(WA, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB, C, 0, walkY)}</g>
   </g>
 </g>`
 
-  // ── 4. Coding (at desk) — BACK VIEW, cape with "AI" ──
+  // ── 3. Coding (at desk) — BACK VIEW, cape with "AI" ──
+  // Large flowing superman cape extending beyond body
+  const codeCapeCx = Math.round(5.5 * PX)  // center x of sprite
+  const codeCapeTop = sitY + 3 * PX        // neck/shoulder level
+  const codeCapeBot = sitY + 9 * PX        // below body
+  const codeCapeW = Math.round(6 * PX)     // half-width of cape at bottom (wider than body)
   const coding = `<g class="ds" transform="translate(${deskX},0)">
+  <g class="cape-dr-l">
+    <polygon points="${codeCapeCx-2*PX},${codeCapeTop} ${codeCapeCx+2*PX},${codeCapeTop} ${codeCapeCx+codeCapeW},${codeCapeBot} ${codeCapeCx-codeCapeW},${codeCapeBot}" fill="#cc1111"/>
+    <polygon points="${codeCapeCx+codeCapeW-PX},${codeCapeBot-2*PX} ${codeCapeCx+codeCapeW+PX},${codeCapeBot} ${codeCapeCx+codeCapeW-PX},${codeCapeBot}" fill="#991010"/>
+    <polygon points="${codeCapeCx-codeCapeW+PX},${codeCapeBot-2*PX} ${codeCapeCx-codeCapeW-PX},${codeCapeBot} ${codeCapeCx-codeCapeW+PX},${codeCapeBot}" fill="#991010"/>
+  </g>
   ${bmp(SI_B.slice(0,-1), C, 0, sitY)}
   <g class="tw">${bmp([SI_B[SI_B.length-1]], C, tailOff, sitY+(SI_B.length-1)*PX)}</g>
-  <text x="${25}" y="${sitY+35}" fill="#ffd700" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">AI</text>
-  <text class="ht"  x="${spriteW-8}"  y="${sitY-6}"  font-family="monospace" font-size="14" fill="${accent}" font-weight="bold">!</text>
-  <text class="ht2" x="${spriteW+4}"  y="${sitY-4}"  font-family="monospace" font-size="11" fill="#ffaa20" font-weight="bold">!</text>
-  <text class="ht3" x="${spriteW-2}"  y="${sitY-14}" font-family="monospace" font-size="9"  fill="#fff" opacity="0.8">✦</text>
+  <text x="${codeCapeCx}" y="${sitY + Math.round(6.2*PX)}" fill="#ffd700" font-family="monospace" font-size="${Math.round(2.2*PX)}" font-weight="bold" text-anchor="middle">AI</text>
+  <text class="ht"  x="${spriteW-PX}"  y="${sitY-PX}"  font-family="monospace" font-size="${Math.round(2.8*PX)}" fill="${accent}" font-weight="bold">!</text>
+  <text class="ht2" x="${spriteW+PX}"  y="${sitY-PX+2}"  font-family="monospace" font-size="${Math.round(2.2*PX)}" fill="#ffaa20" font-weight="bold">!</text>
+  <text class="ht3" x="${spriteW-PX+2}"  y="${sitY-2*PX}" font-family="monospace" font-size="${Math.round(1.8*PX)}"  fill="#fff" opacity="0.8">✦</text>
 </g>`
 
-  // ── 5. Coffee (at desk) — FRONT VIEW, cup appears only here ──
+  // ── 4. Coffee (at desk) — FRONT VIEW, cup appears only here ──
   const coffeeCat = `<g class="cf-cat" transform="translate(${deskX},0)">
-  <g class="cape-dr-l">${capeSvg(capeNeckR, sitY + 27, 'L', 22)}</g>
+  <g class="cape-dr-l">${capeSvg(capeNeckR, sitY + capeShoulder, 'L', Math.round(4.5*PX))}</g>
   ${bmp(CF.slice(0,-1), C, 0, sitY)}
   <g class="tw">${bmp([CF[CF.length-1]], C, tailOff, sitY+(CF.length-1)*PX)}</g>
 </g>`
-  const coffeeCup = `<g transform="translate(${deskX+46},${sitY+22})">
+  const cupX = deskX + Math.round(8*PX)
+  const cupY = sitY + Math.round(3.5*PX)
+  const coffeeCup = `<g transform="translate(${cupX},${cupY})">
   <g class="cf">
-    <rect x="0" y="4" width="20" height="14" fill="#2a1408" rx="3"/>
-    <ellipse cx="10" cy="4" rx="9" ry="3.5" fill="#3a2010"/>
-    <ellipse cx="10" cy="4" rx="7" ry="2.5" fill="#6b3010"/>
-    <path d="M20 6 Q26 6 26 12 Q26 18 20 18" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-    <ellipse cx="10" cy="4" rx="5" ry="1.5" fill="#8b4513" opacity="0.8"/>
+    <rect x="0" y="4" width="${Math.round(4*PX)}" height="${Math.round(2.8*PX)}" fill="#2a1408" rx="3"/>
+    <ellipse cx="${2*PX}" cy="4" rx="${Math.round(1.8*PX)}" ry="${Math.round(0.7*PX)}" fill="#3a2010"/>
+    <ellipse cx="${2*PX}" cy="4" rx="${Math.round(1.4*PX)}" ry="${Math.round(0.5*PX)}" fill="#6b3010"/>
+    <path d="M${4*PX} 6 Q${5*PX} 6 ${5*PX} ${Math.round(2*PX)} Q${5*PX} ${Math.round(3.5*PX)} ${4*PX} ${Math.round(3.5*PX)}" stroke="#3a2010" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="${2*PX}" cy="4" rx="${PX}" ry="${Math.round(0.3*PX)}" fill="#8b4513" opacity="0.8"/>
   </g>
 </g>`
 
-  // ── 6. Walk desk → window (facing left) ──
+  // ── 5. Walk desk → window (facing left) ──
   const walkToWindow = `<g transform="translate(${deskX},0)">
   <g class="wk-w">
-    <g class="cape-fl-r">${capeSvg(capeNeckL, walkY + 27, 'R', 28)}</g>
+    <g class="cape-fl-r">${capeSvg(capeNeckL, walkY + capeShoulder, 'R', capeH)}</g>
     <g class="wf-a">${bmp(WA_L, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB_L, C, 0, walkY)}</g>
   </g>
 </g>`
 
-  // ── 7. Gaze at window — BACK VIEW, cape with "AI" ──
+  // ── 6. Gaze at window — BACK VIEW, superman cape with "AI" ──
+  const gazeCapeCx = Math.round(5.5 * PX)
+  const gazeCapeTop = gazeY + 3 * PX
+  const gazeCapeBot = gazeY + 9 * PX
+  const gazeCapeW = Math.round(6 * PX)
   const windowGaze = `<g class="gz" transform="translate(${windowX},0)">
+  <g class="cape-dr-r">
+    <polygon points="${gazeCapeCx-2*PX},${gazeCapeTop} ${gazeCapeCx+2*PX},${gazeCapeTop} ${gazeCapeCx+gazeCapeW},${gazeCapeBot} ${gazeCapeCx-gazeCapeW},${gazeCapeBot}" fill="#cc1111"/>
+    <polygon points="${gazeCapeCx+gazeCapeW-PX},${gazeCapeBot-2*PX} ${gazeCapeCx+gazeCapeW+PX},${gazeCapeBot} ${gazeCapeCx+gazeCapeW-PX},${gazeCapeBot}" fill="#991010"/>
+    <polygon points="${gazeCapeCx-gazeCapeW+PX},${gazeCapeBot-2*PX} ${gazeCapeCx-gazeCapeW-PX},${gazeCapeBot} ${gazeCapeCx-gazeCapeW+PX},${gazeCapeBot}" fill="#991010"/>
+  </g>
   ${bmp(WG_B.slice(0,-1), C, 0, gazeY)}
   <g class="tw-slow-l">${bmp([WG_B[WG_B.length-1]], C, 0, gazeY+(WG_B.length-1)*PX)}</g>
-  <text x="${25}" y="${gazeY+35}" fill="#ffd700" font-family="monospace" font-size="11" font-weight="bold" text-anchor="middle">AI</text>
+  <text x="${gazeCapeCx}" y="${gazeY + Math.round(6.2*PX)}" fill="#ffd700" font-family="monospace" font-size="${Math.round(2.2*PX)}" font-weight="bold" text-anchor="middle">AI</text>
 </g>`
 
-  // ── 8. Walk window → bed (facing left) ──
+  // ── 7. Walk window → bed (facing left) ──
   const walkToBed = `<g transform="translate(${windowX},0)">
   <g class="wk-l">
-    <g class="cape-fl-r">${capeSvg(capeNeckL, walkY + 27, 'R', 28)}</g>
+    <g class="cape-fl-r">${capeSvg(capeNeckL, walkY + capeShoulder, 'R', capeH)}</g>
     <g class="wf-a">${bmp(WA_L, C, 0, walkY)}</g>
     <g class="wf-b">${bmp(WB_L, C, 0, walkY)}</g>
   </g>
@@ -925,7 +927,6 @@ ${room}
 ${claudeLogo}
 ${openclawLogo}
 ${sleeping}
-${stretching}
 ${walkRight}
 ${coding}
 ${coffeeCat}
