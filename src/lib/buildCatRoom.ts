@@ -2,7 +2,7 @@
  * Pixel art cat room — Orange tabby cat (60s loop)
  *
  * Behavior: sleep → walk right → code → coffee → walk to window →
- *           gaze outside → walk left → sleep  (36s loop)
+ *           gaze outside → walk left → sleep  (24s loop)
  *
  * Room layout: [Bed] [Window] [Bookshelf] [Desk + Monitor]
  */
@@ -63,12 +63,12 @@ const C: Record<string, string> = {
 }
 
 // ── Sleep pose (SL) — lying on belly, side view, 18×8 ──
-// Eyes: 'n' pixels give thin dark closed-eye slit look on orange face
+// Eyes rendered as thin SVG lines separately (not in sprite) for closed look
 const SL = [
   '..KK..KK..........',
   '.KOOKKLOOK........',
   'KOOOOOOOOOKKKKKK..',
-  'KOnOOOOnOOOODOOSK.',
+  'KOOOOOOOOOOODOOSK.',
   'KOOWWnWWOODOOSOK..',
   '.KOGGWGGOODDSOOK..',
   '..KKOOOOLOOOOLK...',
@@ -582,15 +582,15 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 // ── CSS Animations ─────────────────────────────────────────────────────────────
 
 /**
- * Timeline (36s — fast loop, no stretch):
- * 0-7s:   sleep
- * 7-10s:  walk right (bed → desk)
- * 10-19s: code at desk
- * 19-23s: coffee
- * 23-25s: walk left (desk → window)
- * 25-29s: gaze at window
- * 29-33s: walk left (window → bed)
- * 33-36s: sleep
+ * Timeline (24s — fast loop):
+ * 0-4s:   sleep
+ * 4-6s:   walk right (bed → desk)
+ * 6-12s:  code at desk
+ * 12-15s: coffee
+ * 15-16.5s: walk left (desk → window)
+ * 16.5-19.5s: gaze at window
+ * 19.5-22s: walk left (window → bed)
+ * 22-24s: sleep
  */
 function buildCSS(
   dur: number,
@@ -603,15 +603,15 @@ function buildCSS(
   const p = (sec: number) => (sec / dur * 100).toFixed(2)
   const eps = 0.02
 
-  // Phase boundaries (in seconds) — no stretch, faster pace
-  const S1_END = 7     // sleep1 end
-  const WR_END = 10    // walk right end (at desk)
-  const CD_END = 19    // coding end
-  const CF_END = 23    // coffee end
-  const WW_END = 25    // walk to window end
-  const GZ_END = 29    // gaze end
-  const WL_END = 33    // walk left to bed end
-  // 33-36: sleep2
+  // Phase boundaries (in seconds) — fast pace
+  const S1_END = 4       // sleep1 end
+  const WR_END = 6       // walk right end (at desk)
+  const CD_END = 12      // coding end
+  const CF_END = 15      // coffee end
+  const WW_END = 16.5    // walk to window end
+  const GZ_END = 19.5    // gaze end
+  const WL_END = 22      // walk left to bed end
+  // 22-24: sleep2
 
   return `
 /* ── Sleep (0-${S1_END}s, ${WL_END}-${dur}s) ── */
@@ -639,8 +639,8 @@ function buildCSS(
 }
 
 /* ── Walk frame toggle ── */
-.wf-a{animation:wftog 0.35s step-end infinite}
-.wf-b{animation:wftog 0.35s step-end 0.175s infinite}
+.wf-a{animation:wftog 0.25s step-end infinite}
+.wf-b{animation:wftog 0.25s step-end 0.125s infinite}
 @keyframes wftog{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
 /* ── Coding (${WR_END}-${CD_END}s) ── */
@@ -795,7 +795,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const travel  = deskX - sleepX
   const travelDeskToWin = deskX - windowX
 
-  const DUR = 36
+  const DUR = 24
 
   const css  = buildCSS(DUR, sleepX, deskX, windowX, travel, travelDeskToWin)
   const room = buildRoom(w, h, accent, scene)
@@ -832,10 +832,17 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   // ── 1. Sleep (bed) ──
   const sleepW = SL[0].length * PX
   const headW  = 10 * PX
+  // Closed eyelids: thin horizontal lines at eye positions (row 3, cols 2 & 7)
+  const eyeY = sleepY + 3 * PX + Math.round(PX * 0.35)  // vertically centered in eye row
+  const eyeH = Math.max(2, Math.round(PX * 0.35))        // thin line (2px)
+  const eye1X = 2 * PX   // left eye col
+  const eye2X = 7 * PX   // right eye col
   const sleeping = `<g class="sl" transform="translate(${sleepX},0)">
   <path d="M${10*PX} ${sleepY+PX} L${17*PX} ${sleepY} L${18*PX} ${sleepY+7*PX} L${9*PX} ${sleepY+8*PX} Z" fill="#cc1111" opacity="0.8"/>
   <path d="M${15*PX} ${sleepY+PX} L${18*PX} ${sleepY+3*PX} L${18*PX} ${sleepY+7*PX} L${16*PX} ${sleepY+6*PX} Z" fill="#991010" opacity="0.7"/>
   ${bmp(SL, C, 0, sleepY)}
+  <rect x="${eye1X}" y="${eyeY}" width="${PX}" height="${eyeH}" fill="#1a1008" rx="1"/>
+  <rect x="${eye2X}" y="${eyeY}" width="${PX}" height="${eyeH}" fill="#1a1008" rx="1"/>
   <text class="z1" x="${headW+4}"  y="${sleepY-2}"  font-family="monospace" font-size="13" fill="${accent}" font-weight="bold">z</text>
   <text class="z2" x="${headW+14}" y="${sleepY-13}" font-family="monospace" font-size="16" fill="${accent}" font-weight="bold">z</text>
   <text class="z3" x="${headW+24}" y="${sleepY-26}" font-family="monospace" font-size="20" fill="${accent}" font-weight="bold">Z</text>
