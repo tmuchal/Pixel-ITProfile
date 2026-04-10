@@ -2,7 +2,7 @@
  * Pixel art cat room — Orange tabby cat (60s loop)
  *
  * Behavior: sleep → walk right → code → coffee → walk to window →
- *           gaze outside → walk left → sleep  (24s loop)
+ *           gaze outside → walk left → sleep  (30s loop)
  *
  * Room layout: [Bed] [Window] [Bookshelf] [Desk + Monitor]
  */
@@ -582,15 +582,15 @@ function buildRoom(w: number, h: number, accent: string, scene: RoomScene = 'nig
 // ── CSS Animations ─────────────────────────────────────────────────────────────
 
 /**
- * Timeline (24s — fast loop):
- * 0-4s:   sleep
- * 4-6s:   walk right (bed → desk)
- * 6-12s:  code at desk
- * 12-15s: coffee
- * 15-16.5s: walk left (desk → window)
- * 16.5-19.5s: gaze at window
- * 19.5-22s: walk left (window → bed)
- * 22-24s: sleep
+ * Timeline (30s loop):
+ * 0-5s:   sleep
+ * 5-7.5s: walk right (bed → desk)
+ * 7.5-15s: code at desk
+ * 15-18s: coffee
+ * 18-20s: walk left (desk → window)
+ * 20-24s: gaze at window
+ * 24-27s: walk left (window → bed)
+ * 27-30s: sleep
  */
 function buildCSS(
   dur: number,
@@ -603,15 +603,15 @@ function buildCSS(
   const p = (sec: number) => (sec / dur * 100).toFixed(2)
   const eps = 0.02
 
-  // Phase boundaries (in seconds) — fast pace
-  const S1_END = 4       // sleep1 end
-  const WR_END = 6       // walk right end (at desk)
-  const CD_END = 12      // coding end
-  const CF_END = 15      // coffee end
-  const WW_END = 16.5    // walk to window end
-  const GZ_END = 19.5    // gaze end
-  const WL_END = 22      // walk left to bed end
-  // 22-24: sleep2
+  // Phase boundaries (in seconds)
+  const S1_END = 5       // sleep1 end
+  const WR_END = 7.5     // walk right end (at desk)
+  const CD_END = 15      // coding end
+  const CF_END = 18      // coffee end
+  const WW_END = 20      // walk to window end
+  const GZ_END = 24      // gaze end
+  const WL_END = 27      // walk left to bed end
+  // 27-30: sleep2
 
   return `
 /* ── Sleep (0-${S1_END}s, ${WL_END}-${dur}s) ── */
@@ -639,8 +639,8 @@ function buildCSS(
 }
 
 /* ── Walk frame toggle ── */
-.wf-a{animation:wftog 0.25s step-end infinite}
-.wf-b{animation:wftog 0.25s step-end 0.125s infinite}
+.wf-a{animation:wftog 0.3s step-end infinite}
+.wf-b{animation:wftog 0.3s step-end 0.15s infinite}
 @keyframes wftog{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
 /* ── Coding (${WR_END}-${CD_END}s) ── */
@@ -795,7 +795,7 @@ export function buildCatRoomContent(w: number, h: number, accent: string, scene:
   const travel  = deskX - sleepX
   const travelDeskToWin = deskX - windowX
 
-  const DUR = 24
+  const DUR = 30
 
   const css  = buildCSS(DUR, sleepX, deskX, windowX, travel, travelDeskToWin)
   const room = buildRoom(w, h, accent, scene)

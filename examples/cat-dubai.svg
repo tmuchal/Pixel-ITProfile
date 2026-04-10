@@ -1,16 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="800" height="150" viewBox="0 0 800 150">
 <style>
-/* ── Sleep (0-4s, 22-24s) ── */
-.sl{animation:sl-v 24s step-end infinite}
+/* ── Sleep (0-5s, 27-30s) ── */
+.sl{animation:sl-v 30s step-end infinite}
 @keyframes sl-v{
   0%{opacity:1}
   16.67%{opacity:1}16.69%{opacity:0}
-  91.67%{opacity:0}91.69%{opacity:1}
+  90.00%{opacity:0}90.02%{opacity:1}
   100%{opacity:1}
 }
 
-/* ── Walk right: bed→desk (4-6s) ── */
-.wk-r{animation:wkr-v 24s step-end infinite,wkr-x 24s ease-in-out infinite}
+/* ── Walk right: bed→desk (5-7.5s) ── */
+.wk-r{animation:wkr-v 30s step-end infinite,wkr-x 30s ease-in-out infinite}
 @keyframes wkr-v{
   0%{opacity:0}
   16.67%{opacity:0}16.69%{opacity:1}
@@ -25,12 +25,12 @@
 }
 
 /* ── Walk frame toggle ── */
-.wf-a{animation:wftog 0.25s step-end infinite}
-.wf-b{animation:wftog 0.25s step-end 0.125s infinite}
+.wf-a{animation:wftog 0.3s step-end infinite}
+.wf-b{animation:wftog 0.3s step-end 0.15s infinite}
 @keyframes wftog{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
-/* ── Coding (6-12s) ── */
-.ds{animation:ds-v 24s step-end infinite}
+/* ── Coding (7.5-15s) ── */
+.ds{animation:ds-v 30s step-end infinite}
 @keyframes ds-v{
   0%{opacity:0}
   25.00%{opacity:0}25.02%{opacity:1}
@@ -38,63 +38,63 @@
   100%{opacity:0}
 }
 
-/* ── Coffee (12-15s) ── */
-.cf-cat{animation:cf-cat-v 24s step-end infinite}
+/* ── Coffee (15-18s) ── */
+.cf-cat{animation:cf-cat-v 30s step-end infinite}
 @keyframes cf-cat-v{
   0%{opacity:0}
   50.00%{opacity:0}50.02%{opacity:1}
-  62.50%{opacity:1}62.52%{opacity:0}
+  60.00%{opacity:1}60.02%{opacity:0}
   100%{opacity:0}
 }
-.cf{animation:cf-v 24s step-end infinite,cf-y 24s ease-in-out infinite}
+.cf{animation:cf-v 30s step-end infinite,cf-y 30s ease-in-out infinite}
 @keyframes cf-v{
   0%{opacity:0}
   50.00%{opacity:0}50.02%{opacity:1}
-  62.50%{opacity:1}62.52%{opacity:0}
+  60.00%{opacity:1}60.02%{opacity:0}
   100%{opacity:0}
 }
 @keyframes cf-y{
   50.00%{transform:translateY(0)}
-  56.25%{transform:translateY(-10px) rotate(-15deg)}
-  62.50%{transform:translateY(0)}
+  55.00%{transform:translateY(-10px) rotate(-15deg)}
+  60.00%{transform:translateY(0)}
 }
 
-/* ── Walk desk→window (15-16.5s) ── */
-.wk-w{animation:wkw-v 24s step-end infinite,wkw-x 24s ease-in-out infinite}
+/* ── Walk desk→window (18-20s) ── */
+.wk-w{animation:wkw-v 30s step-end infinite,wkw-x 30s ease-in-out infinite}
 @keyframes wkw-v{
   0%{opacity:0}
-  62.50%{opacity:0}62.52%{opacity:1}
-  68.75%{opacity:1}68.77%{opacity:0}
+  60.00%{opacity:0}60.02%{opacity:1}
+  66.67%{opacity:1}66.69%{opacity:0}
   100%{opacity:0}
 }
 @keyframes wkw-x{
   0%{transform:translateX(0)}
-  62.50%{transform:translateX(0)}
-  68.75%{transform:translateX(-328px)}
+  60.00%{transform:translateX(0)}
+  66.67%{transform:translateX(-328px)}
   100%{transform:translateX(-328px)}
 }
 
-/* ── Window gaze (16.5-19.5s) ── */
-.gz{animation:gz-v 24s step-end infinite}
+/* ── Window gaze (20-24s) ── */
+.gz{animation:gz-v 30s step-end infinite}
 @keyframes gz-v{
   0%{opacity:0}
-  68.75%{opacity:0}68.77%{opacity:1}
-  81.25%{opacity:1}81.27%{opacity:0}
+  66.67%{opacity:0}66.69%{opacity:1}
+  80.00%{opacity:1}80.02%{opacity:0}
   100%{opacity:0}
 }
 
-/* ── Walk window→bed (19.5-22s) ── */
-.wk-l{animation:wkl-v 24s step-end infinite,wkl-x 24s ease-in-out infinite}
+/* ── Walk window→bed (24-27s) ── */
+.wk-l{animation:wkl-v 30s step-end infinite,wkl-x 30s ease-in-out infinite}
 @keyframes wkl-v{
   0%{opacity:0}
-  81.25%{opacity:0}81.27%{opacity:1}
-  91.67%{opacity:1}91.69%{opacity:0}
+  80.00%{opacity:0}80.02%{opacity:1}
+  90.00%{opacity:1}90.02%{opacity:0}
   100%{opacity:0}
 }
 @keyframes wkl-x{
   0%{transform:translateX(0)}
-  81.25%{transform:translateX(0)}
-  91.67%{transform:translateX(-184px)}
+  80.00%{transform:translateX(0)}
+  90.00%{transform:translateX(-184px)}
   100%{transform:translateX(-184px)}
 }
 
@@ -139,8 +139,8 @@
 @keyframes eartw{0%,80%{transform:scaleY(1)}85%{transform:scaleY(0.85)}90%{transform:scaleY(1)}95%{transform:scaleY(0.9)}100%{transform:scaleY(1)}}
 
 /* ── Monitor logos ── */
-.mon-claude{animation:mon-cl 24s step-end infinite}
-.mon-openclaw{animation:mon-oc 24s step-end infinite}
+.mon-claude{animation:mon-cl 30s step-end infinite}
+.mon-openclaw{animation:mon-oc 30s step-end infinite}
 @keyframes mon-cl{
   0%{opacity:0}
   25.00%{opacity:0}25.02%{opacity:1}
